@@ -154,6 +154,7 @@ class _ItemPageState() extends State<ItemPage> {
                   ),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
+                    spacing: AppSpacing.xl,
                     children: [
                       FloatingActionButton.small(
                         heroTag: null,
@@ -167,7 +168,7 @@ class _ItemPageState() extends State<ItemPage> {
                         tooltip: context.l10n.nextRootChild,
                         child: const Icon(Icons.keyboard_arrow_down_outlined),
                       ),
-                    ].spaced(height: AppSpacing.xl),
+                    ],
                   ),
                 )
               : null,

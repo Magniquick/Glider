@@ -58,6 +58,7 @@ class const StoriesSearchRangeView(
               },
         ),
         child: Row(
+          spacing: AppSpacing.m,
           children: [
             for (final searchRange in SearchRange.values)
               ChoiceChip(
@@ -71,7 +72,7 @@ class const StoriesSearchRangeView(
                   ),
                 ),
               ),
-          ].spaced(width: AppSpacing.m),
+          ],
         ),
       );
     },

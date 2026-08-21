@@ -15,13 +15,14 @@ class const PreviewCard({required final Widget child, super.key})
         Padding(
           padding: AppSpacing.defaultTilePadding.copyWith(bottom: 0),
           child: Row(
+            spacing: AppSpacing.l,
             children: [
               const MetadataWidget(icon: Icons.visibility_outlined),
               Text(
                 context.l10n.preview,
                 style: Theme.of(context).textTheme.titleSmall,
               ),
-            ].spaced(width: AppSpacing.l),
+            ],
           ),
         ),
         AnimatedSize(

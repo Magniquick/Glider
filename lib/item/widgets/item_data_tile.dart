@@ -53,6 +53,7 @@ class const ItemDataTile(
         value: vote.upvoted,
         onChanged: (value) => onTap?.call(context, item),
         title: Row(
+          spacing: AppSpacing.s,
           children: [
             if (item.text case final text?)
               Expanded(
@@ -71,7 +72,7 @@ class const ItemDataTile(
               tag: 'item_tile_score_${item.id}',
               child: _buildVotedMetadata(context),
             ),
-          ].spaced(width: AppSpacing.s),
+          ],
         ),
         contentPadding: padding.copyWith(top: 0, bottom: 0),
         visualDensity: VisualDensity.compact,
@@ -105,11 +106,12 @@ class const ItemDataTile(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.m,
             children: [
               if (hasPrimary) _buildPrimary(context),
               if (hasSecondary && collapsedCount == null)
                 _buildSecondary(context),
-            ].spaced(height: AppSpacing.m),
+            ],
           ),
         ),
       ),
@@ -117,10 +119,12 @@ class const ItemDataTile(
   }
 
   Widget _buildPrimary(BuildContext context) => Column(
+    spacing: AppSpacing.s,
     children: [
       if ((item.title != null || item.url != null) && !blocked && !filtered)
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: AppSpacing.xl,
           children: [
             if (item.title != null)
               Expanded(
@@ -153,10 +157,10 @@ class const ItemDataTile(
                   ),
                 ),
               ),
-          ].spaced(width: AppSpacing.xl),
+          ],
         ),
       if (showMetadata) _buildMetadata(context),
-    ].spaced(height: AppSpacing.s),
+    ],
   );
 
   Widget _buildMetadata(BuildContext context) => Row(
@@ -325,6 +329,7 @@ class const ItemDataTile(
   );
 
   Widget _buildSecondary(BuildContext context) => Column(
+    spacing: AppSpacing.m,
     children: [
       if (item.text case final text?)
         Hero(
@@ -346,6 +351,7 @@ class const ItemDataTile(
             child: Padding(
               padding: AppSpacing.defaultTilePadding,
               child: Row(
+                spacing: AppSpacing.l,
                 children: [
                   if (showFavicons)
                     Hero(
@@ -375,12 +381,12 @@ class const ItemDataTile(
                       ),
                     ),
                   ),
-                ].spaced(width: AppSpacing.l),
+                ],
               ),
             ),
           ),
         ),
-    ].spaced(height: AppSpacing.m),
+    ],
   );
 }
 

@@ -88,6 +88,7 @@ class const _SubmitBody(final SubmitCubit _submitCubit)
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: AppSpacing.xl,
         children: [
           _SubmitForm(_submitCubit),
           if (state.url.hasHost)
@@ -96,7 +97,7 @@ class const _SubmitBody(final SubmitCubit _submitCubit)
               icon: const Icon(Icons.title_outlined),
               label: Text(context.l10n.autofillTitle),
             ),
-        ].spaced(height: AppSpacing.xl),
+        ],
       ),
     ),
   );
@@ -156,6 +157,7 @@ class _SubmitFormState() extends State<_SubmitForm> {
     },
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.m,
       children: [
         BlocBuilder<SubmitCubit, SubmitState>(
           bloc: widget._submitCubit,
@@ -208,7 +210,7 @@ class _SubmitFormState() extends State<_SubmitForm> {
             onChanged: widget._submitCubit.setText,
           ),
         ),
-      ].spaced(height: AppSpacing.m),
+      ],
     ),
   );
 }

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:glider/app/extensions/text_scaler_extension.dart';
 import 'package:glider/common/constants/app_spacing.dart';
-import 'package:glider/common/extensions/widget_list_extension.dart';
-import 'package:glider/common/widgets/loading_block.dart';
-import 'package:glider/common/widgets/loading_text_block.dart';
-import 'package:glider/common/widgets/metadata_widget.dart';
 import 'package:glider/item/models/item_style.dart';
+import 'package:glider/item/widgets/item_data_tile.dart';
 import 'package:glider_domain/glider_domain.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
+/// Placeholder shown while an item loads.
+///
+/// Rather than hand-mirroring [ItemDataTile]'s layout -- which had to be kept
+/// in step with it by hand -- this renders the real tile with stand-in content
+/// and lets Skeletonizer turn it into bones. Any change to [ItemDataTile] is
+/// therefore reflected here automatically.
 class const ItemLoadingTile({
   required final ItemType type,
   super.key,
@@ -18,141 +21,41 @@ class const ItemLoadingTile({
   final ItemStyle style = ItemStyle.full,
   final EdgeInsetsGeometry padding = AppSpacing.defaultTilePadding,
 }) extends StatelessWidget {
-  int get _faviconSize =>
-      useLargeStoryStyle ? (storyLines >= 0 ? storyLines : 2) * 24 : 20;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: padding,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (style.showPrimary && (type != ItemType.comment || showMetadata))
-          _buildPrimary(context),
-        if (style.showSecondary &&
-            type == ItemType.comment &&
-            collapsedCount == null)
-          _buildSecondary(context),
-      ],
-    ),
+  /// Stand-in content, sized so the bones match a typical item's proportions.
+  Item get _placeholder => Item(
+    id: 0,
+    type: type,
+    username: 'username',
+    dateTime: DateTime.fromMillisecondsSinceEpoch(0),
+    title: type == ItemType.comment
+        ? null
+        : 'A story title that runs to about the length of a real one',
+    text: type == ItemType.comment
+        ? 'A comment body long enough to occupy the couple of lines that a '
+              'typical Hacker News reply takes up on screen.'
+        : null,
+    url: type == ItemType.comment ? null : Uri.https('example.com'),
+    score: 100,
+    descendantCount: 10,
   );
 
-  Widget _buildPrimary(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      children: [
-        if (type != ItemType.comment)
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    for (
-                      var i = 0;
-                      i < (storyLines >= 0 ? storyLines : 2) - 1;
-                      i++
-                    )
-                      LoadingTextBlock(
-                        style: useLargeStoryStyle
-                            ? textTheme.titleMedium
-                            : textTheme.titleSmall,
-                      ),
-                    LoadingTextBlock(
-                      width: 200,
-                      style: useLargeStoryStyle
-                          ? textTheme.titleMedium
-                          : textTheme.titleSmall,
-                    ),
-                  ],
-                ),
-              ),
-              LoadingBlock(
-                width: _faviconSize.toDouble(),
-                height: _faviconSize.toDouble(),
-              ),
-            ].spaced(width: AppSpacing.xl),
-          ),
-        if (showMetadata) _buildMetadata(context),
-      ].spaced(height: AppSpacing.s),
-    );
-  }
-
-  Widget _buildMetadata(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    final Color color = Theme.of(context).colorScheme.outline
-        .withValues(alpha: LoadingBlock.opacity);
-    return Row(
-      children: [
-        if (type != ItemType.comment) ...[
-          MetadataWidget(
-            icon: Icons.arrow_upward_outlined,
-            label: LoadingTextBlock(
-              width: 14,
-              style: textTheme.bodySmall,
-              hasLeading: false,
-            ),
-            color: color,
-          ),
-          MetadataWidget(
-            icon: Icons.chat_bubble_outline_outlined,
-            label: LoadingTextBlock(
-              width: 14,
-              style: textTheme.bodySmall,
-              hasLeading: false,
-            ),
-            color: color,
-          ),
-        ],
-        ElevatedButton.icon(
-          onPressed: null,
-          style: ElevatedButton.styleFrom(
-            padding: ButtonStyleButton.scaledPadding(
-              const EdgeInsets.symmetric(horizontal: AppSpacing.l),
-              const EdgeInsets.symmetric(horizontal: AppSpacing.m),
-              const EdgeInsets.symmetric(horizontal: AppSpacing.s),
-              MediaQuery.textScalerOf(context).getFontSizeMultiplier(
-                fontSize: Theme.of(context).textTheme.labelLarge?.fontSize,
-                fallbackFontSize: 14,
-              ),
-            ),
-            visualDensity: const VisualDensity(
-              horizontal: VisualDensity.minimumDensity,
-              vertical: VisualDensity.minimumDensity,
-            ),
-            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-          ),
-          icon: const LoadingBlock(width: 14, height: 14),
-          label: LoadingTextBlock(
-            width: 63,
-            style: textTheme.bodySmall,
-            hasLeading: false,
-          ),
-        ),
-        if (collapsedCount != null)
-          MetadataWidget(icon: Icons.add_circle_outline_outlined, color: color),
-        const Spacer(),
-        MetadataWidget(
-          label: LoadingTextBlock(
-            width: 70,
-            style: textTheme.bodySmall,
-            hasLeading: false,
-          ),
-        ),
-      ].spaced(width: AppSpacing.m),
-    );
-  }
-
-  Widget _buildSecondary(BuildContext context) {
-    final TextTheme textTheme = Theme.of(context).textTheme;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (style.showPrimary) const SizedBox(height: AppSpacing.m),
-        LoadingTextBlock(style: textTheme.bodyMedium),
-        LoadingTextBlock(style: textTheme.bodyMedium),
-        LoadingTextBlock(width: 200, style: textTheme.bodyMedium),
-      ],
-    );
-  }
+  @override
+  Widget build(BuildContext context) => Skeletonizer(
+    // Pointer events are ignored while skeletonized, so the stand-in tile
+    // cannot be tapped through to a nonexistent item.
+    child: ItemDataTile(
+      _placeholder,
+      collapsedCount: collapsedCount,
+      storyLines: storyLines,
+      useLargeStoryStyle: useLargeStoryStyle,
+      showMetadata: showMetadata,
+      // Favicons would try to hit the network for the placeholder URL.
+      showFavicons: false,
+      showUserAvatars: false,
+      style: style,
+      padding: padding is EdgeInsets
+          ? padding as EdgeInsets
+          : AppSpacing.defaultTilePadding,
+    ),
+  );
 }

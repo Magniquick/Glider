@@ -161,6 +161,7 @@ class _EditFormState() extends State<_EditForm> {
     },
     builder: (context, state) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.m,
       children: [
         if (state.title != null)
           BlocBuilder<EditCubit, EditState>(
@@ -205,7 +206,7 @@ class _EditFormState() extends State<_EditForm> {
               onChanged: widget._editCubit.setText,
             ),
           ),
-      ].spaced(height: AppSpacing.m),
+      ],
     ),
   );
 }

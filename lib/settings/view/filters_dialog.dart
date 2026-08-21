@@ -63,12 +63,14 @@ class _FiltersBodyState() extends State<_FiltersBody> {
         !setEquals(previous.domainFilters, current.domainFilters),
     builder: (context, state) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.l,
       children: <Widget>[
         Text(
           context.l10n.words,
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Row(
+          spacing: AppSpacing.m,
           children: [
             Expanded(
               child: TextFormField(
@@ -83,7 +85,7 @@ class _FiltersBodyState() extends State<_FiltersBody> {
               icon: const Icon(Icons.add),
               onPressed: _addWordFilter,
             ),
-          ].spaced(width: AppSpacing.m),
+          ],
         ),
         AnimatedSize(
           alignment: AlignmentDirectional.topStart,
@@ -111,6 +113,7 @@ class _FiltersBodyState() extends State<_FiltersBody> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
         Row(
+          spacing: AppSpacing.m,
           children: [
             Expanded(
               child: TextFormField(
@@ -125,7 +128,7 @@ class _FiltersBodyState() extends State<_FiltersBody> {
               icon: const Icon(Icons.add),
               onPressed: _addDomainFilter,
             ),
-          ].spaced(width: AppSpacing.m),
+          ],
         ),
         AnimatedSize(
           alignment: AlignmentDirectional.topStart,
@@ -148,7 +151,7 @@ class _FiltersBodyState() extends State<_FiltersBody> {
             ),
           ),
         ),
-      ].spaced(height: AppSpacing.l),
+      ],
     ),
   );
 

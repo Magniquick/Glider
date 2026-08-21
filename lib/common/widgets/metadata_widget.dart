@@ -17,6 +17,7 @@ class const MetadataWidget({
   @override
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
+    spacing: AppSpacing.s,
     children: [
       if (icon != null) Icon(icon, size: _iconSize, color: color),
       if (label != null)
@@ -29,6 +30,6 @@ class const MetadataWidget({
             child: label!,
           ),
         ),
-    ].spaced(width: AppSpacing.s),
+    ],
   );
 }

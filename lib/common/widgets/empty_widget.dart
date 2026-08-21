@@ -11,10 +11,11 @@ class const EmptyWidget({super.key}) extends StatelessWidget {
     padding: const EdgeInsets.all(AppSpacing.xl),
     child: Column(
       mainAxisAlignment: MainAxisAlignment.center,
+      spacing: AppSpacing.xl,
       children: [
         const Icon(Icons.air_outlined, size: _iconSize),
         Text(context.l10n.empty),
-      ].spaced(height: AppSpacing.xl),
+      ],
     ),
   );
 }

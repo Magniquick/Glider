@@ -139,6 +139,7 @@ class _AuthBodyState() extends State<_AuthBody> {
             key: _formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
+              spacing: AppSpacing.m,
               children: [
                 Text(context.l10n.authDescription),
                 TextFormField(
@@ -194,7 +195,7 @@ class _AuthBodyState() extends State<_AuthBody> {
                   label: Text(context.l10n.login),
                 ),
                 _AuthLinks(widget._settingsCubit),
-              ].spaced(height: AppSpacing.m),
+              ],
             ),
           ),
         ),

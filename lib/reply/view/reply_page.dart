@@ -107,6 +107,7 @@ class const _ReplyBody(final ReplyCubit _replyCubit) extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: AppSpacing.xl,
         children: [
           _ReplyForm(_replyCubit),
           if (state.parentItem?.text != null)
@@ -115,7 +116,7 @@ class const _ReplyBody(final ReplyCubit _replyCubit) extends StatelessWidget {
               icon: const Icon(Icons.format_quote),
               label: Text(context.l10n.quoteParent),
             ),
-        ].spaced(height: AppSpacing.xl),
+        ],
       ),
     ),
   );

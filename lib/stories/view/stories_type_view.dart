@@ -28,10 +28,11 @@ class const StoriesTypeView(
         builder: (context, controller, child) => FilterChip.elevated(
           avatar: Icon(state.storyType.icon),
           label: Row(
+            spacing: AppSpacing.m,
             children: [
               Expanded(child: Text(state.storyType.label(context))),
               const Icon(Icons.arrow_drop_down),
-            ].spaced(width: AppSpacing.m),
+            ],
           ),
           labelPadding: const EdgeInsetsDirectional.only(start: AppSpacing.m),
           onSelected: (storyType) =>

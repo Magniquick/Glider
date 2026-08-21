@@ -41,16 +41,18 @@ class const UserDataTile(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: AppSpacing.m,
           children: [
             if (hasPrimary) _buildPrimary(context),
             if (hasSecondary) _buildSecondary(context),
-          ].spaced(height: AppSpacing.m),
+          ],
         ),
       ),
     );
   }
 
   Widget _buildPrimary(BuildContext context) => Row(
+    spacing: AppSpacing.m,
     children: [
       Hero(
         tag: 'user_tile_karma_${user.username}',
@@ -98,7 +100,7 @@ class const UserDataTile(
           ),
         ),
       ),
-    ].spaced(width: AppSpacing.m),
+    ],
   );
 
   Widget _buildSecondary(BuildContext context) => Hero(

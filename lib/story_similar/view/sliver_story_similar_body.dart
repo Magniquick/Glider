@@ -54,13 +54,14 @@ class const SliverStorySimilarBody(
                       AppSpacing.defaultShadowPadding +
                       AppSpacing.defaultTilePadding,
                   child: Row(
+                    spacing: AppSpacing.l,
                     children: [
                       const MetadataWidget(icon: Icons.forum_outlined),
                       Text(
                         context.l10n.similarDiscussions,
                         style: Theme.of(context).textTheme.titleSmall,
                       ),
-                    ].spaced(width: AppSpacing.l),
+                    ],
                   ),
                 ),
               ),
