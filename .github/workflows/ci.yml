@@ -17,16 +17,10 @@ jobs:
           fetch-depth: 0
       - name: Bootstrap workspace
         uses: ./.github/actions/bootstrap
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
       - name: Run static analysis checks
         run: melos lint
       - name: Build Android APK (profile)
-        run: fvm flutter build apk --profile
+        run: flutter build apk --profile
       - name: Upload APK (profile) artifact
         uses: actions/upload-artifact@v4
         with:

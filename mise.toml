@@ -1,0 +1,10 @@
+# Project-local toolchain for Glider.
+# Dispose with:  rm mise.toml && mise prune
+[tools]
+flutter = "3.47.1"
+java = "temurin-21"
+"android-sdk" = "latest"
+
+[env]
+# Keep Flutter's own state inside the repo so nothing leaks into $HOME.
+PUB_CACHE = "{{config_root}}/.pub-cache"

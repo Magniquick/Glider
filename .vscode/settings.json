@@ -1,3 +1,7 @@
 {
-  "dart.flutterSdkPath": ".fvm/versions/3.22.0-0.1.pre"
+  // Flutter is managed by mise (see mise.toml). Point Dart-Code at mise's
+  // install root rather than a pinned version, so bumping mise.toml is enough
+  // and there is no version duplicated here to drift.
+  "dart.flutterSdkPaths": ["${userHome}/.local/share/mise/installs/flutter"],
+  "dart.flutterSdkPath": "${userHome}/.local/share/mise/installs/flutter/latest"
 }

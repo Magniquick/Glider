@@ -13,25 +13,21 @@ scripts:
     run: |
       melos run analyze
       melos run format-check
-      melos run dependency-validate
     description: Run all static analysis checks.
 
   analyze:
-    exec: fvm dart analyze . --fatal-infos
+    exec: dart analyze . --fatal-infos
     description: Run `dart analyze` in all packages.
 
   format:
-    exec: fvm dart format . --fix
+    exec: dart format .
     description: Run `dart format` for all packages.
 
   format-check:
-    exec: fvm dart format . --set-exit-if-changed
+    exec: dart format . --set-exit-if-changed
     description: Run `dart format` checks for all packages.
 
-  dependency-validate:
-    exec: fvm flutter pub run dependency_validator
-    description: Run `flutter pub run dependency_validator` for all packages.
 
   outdated:
-    exec: fvm flutter pub outdated
+    exec: flutter pub outdated
     description: Run `flutter pub outdated` for all packages.

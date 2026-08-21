@@ -15,12 +15,6 @@ jobs:
           fetch-depth: 0
       - name: Bootstrap workspace
         uses: ./.github/actions/bootstrap
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: 21
-          cache: gradle
       - name: Get Android keystore
         id: android-keystore
         uses: timheuer/base64-to-file@v1
@@ -42,9 +36,9 @@ jobs:
             ${{ secrets.ANDROID_KEY_PASSWORD }}
             ${{ secrets.ANDROID_KEY_ALIAS }}
       - name: Build Android APK
-        run: fvm flutter build apk
+        run: flutter build apk
       - name: Build Android App Bundle
-        run: fvm flutter build appbundle
+        run: flutter build appbundle
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
