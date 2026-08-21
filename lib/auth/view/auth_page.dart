@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glider/app/container/app_container.dart';
 import 'package:glider/app/models/app_route.dart';
@@ -102,6 +103,15 @@ class _AuthBodyState() extends State<_AuthBody> {
       username: _usernameController.text.trim(),
       password: _passwordController.text,
     );
+
+    // Tell the platform the autofill session is over. On Android this is what
+    // prompts the autofill service -- Google Password Manager, or whichever is
+    // configured -- to offer to save the credentials. Without it the
+    // `autofillHints` below only ever fill, never save. Only do so once the
+    // credentials are known good, so a typo is not what gets saved.
+    if (widget._authCubit.state.isLoggedIn) {
+      TextInput.finishAutofillContext();
+    }
   }
 
   String? _errorText(BuildContext context, AuthStatus status) =>
@@ -121,66 +131,71 @@ class _AuthBodyState() extends State<_AuthBody> {
       final String? errorText = _errorText(context, state.status);
       return Padding(
         padding: AppSpacing.defaultTilePadding,
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(context.l10n.authDescription),
-              TextFormField(
-                controller: _usernameController,
-                enabled: !inProgress,
-                autocorrect: false,
-                enableSuggestions: false,
-                textInputAction: TextInputAction.next,
-                autofillHints: const [AutofillHints.username],
-                decoration: InputDecoration(
-                  labelText: context.l10n.username,
-                  border: const OutlineInputBorder(),
-                ),
-                validator: (value) => value == null || value.trim().isEmpty
-                    ? context.l10n.emptyError
-                    : null,
-              ),
-              TextFormField(
-                controller: _passwordController,
-                enabled: !inProgress,
-                obscureText: _obscurePassword,
-                autocorrect: false,
-                enableSuggestions: false,
-                textInputAction: TextInputAction.done,
-                autofillHints: const [AutofillHints.password],
-                onFieldSubmitted: (_) => _submit(),
-                decoration: InputDecoration(
-                  labelText: context.l10n.password,
-                  border: const OutlineInputBorder(),
-                  errorText: errorText,
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _obscurePassword
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                    ),
-                    onPressed: () =>
-                        setState(() => _obscurePassword = !_obscurePassword),
+        // Groups the two fields into a single autofill session, so the
+        // platform offers username and password together rather than
+        // treating them as unrelated fields.
+        child: AutofillGroup(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(context.l10n.authDescription),
+                TextFormField(
+                  controller: _usernameController,
+                  enabled: !inProgress,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.next,
+                  autofillHints: const [AutofillHints.username],
+                  decoration: InputDecoration(
+                    labelText: context.l10n.username,
+                    border: const OutlineInputBorder(),
                   ),
+                  validator: (value) => value == null || value.trim().isEmpty
+                      ? context.l10n.emptyError
+                      : null,
                 ),
-                validator: (value) => value == null || value.isEmpty
-                    ? context.l10n.emptyError
-                    : null,
-              ),
-              FilledButton.icon(
-                onPressed: inProgress ? null : _submit,
-                icon: inProgress
-                    ? const SizedBox.square(
-                        dimension: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : const Icon(Icons.login_outlined),
-                label: Text(context.l10n.login),
-              ),
-              _AuthLinks(widget._settingsCubit),
-            ].spaced(height: AppSpacing.m),
+                TextFormField(
+                  controller: _passwordController,
+                  enabled: !inProgress,
+                  obscureText: _obscurePassword,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.done,
+                  autofillHints: const [AutofillHints.password],
+                  onFieldSubmitted: (_) => _submit(),
+                  decoration: InputDecoration(
+                    labelText: context.l10n.password,
+                    border: const OutlineInputBorder(),
+                    errorText: errorText,
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
+                    ),
+                  ),
+                  validator: (value) => value == null || value.isEmpty
+                      ? context.l10n.emptyError
+                      : null,
+                ),
+                FilledButton.icon(
+                  onPressed: inProgress ? null : _submit,
+                  icon: inProgress
+                      ? const SizedBox.square(
+                          dimension: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.login_outlined),
+                  label: Text(context.l10n.login),
+                ),
+                _AuthLinks(widget._settingsCubit),
+              ].spaced(height: AppSpacing.m),
+            ),
           ),
         ),
       );

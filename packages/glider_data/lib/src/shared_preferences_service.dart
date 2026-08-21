@@ -1,7 +1,7 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 class const SharedPreferencesService(
-  final SharedPreferences _sharedPreferences,
+  final SharedPreferencesAsync _sharedPreferences,
 ) {
   static const String _themeModeKey = 'theme_mode';
   static const String _useDynamicThemeKey = 'use_dynamic_theme';
@@ -33,107 +33,107 @@ class const SharedPreferencesService(
   Future<String?> getThemeMode() async =>
       _sharedPreferences.getString(_themeModeKey);
 
-  Future<bool> setThemeMode({required String value}) =>
+  Future<void> setThemeMode({required String value}) =>
       _sharedPreferences.setString(_themeModeKey, value);
 
   Future<bool?> getUseDynamicTheme() async =>
       _sharedPreferences.getBool(_useDynamicThemeKey);
 
-  Future<bool> setUseDynamicTheme({required bool value}) =>
+  Future<void> setUseDynamicTheme({required bool value}) =>
       _sharedPreferences.setBool(_useDynamicThemeKey, value);
 
   Future<int?> getThemeColor() async =>
       _sharedPreferences.getInt(_themeColorKey);
 
-  Future<bool> setThemeColor({required int value}) =>
+  Future<void> setThemeColor({required int value}) =>
       _sharedPreferences.setInt(_themeColorKey, value);
 
   Future<String?> getThemeVariant() async =>
       _sharedPreferences.getString(_themeVariantKey);
 
-  Future<bool> setThemeVariant({required String value}) =>
+  Future<void> setThemeVariant({required String value}) =>
       _sharedPreferences.setString(_themeVariantKey, value);
 
   Future<bool?> getUsePureBackground() async =>
       _sharedPreferences.getBool(_usePureBackgroundKey);
 
-  Future<bool> setUsePureBackground({required bool value}) =>
+  Future<void> setUsePureBackground({required bool value}) =>
       _sharedPreferences.setBool(_usePureBackgroundKey, value);
 
   Future<String?> getFont() async => _sharedPreferences.getString(_fontKey);
 
-  Future<bool> setFont({required String value}) =>
+  Future<void> setFont({required String value}) =>
       _sharedPreferences.setString(_fontKey, value);
 
   Future<int?> getStoryLines() async =>
       _sharedPreferences.getInt(_storyLinesKey);
 
-  Future<bool> setStoryLines({required int value}) =>
+  Future<void> setStoryLines({required int value}) =>
       _sharedPreferences.setInt(_storyLinesKey, value);
 
   Future<bool?> getUseLargeStoryStyle() async =>
       _sharedPreferences.getBool(_useLargeStoryStyleKey);
 
-  Future<bool> setUseLargeStoryStyle({required bool value}) =>
+  Future<void> setUseLargeStoryStyle({required bool value}) =>
       _sharedPreferences.setBool(_useLargeStoryStyleKey, value);
 
   Future<bool?> getShowFavicons() async =>
       _sharedPreferences.getBool(_showFaviconsKey);
 
-  Future<bool> setShowFavicons({required bool value}) =>
+  Future<void> setShowFavicons({required bool value}) =>
       _sharedPreferences.setBool(_showFaviconsKey, value);
 
   Future<bool?> getShowStoryMetadata() async =>
       _sharedPreferences.getBool(_showStoryMetadataKey);
 
-  Future<bool> setShowStoryMetadata({required bool value}) =>
+  Future<void> setShowStoryMetadata({required bool value}) =>
       _sharedPreferences.setBool(_showStoryMetadataKey, value);
 
   Future<bool?> getShowUserAvatars() async =>
       _sharedPreferences.getBool(_showUserAvatars);
 
-  Future<bool> setShowUserAvatars({required bool value}) =>
+  Future<void> setShowUserAvatars({required bool value}) =>
       _sharedPreferences.setBool(_showUserAvatars, value);
 
   Future<bool?> getUseActionButtons() async =>
       _sharedPreferences.getBool(_useActionButtonsKey);
 
-  Future<bool> setUseActionButtons({required bool value}) =>
+  Future<void> setUseActionButtons({required bool value}) =>
       _sharedPreferences.setBool(_useActionButtonsKey, value);
 
   Future<bool?> getShowJobs() async => _sharedPreferences.getBool(_showJobsKey);
 
-  Future<bool> setShowJobs({required bool value}) =>
+  Future<void> setShowJobs({required bool value}) =>
       _sharedPreferences.setBool(_showJobsKey, value);
 
   Future<bool?> getUseThreadNavigation() async =>
       _sharedPreferences.getBool(_useThreadNavigationKey);
 
-  Future<bool> setUseThreadNavigation({required bool value}) =>
+  Future<void> setUseThreadNavigation({required bool value}) =>
       _sharedPreferences.setBool(_useThreadNavigationKey, value);
 
   Future<bool?> getEnableDownvoting() async =>
       _sharedPreferences.getBool(_enableDownvotingKey);
 
-  Future<bool> setEnableDownvoting({required bool value}) =>
+  Future<void> setEnableDownvoting({required bool value}) =>
       _sharedPreferences.setBool(_enableDownvotingKey, value);
 
   Future<bool?> getUseInAppBrowser() async =>
       _sharedPreferences.getBool(_useInAppBrowserKey);
 
-  Future<bool> setUseInAppBrowser({required bool value}) =>
+  Future<void> setUseInAppBrowser({required bool value}) =>
       _sharedPreferences.setBool(_useInAppBrowserKey, value);
 
   Future<bool?> getUseNavigationDrawer() async =>
       _sharedPreferences.getBool(_useNavigationDrawerKey);
 
-  Future<bool> setUseNavigationDrawer({required bool value}) =>
+  Future<void> setUseNavigationDrawer({required bool value}) =>
       _sharedPreferences.setBool(_useNavigationDrawerKey, value);
 
   Future<List<String>?> getWordFilters() async =>
       _sharedPreferences.getStringList(_wordFiltersKey);
 
-  Future<bool> setWordFilter({required String value, required bool filter}) {
+  Future<void> setWordFilter({required String value, required bool filter}) {
     if (filter) {
       return _sharedPreferences.addElement(_wordFiltersKey, value);
     } else {
@@ -144,7 +144,7 @@ class const SharedPreferencesService(
   Future<List<String>?> getDomainFilters() async =>
       _sharedPreferences.getStringList(_domainFiltersKey);
 
-  Future<bool> setDomainFilter({required String value, required bool filter}) {
+  Future<void> setDomainFilter({required String value, required bool filter}) {
     if (filter) {
       return _sharedPreferences.addElement(_domainFiltersKey, value);
     } else {
@@ -155,13 +155,13 @@ class const SharedPreferencesService(
   Future<String?> getLastVersion() async =>
       _sharedPreferences.getString(_lastVersionKey);
 
-  Future<bool> setLastVersion({required String value}) =>
+  Future<void> setLastVersion({required String value}) =>
       _sharedPreferences.setString(_lastVersionKey, value);
 
   Future<bool> getVisited({required int id}) async =>
       _sharedPreferences.containsElement(_visitedKey, id.toString());
 
-  Future<bool> setVisited({required int id, required bool visit}) {
+  Future<void> setVisited({required int id, required bool visit}) {
     if (visit) {
       return _sharedPreferences.addElement(_visitedKey, id.toString());
     } else {
@@ -170,10 +170,10 @@ class const SharedPreferencesService(
   }
 
   Future<List<int>> getVisitedIds() async => [
-    ...?_sharedPreferences.getStringList(_visitedKey)?.map(int.parse),
+    ...?(await _sharedPreferences.getStringList(_visitedKey))?.map(int.parse),
   ];
 
-  Future<bool> setVisitedIds({required Iterable<int> ids}) {
+  Future<void> setVisitedIds({required Iterable<int> ids}) {
     return _sharedPreferences.setStringList(_visitedKey, [
       ...ids.map((id) => id.toString()),
     ]);
@@ -182,7 +182,7 @@ class const SharedPreferencesService(
   Future<bool> getUpvoted({required int id}) async =>
       _sharedPreferences.containsElement(_upvotedKey, id.toString());
 
-  Future<bool> setUpvoted({required int id, required bool upvote}) {
+  Future<void> setUpvoted({required int id, required bool upvote}) {
     if (upvote) {
       return _sharedPreferences.addElement(_upvotedKey, id.toString());
     } else {
@@ -191,10 +191,10 @@ class const SharedPreferencesService(
   }
 
   Future<List<int>> getUpvotedIds() async => [
-    ...?_sharedPreferences.getStringList(_upvotedKey)?.map(int.parse),
+    ...?(await _sharedPreferences.getStringList(_upvotedKey))?.map(int.parse),
   ];
 
-  Future<bool> setUpvotedIds({required Iterable<int> ids}) {
+  Future<void> setUpvotedIds({required Iterable<int> ids}) {
     return _sharedPreferences.setStringList(_upvotedKey, [
       ...ids.map((id) => id.toString()),
     ]);
@@ -203,7 +203,7 @@ class const SharedPreferencesService(
   Future<bool> getDownvoted({required int id}) async =>
       _sharedPreferences.containsElement(_downvotedKey, id.toString());
 
-  Future<bool> setDownvoted({required int id, required bool downvote}) {
+  Future<void> setDownvoted({required int id, required bool downvote}) {
     if (downvote) {
       return _sharedPreferences.addElement(_downvotedKey, id.toString());
     } else {
@@ -212,10 +212,10 @@ class const SharedPreferencesService(
   }
 
   Future<List<int>> getDownvotedIds() async => [
-    ...?_sharedPreferences.getStringList(_downvotedKey)?.map(int.parse),
+    ...?(await _sharedPreferences.getStringList(_downvotedKey))?.map(int.parse),
   ];
 
-  Future<bool> setDownvotedIds({required Iterable<int> ids}) {
+  Future<void> setDownvotedIds({required Iterable<int> ids}) {
     return _sharedPreferences.setStringList(_downvotedKey, [
       ...ids.map((id) => id.toString()),
     ]);
@@ -224,7 +224,7 @@ class const SharedPreferencesService(
   Future<bool> getFavorited({required int id}) async =>
       _sharedPreferences.containsElement(_favoritedKey, id.toString());
 
-  Future<bool> setFavorited({required int id, required bool favorite}) {
+  Future<void> setFavorited({required int id, required bool favorite}) {
     if (favorite) {
       return _sharedPreferences.addElement(_favoritedKey, id.toString());
     } else {
@@ -233,10 +233,10 @@ class const SharedPreferencesService(
   }
 
   Future<List<int>> getFavoritedIds() async => [
-    ...?_sharedPreferences.getStringList(_favoritedKey)?.map(int.parse),
+    ...?(await _sharedPreferences.getStringList(_favoritedKey))?.map(int.parse),
   ];
 
-  Future<bool> setFavoritedIds({required Iterable<int> ids}) {
+  Future<void> setFavoritedIds({required Iterable<int> ids}) {
     return _sharedPreferences.setStringList(_favoritedKey, [
       ...ids.map((id) => id.toString()),
     ]);
@@ -245,7 +245,7 @@ class const SharedPreferencesService(
   Future<bool> getFlagged({required int id}) async =>
       _sharedPreferences.containsElement(_flaggedKey, id.toString());
 
-  Future<bool> setFlagged({required int id, required bool flagged}) {
+  Future<void> setFlagged({required int id, required bool flagged}) {
     if (flagged) {
       return _sharedPreferences.addElement(_flaggedKey, id.toString());
     } else {
@@ -254,23 +254,23 @@ class const SharedPreferencesService(
   }
 
   Future<List<int>> getFlaggedIds() async => [
-    ...?_sharedPreferences.getStringList(_flaggedKey)?.map(int.parse),
+    ...?(await _sharedPreferences.getStringList(_flaggedKey))?.map(int.parse),
   ];
 
-  Future<bool> setFlaggedIds({required Iterable<int> ids}) {
+  Future<void> setFlaggedIds({required Iterable<int> ids}) {
     return _sharedPreferences.setStringList(_flaggedKey, [
       ...ids.map((id) => id.toString()),
     ]);
   }
 
   Future<List<String>> getBlockedUsernames() async => [
-    ...?_sharedPreferences.getStringList(_blockedKey),
+    ...?await _sharedPreferences.getStringList(_blockedKey),
   ];
 
   Future<bool> getBlocked({required String username}) async =>
       _sharedPreferences.containsElement(_blockedKey, username);
 
-  Future<bool> setBlocked({required String username, required bool block}) {
+  Future<void> setBlocked({required String username, required bool block}) {
     if (block) {
       return _sharedPreferences.addElement(_blockedKey, username);
     } else {
@@ -279,16 +279,19 @@ class const SharedPreferencesService(
   }
 }
 
-extension on SharedPreferences {
-  bool containsElement(String key, String element) =>
-      getStringList(key)?.contains(element) ?? false;
+extension on SharedPreferencesAsync {
+  Future<bool> containsElement(String key, String element) async =>
+      (await getStringList(key))?.contains(element) ?? false;
 
-  Future<bool> addElement(String key, String element) =>
-      setStringList(key, [element, ..._getDistinctElements(key)]);
+  Future<void> addElement(String key, String element) async =>
+      setStringList(key, [element, ...await _getDistinctElements(key)]);
 
-  Future<bool> removeElement(String key, String element) => setStringList(key, [
-    ..._getDistinctElements(key).where((e) => e != element),
-  ]);
+  Future<void> removeElement(String key, String element) async => setStringList(
+    key,
+    [...(await _getDistinctElements(key)).where((e) => e != element)],
+  );
 
-  Set<String> _getDistinctElements(String key) => {...?getStringList(key)};
+  Future<Set<String>> _getDistinctElements(String key) async => {
+    ...?await getStringList(key),
+  };
 }

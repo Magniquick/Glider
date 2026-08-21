@@ -203,5 +203,68 @@
   "filtered": "[filtered]",
   "@filtered": {
     "description": "Placeholder shown in place of an item hidden by the user’s filters."
+  },
+  "relativeYears": "{count, plural, =0{this year} =1{last year} other{{count} years ago}}",
+  "@relativeYears": {
+    "description": "How long ago something happened, in years.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeMonths": "{count, plural, =0{this month} =1{last month} other{{count} months ago}}",
+  "@relativeMonths": {
+    "description": "How long ago something happened, in months.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeWeeks": "{count, plural, =0{this week} =1{last week} other{{count} weeks ago}}",
+  "@relativeWeeks": {
+    "description": "How long ago something happened, in weeks.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeDays": "{count, plural, =0{today} =1{yesterday} other{{count} days ago}}",
+  "@relativeDays": {
+    "description": "How long ago something happened, in days.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeHours": "{count, plural, =0{this hour} =1{1 hour ago} other{{count} hours ago}}",
+  "@relativeHours": {
+    "description": "How long ago something happened, in hours.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeMinutes": "{count, plural, =0{this minute} =1{1 minute ago} other{{count} minutes ago}}",
+  "@relativeMinutes": {
+    "description": "How long ago something happened, in minutes.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "relativeSeconds": "{count, plural, =0{now} =1{1 second ago} other{{count} seconds ago}}",
+  "@relativeSeconds": {
+    "description": "How long ago something happened, in seconds.",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   }
 }

@@ -12,13 +12,13 @@ class const SettingsRepository(
     return value != null ? ThemeMode.values.byName(value) : null;
   }
 
-  Future<bool> setThemeMode({required ThemeMode value}) =>
+  Future<void> setThemeMode({required ThemeMode value}) =>
       _sharedPreferencesService.setThemeMode(value: value.name);
 
   Future<bool?> getUseDynamicTheme() =>
       _sharedPreferencesService.getUseDynamicTheme();
 
-  Future<bool> setUseDynamicTheme({required bool value}) =>
+  Future<void> setUseDynamicTheme({required bool value}) =>
       _sharedPreferencesService.setUseDynamicTheme(value: value);
 
   Future<Color?> getThemeColor() async {
@@ -26,7 +26,7 @@ class const SettingsRepository(
     return value != null ? Color(value) : null;
   }
 
-  Future<bool> setThemeColor({required Color value}) =>
+  Future<void> setThemeColor({required Color value}) =>
       _sharedPreferencesService.setThemeColor(value: value.toARGB32());
 
   Future<Variant?> getThemeVariant() async {
@@ -34,93 +34,93 @@ class const SettingsRepository(
     return value != null ? Variant.values.byName(value) : null;
   }
 
-  Future<bool> setThemeVariant({required Variant value}) =>
+  Future<void> setThemeVariant({required Variant value}) =>
       _sharedPreferencesService.setThemeVariant(value: value.name);
 
   Future<bool?> getUsePureBackground() =>
       _sharedPreferencesService.getUsePureBackground();
 
-  Future<bool> setUsePureBackground({required bool value}) =>
+  Future<void> setUsePureBackground({required bool value}) =>
       _sharedPreferencesService.setUsePureBackground(value: value);
 
   Future<String?> getFont() => _sharedPreferencesService.getFont();
 
-  Future<bool> setFont({required String value}) =>
+  Future<void> setFont({required String value}) =>
       _sharedPreferencesService.setFont(value: value);
 
   Future<int?> getStoryLines() => _sharedPreferencesService.getStoryLines();
 
-  Future<bool> setStoryLines({required int value}) =>
+  Future<void> setStoryLines({required int value}) =>
       _sharedPreferencesService.setStoryLines(value: value);
 
   Future<bool?> getUseLargeStoryStyle() =>
       _sharedPreferencesService.getUseLargeStoryStyle();
 
-  Future<bool> setUseLargeStoryStyle({required bool value}) =>
+  Future<void> setUseLargeStoryStyle({required bool value}) =>
       _sharedPreferencesService.setUseLargeStoryStyle(value: value);
 
   Future<bool?> getShowFavicons() =>
       _sharedPreferencesService.getShowFavicons();
 
-  Future<bool> setShowFavicons({required bool value}) =>
+  Future<void> setShowFavicons({required bool value}) =>
       _sharedPreferencesService.setShowFavicons(value: value);
 
   Future<bool?> getShowStoryMetadata() =>
       _sharedPreferencesService.getShowStoryMetadata();
 
-  Future<bool> setShowStoryMetadata({required bool value}) =>
+  Future<void> setShowStoryMetadata({required bool value}) =>
       _sharedPreferencesService.setShowStoryMetadata(value: value);
 
   Future<bool?> getShowUserAvatars() =>
       _sharedPreferencesService.getShowUserAvatars();
 
-  Future<bool> setShowUserAvatars({required bool value}) =>
+  Future<void> setShowUserAvatars({required bool value}) =>
       _sharedPreferencesService.setShowUserAvatars(value: value);
 
   Future<bool?> getUseActionButtons() =>
       _sharedPreferencesService.getUseActionButtons();
 
-  Future<bool> setUseActionButtons({required bool value}) =>
+  Future<void> setUseActionButtons({required bool value}) =>
       _sharedPreferencesService.setUseActionButtons(value: value);
 
   Future<bool?> getShowJobs() => _sharedPreferencesService.getShowJobs();
 
-  Future<bool> setShowJobs({required bool value}) =>
+  Future<void> setShowJobs({required bool value}) =>
       _sharedPreferencesService.setShowJobs(value: value);
 
   Future<bool?> getUseThreadNavigation() =>
       _sharedPreferencesService.getUseThreadNavigation();
 
-  Future<bool> setUseThreadNavigation({required bool value}) =>
+  Future<void> setUseThreadNavigation({required bool value}) =>
       _sharedPreferencesService.setUseThreadNavigation(value: value);
 
   Future<bool?> getEnableDownvoting() =>
       _sharedPreferencesService.getEnableDownvoting();
 
-  Future<bool> setEnableDownvoting({required bool value}) =>
+  Future<void> setEnableDownvoting({required bool value}) =>
       _sharedPreferencesService.setEnableDownvoting(value: value);
 
   Future<bool?> getUseInAppBrowser() =>
       _sharedPreferencesService.getUseInAppBrowser();
 
-  Future<bool> setUseInAppBrowser({required bool value}) =>
+  Future<void> setUseInAppBrowser({required bool value}) =>
       _sharedPreferencesService.setUseInAppBrowser(value: value);
 
   Future<bool?> getUseNavigationDrawer() =>
       _sharedPreferencesService.getUseNavigationDrawer();
 
-  Future<bool> setUseNavigationDrawer({required bool value}) =>
+  Future<void> setUseNavigationDrawer({required bool value}) =>
       _sharedPreferencesService.setUseNavigationDrawer(value: value);
 
   Future<Set<String>?> getWordFilters() async =>
       (await _sharedPreferencesService.getWordFilters())?.toSet();
 
-  Future<bool> setWordFilter({required String value, required bool filter}) =>
+  Future<void> setWordFilter({required String value, required bool filter}) =>
       _sharedPreferencesService.setWordFilter(value: value, filter: filter);
 
   Future<Set<String>?> getDomainFilters() async =>
       (await _sharedPreferencesService.getDomainFilters())?.toSet();
 
-  Future<bool> setDomainFilter({required String value, required bool filter}) =>
+  Future<void> setDomainFilter({required String value, required bool filter}) =>
       _sharedPreferencesService.setDomainFilter(value: value, filter: filter);
 }

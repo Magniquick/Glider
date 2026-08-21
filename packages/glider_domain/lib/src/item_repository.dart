@@ -123,7 +123,7 @@ class ItemRepository(
   Future<Item> getItem(int id) async {
     try {
       final dto = await _hackerNewsApiService.getItem(id);
-      final item = await compute(Item.fromDto, dto);
+      final item = Item.fromDto(dto);
       _itemStreamControllers.getOrAdd(id).add(item);
       return item;
     } on Object catch (e, st) {
@@ -136,10 +136,15 @@ class ItemRepository(
     try {
       var descendants = <ItemDescendant>[];
 
+      // Both splices below run once per comment as the tree streams in, and
+      // they are plain list manipulation. Handing each one to `compute` spawned
+      // an isolate per comment and deep-copied the whole growing list in and
+      // out, which is O(n^2) copying to avoid microseconds of work -- so they
+      // run inline. The bulk DTO conversions above still use `compute`.
       await for (final item in _getItemTreeStream(id)) {
         if (item.partIds != null && item.partIds!.isNotEmpty ||
             item.childIds != null && item.childIds!.isNotEmpty) {
-          yield descendants = await compute((descendants) {
+          yield descendants = ((List<ItemDescendant> descendants) {
             final index = descendants.indexWhere(
               (descendant) => descendant.id == item.id,
             );
@@ -165,16 +170,13 @@ class ItemRepository(
                   ItemDescendant(id: childId, ancestorIds: ancestorIds),
               ...descendants.skip(index + 1),
             ];
-          }, descendants);
+          })(descendants);
         }
 
         if (item.isDeleted) {
-          yield descendants = await compute(
-            (descendants) => [
-              ...descendants.where((descendant) => descendant.id != item.id),
-            ],
-            descendants,
-          );
+          yield descendants = [
+            ...descendants.where((descendant) => descendant.id != item.id),
+          ];
         }
       }
     } on Object catch (e, st) {

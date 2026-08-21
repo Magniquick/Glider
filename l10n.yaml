@@ -3,3 +3,6 @@ output-dir: lib/l10n
 template-arb-file: app_en.arb
 output-localization-file: app_localizations.dart
 nullable-getter: false
+# Records which keys are still English-only. Dutch was silently lost in a 2023
+# refactor and nothing noticed; this makes the gap visible.
+untranslated-messages-file: l10n_untranslated.json

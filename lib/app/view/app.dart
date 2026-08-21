@@ -9,7 +9,6 @@ import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/l10n/app_localizations.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:relative_time/relative_time.dart';
 
 class const App(
   final SettingsCubit _settingsCubit,
@@ -41,7 +40,6 @@ class const App(
             themeMode: state.themeMode.toMaterialThemeMode(),
             localizationsDelegates: const [
               AppLocalizations.delegate,
-              RelativeTimeLocalizations.delegate,
               GlobalMaterialLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,

@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_adaptive_scaffold/flutter_adaptive_scaffold.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glider/app/models/app_route.dart';
 import 'package:glider/auth/cubit/auth_cubit.dart';
@@ -15,6 +14,17 @@ import 'package:go_router/go_router.dart';
 
 // Height based on `_NavigationBarDefaultsM3`.
 const _navigationBarHeight = 80.0;
+
+// Material 3's medium window-size breakpoint. Below it the navigation lives in
+// a bottom bar, at or above it in a side rail. This replaces
+// flutter_adaptive_scaffold's `Breakpoints`, which was discontinued with no
+// first-party successor (flutter/flutter#162965); the framework's
+// NavigationRail and NavigationBar cover everything this screen used.
+const _mediumBreakpoint = 600.0;
+
+/// Whether the window is narrow enough to want bottom navigation.
+bool _isCompact(BuildContext context) =>
+    MediaQuery.sizeOf(context).width < _mediumBreakpoint;
 
 class const NavigationShellScaffold(
   final NavigationShellCubit _navigationShellCubit,
@@ -111,48 +121,38 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
                         )
                       : null;
 
-                  return AdaptiveLayout(
-                    primaryNavigation: settingsState.useNavigationDrawer
-                        ? null
-                        : SlotLayout(
-                            config: <Breakpoint, SlotLayoutConfig>{
-                              Breakpoints.mediumAndUp: SlotLayout.from(
-                                key: const Key('primaryNavigationMediumAndUp'),
-                                builder: (context) => _buildPrimaryNavigation(
-                                  context,
-                                  destinations,
-                                  leading: floatingActionButton,
-                                ),
+                  final bool compact = _isCompact(context);
+                  final bool showRail =
+                      !settingsState.useNavigationDrawer && !compact;
+                  final bool showBar =
+                      !settingsState.useNavigationDrawer && compact;
+
+                  return Column(
+                    children: [
+                      Expanded(
+                        child: Row(
+                          children: [
+                            if (showRail)
+                              _buildPrimaryNavigation(
+                                context,
+                                destinations,
+                                leading: floatingActionButton,
                               ),
-                            },
-                          ),
-                    bottomNavigation: settingsState.useNavigationDrawer
-                        ? null
-                        : SlotLayout(
-                            config: {
-                              Breakpoints.small: SlotLayout.from(
-                                key: const Key('bottomNavigationStandard'),
-                                builder: (context) => _buildBottomNavigation(
-                                  context,
-                                  destinations,
-                                ),
+                            Expanded(
+                              child: _buildBody(
+                                context,
+                                destinations,
+                                floatingActionButton: floatingActionButton,
+                                useNavigationDrawer:
+                                    settingsState.useNavigationDrawer,
                               ),
-                            },
-                          ),
-                    body: SlotLayout(
-                      config: {
-                        Breakpoints.standard: SlotLayout.from(
-                          key: const Key('bodyStandard'),
-                          builder: (context) => _buildBody(
-                            context,
-                            destinations,
-                            floatingActionButton: floatingActionButton,
-                            useNavigationDrawer:
-                                settingsState.useNavigationDrawer,
-                          ),
+                            ),
+                          ],
                         ),
-                      },
-                    ),
+                      ),
+                      if (showBar)
+                        _buildBottomNavigation(context, destinations),
+                    ],
                   );
                 },
               ),
@@ -168,8 +168,8 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
     final TextDirection directionality = Directionality.of(context);
 
     return Material(
-      child: AdaptiveScaffold.standardNavigationRail(
-        width:
+      child: NavigationRail(
+        minWidth:
             80 +
             switch (directionality) {
               TextDirection.ltr => padding.left,
@@ -202,9 +202,9 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
       alignment: Alignment.topCenter,
       child: child,
     ),
-    child: AdaptiveScaffold.standardBottomNavigationBar(
+    child: NavigationBar(
       destinations: destinations,
-      currentIndex: _currentIndex,
+      selectedIndex: _currentIndex,
       onDestinationSelected: onDestinationSelected,
     ),
   );
@@ -219,7 +219,7 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
     final MediaQueryData mediaQuery = MediaQuery.of(context);
     final EdgeInsets padding = mediaQuery.padding;
     final EdgeInsets viewPadding = mediaQuery.viewPadding;
-    final bool isSmallBreakpointActive = Breakpoints.small.isActive(context);
+    final bool isSmallBreakpointActive = _isCompact(context);
     final bool hasNavigationBar =
         !useNavigationDrawer && isSmallBreakpointActive;
     final bool hasNavigationRail =

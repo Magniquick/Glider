@@ -13,7 +13,7 @@ class const PackageRepository(
     return lastVersion != null ? Version.parse(lastVersion) : null;
   }
 
-  Future<bool?> setLastVersion({required Version value}) =>
+  Future<void> setLastVersion({required Version value}) =>
       _sharedPreferencesService.setLastVersion(
         value: value.canonicalizedVersion,
       );

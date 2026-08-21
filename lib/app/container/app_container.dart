@@ -21,6 +21,7 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
 
 typedef ItemCubitFactory = ItemCubit Function(int);
 
@@ -60,8 +61,17 @@ class const AppContainer(
   static Future<AppContainer> create() async {
     final httpClient = http.Client();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-    final SharedPreferences sharedPreferencesFactory =
-        await SharedPreferences.getInstance();
+    // The legacy SharedPreferences API is on its way to deprecation. Migrating
+    // to the async API is a one-way move of the underlying store, so the
+    // migration helper has to run before anything reads a preference --
+    // skipping it would silently lose every existing setting, favourite and
+    // visited-story marker.
+    await migrateLegacySharedPreferencesToSharedPreferencesAsyncIfNecessary(
+      legacySharedPreferencesInstance: await SharedPreferences.getInstance(),
+      sharedPreferencesAsyncOptions: const SharedPreferencesOptions(),
+      migrationCompletedKey: 'migratedToSharedPreferencesAsync',
+    );
+    final sharedPreferencesFactory = SharedPreferencesAsync();
     const flutterSecureStorage = FlutterSecureStorage(
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     );

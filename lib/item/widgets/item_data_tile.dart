@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:glider/app/models/app_route.dart';
 import 'package:glider/common/constants/app_spacing.dart';
+import 'package:glider/common/extensions/date_time_extension.dart';
 import 'package:glider/common/extensions/uri_extension.dart';
 import 'package:glider/common/extensions/widget_list_extension.dart';
 import 'package:glider/common/widgets/animated_visibility.dart';
@@ -16,7 +17,6 @@ import 'package:glider/item/widgets/username_widget.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
-import 'package:relative_time/relative_time.dart';
 
 const _faviconRequestSize = 64;
 

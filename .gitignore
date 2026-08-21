@@ -113,3 +113,4 @@ app.*.map.json
 
 # Generated localizations
 lib/l10n/app_localizations*.dart
+l10n_untranslated.json
