@@ -6,6 +6,7 @@ import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/common/extensions/date_time_extension.dart';
 import 'package:glider/common/extensions/uri_extension.dart';
 import 'package:glider/common/extensions/widget_list_extension.dart';
+import 'package:glider/common/utils/image_luminance.dart';
 import 'package:glider/common/widgets/animated_visibility.dart';
 import 'package:glider/common/widgets/hacker_news_text.dart';
 import 'package:glider/common/widgets/metadata_widget.dart';
@@ -478,62 +479,119 @@ class const _ItemTitle(
   );
 }
 
-class const _ItemFavicon(
-  final Item item, {
-  required final int storyLines,
-  required final bool useLargeStoryStyle,
-}) extends StatelessWidget {
+/// Mean opaque luminance per favicon host, so an icon is analysed once for the
+/// whole feed rather than once per row.
+final _faviconLuminance = <String, double?>{};
+
+class _ItemFavicon extends StatefulWidget {
+  const _ItemFavicon(
+    this.item, {
+    required this.storyLines,
+    required this.useLargeStoryStyle,
+  });
+
+  final Item item;
+  final int storyLines;
+  final bool useLargeStoryStyle;
+
+  @override
+  State<_ItemFavicon> createState() => _ItemFaviconState();
+}
+
+class _ItemFaviconState extends State<_ItemFavicon> {
+  // WCAG's minimum for non-text content. Chromium scopes this same 3.0 to
+  // glyphs, reserving 4.5 for body text.
+  static const _minimumContrast = 3.0;
+  static const _inset = 2.0;
+
+  ImageStreamListener? _listener;
+  ImageStream? _stream;
+
   int get _faviconSize => min(
-    useLargeStoryStyle ? (storyLines >= 0 ? storyLines : 2) * 24 : 20,
+    widget.useLargeStoryStyle
+        ? (widget.storyLines >= 0 ? widget.storyLines : 2) * 24
+        : 20,
     _faviconRequestSize,
   );
 
-  // Inset so the icon sits on the tile rather than bleeding to its edges.
-  static const _inset = 2.0;
+  String? get _host => widget.item.url?.host;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _analyseIfNeeded();
+  }
+
+  @override
+  void dispose() {
+    if (_listener case final listener?) _stream?.removeListener(listener);
+    super.dispose();
+  }
+
+  /// Measures the icon once per host so the plate can be chosen per icon
+  /// rather than applied to all of them.
+  void _analyseIfNeeded() {
+    final host = _host;
+    if (host == null || _faviconLuminance.containsKey(host)) return;
+
+    final listener = ImageStreamListener((info, _) async {
+      final luminance = await averageOpaqueLuminance(info.image);
+      info.image.dispose();
+      _faviconLuminance[host] = luminance;
+      if (mounted) setState(() {});
+    }, onError: (_, __) => _faviconLuminance[host] = null);
+
+    _listener = listener;
+    _stream = NetworkImage(
+      widget.item.faviconUrl!,
+    ).resolve(createLocalImageConfiguration(context))..addListener(listener);
+  }
+
+  /// The plate to draw behind the icon.
+  ///
+  /// Most icons get the subtle themed tile. One measured to contrast poorly
+  /// against it -- a dark mark on a dark surface, or a light one on a light
+  /// surface -- gets [ColorScheme.inverseSurface] instead, which by definition
+  /// runs opposite the current theme. The icon itself is never recoloured:
+  /// that would be rewriting someone else's brand mark.
+  Color _plate(ColorScheme colorScheme) {
+    final tile = colorScheme.surfaceContainerHighest;
+    final luminance = _host != null ? _faviconLuminance[_host] : null;
+    if (luminance == null) return tile;
+
+    final tileLuminance = relativeLuminance(
+      (tile.r * 255).round(),
+      (tile.g * 255).round(),
+      (tile.b * 255).round(),
+    );
+    return contrastRatio(luminance, tileLuminance) < _minimumContrast
+        ? colorScheme.inverseSurface
+        : tile;
+  }
 
   @override
   Widget build(BuildContext context) {
     final double imageSize = _faviconSize - _inset * 2;
     return DecoratedBox(
-      // Every favicon is authored against whatever background its own site
-      // uses, so a dark logo vanishes against a dark surface while one with a
-      // baked-in white box glares. A neutral tile behind every icon
-      // normalises both.
-      //
-      // Asking for a dark variant is not practical here. `/favicon-dark.*` is
-      // not a convention, and while `<link media="(prefers-color-scheme:
-      // dark)">` is standards-track and Chromium has honoured it since 91,
-      // it lives in each site's HTML under an arbitrary filename -- reading
-      // it would mean a page fetch per story. Brandfetch does serve
-      // `/theme/dark`, but it needs an API key an open-source client cannot
-      // ship, and its coverage of the long tail Hacker News links to is poor.
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        color: _plate(Theme.of(context).colorScheme),
         borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
       child: Padding(
         padding: const EdgeInsets.all(_inset),
         // A plain Image, not Ink.image: Ink paints onto the ancestor Material's
-        // canvas, which sits *behind* the tile above, so the tile would cover
+        // canvas, which sits *behind* the plate above, so the plate would cover
         // the icon entirely.
         child: Image(
           image: ResizeImage(
-            NetworkImage(item.faviconUrl!),
+            NetworkImage(widget.item.faviconUrl!),
             width: imageSize.round(),
             height: imageSize.round(),
             policy: ResizeImagePolicy.fit,
           ),
           width: imageSize,
           height: imageSize,
-          // Scale small icons up to fill the tile. Most favicons are 32x32
-          // against a 44px tile, so this is a 1.4x upscale; only genuine 16x16
-          // outliers blur noticeably, and those looked lost in the tile
-          // otherwise. Without this, Flutter never enlarges: ResizeImage
-          // defaults to allowUpscaling false and paintImage defaults to
-          // BoxFit.scaleDown.
           fit: BoxFit.contain,
-          // A favicon that fails to load should leave the tile empty rather
-          // than an error glyph; plenty of sites simply have none.
           errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
         ),
       ),
