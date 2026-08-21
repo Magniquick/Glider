@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:glider/common/utils/public_suffix.dart';
 import 'package:glider/item/extensions/item_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
 
@@ -7,6 +8,8 @@ Item _itemWithUrl(String? url) =>
 
 void main() {
   group('faviconUrls', () {
+    setUp(() => debugSetPublicSuffixRules(['com', 'uno', 'github.io']));
+
     test('is empty when the item has no link', () {
       expect(_itemWithUrl(null).faviconUrls, isEmpty);
     });

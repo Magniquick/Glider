@@ -1,4 +1,8 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.11"
+# dependencies = []
+# ///
 """Regenerates assets/simple_icons/domains.json.
 
 Simple Icons records a `source` URL for every brand, which is almost always
@@ -11,6 +15,7 @@ Usage: python3 tool/update_simple_icons_map.py [version]
 import json, re, sys, unicodedata, urllib.request
 
 OUT = 'assets/simple_icons/domains.json'
+PSL = 'assets/public_suffix_list.dat'
 
 # Brands whose `source` URL cannot identify their domain, hand-checked against
 # 30 days of Hacker News front pages. Every entry is verified to exist in the
@@ -58,6 +63,42 @@ def plain(title):
     return re.sub(r'[^a-z0-9]', '', title.lower())
 
 
+def load_public_suffixes():
+    """Rules from the vendored Public Suffix List, split by kind."""
+    rules, exceptions = set(), set()
+    with open(PSL) as f:
+        for line in f:
+            rule = line.strip()
+            if rule.startswith('!'):
+                exceptions.add(rule[1:])
+            elif rule:
+                rules.add(rule)
+    return rules, exceptions
+
+
+def registrable_domain(host, rules, exceptions):
+    """Public suffix plus one label, or None if host is itself a suffix."""
+    labels = host.split('.')
+    suffix = None
+    for i in range(len(labels)):
+        if '.'.join(labels[i:]) in exceptions:
+            suffix = labels[i + 1:]
+            break
+    if suffix is None:
+        for i in range(len(labels)):
+            candidate = labels[i:]
+            if ('.'.join(candidate) in rules
+                    or (len(candidate) > 1
+                        and '.'.join(['*'] + candidate[1:]) in rules)):
+                suffix = candidate
+                break
+    if suffix is None:
+        suffix = labels[-1:]
+    if len(labels) <= len(suffix):
+        return None
+    return '.'.join(labels[-len(suffix) - 1:])
+
+
 def main():
     version = sys.argv[1] if len(sys.argv) > 1 else fetch(
         'https://registry.npmjs.org/simple-icons/latest')['version']
@@ -90,15 +131,17 @@ def main():
     # about.gitlab.com -- while links in the wild use the bare domain. Fold
     # those in, but only where the slug is the registrable domain's own name,
     # so a project hosted on someone else's domain cannot claim it.
+    rules, exceptions = load_public_suffixes()
     for host in claims:
-        parts = host.split('.')
-        if len(parts) < 3:
+        registrable = registrable_domain(host, rules, exceptions)
+        # Skip hosts that are already their own registrable domain, and any
+        # sitting directly on a public suffix -- a project page on github.io
+        # must never claim the suffix for every other page there.
+        if registrable is None or registrable == host or registrable in domains:
             continue
-        registrable = '.'.join(parts[-2:])
-        if registrable in domains:
-            continue
+        own = registrable.split('.')[0]
         for slug, title in claims[host]:
-            if slug == slugify(parts[-2]) or plain(title) == parts[-2]:
+            if slug == slugify(own) or plain(title) == own:
                 domains[registrable] = slug
                 break
 

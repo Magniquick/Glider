@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/services.dart';
+import 'package:glider/common/utils/public_suffix.dart';
 
 /// Where a brand's icon lives in the Simple Icons CDN.
 typedef BrandIcon = ({String slug, String url});
@@ -30,16 +31,18 @@ Future<void> _load() async {
 /// The brand icon for [host], or null if Simple Icons has nothing for it.
 ///
 /// Falls back to the registrable domain, so blog.cloudflare.com resolves the
-/// same mark as cloudflare.com. Hosts are indexed without a leading www.
+/// same mark as cloudflare.com -- but no further, so a site on a public
+/// suffix such as github.io keeps its own identity. Hosts are indexed without
+/// a leading www.
 Future<BrandIcon?> brandIconFor(String host) async {
-  await _load();
+  await Future.wait([_load(), ensurePublicSuffixListLoaded()]);
   final domains = _domains!;
   final normalised = host.toLowerCase().replaceFirst(RegExp('^www.'), '');
-  final labels = normalised.split('.');
+  final parent = registrableDomain(normalised);
 
   final slug =
       domains[normalised] ??
-      (labels.length > 2 ? domains[labels.sublist(1).join('.')] : null);
+      (parent != null && parent != normalised ? domains[parent] : null);
   if (slug == null) return null;
 
   return (

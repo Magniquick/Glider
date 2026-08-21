@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:glider/common/utils/public_suffix.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
 
@@ -66,18 +67,24 @@ extension ItemExtension on Item {
   ///
   /// DuckDuckGo indexes by exact host, so a subdomain that publishes no icon
   /// of its own 404s even when its parent domain has one --
-  /// api-docs.deepseek.com misses while deepseek.com hits. Trying the parent
-  /// next recovers those. The full host has to come first, because the
-  /// reverse also happens: www.winona.com hits while winona.com 404s.
+  /// api-docs.deepseek.com misses while deepseek.com hits. Trying the
+  /// registrable domain next recovers those. The full host has to come first,
+  /// because the reverse also happens: www.winona.com hits while winona.com
+  /// 404s.
+  ///
+  /// Walking up stops at the registrable domain rather than at any shorter
+  /// name, so bandarlabs.github.io is left alone: github.io is a public
+  /// suffix, and borrowing its icon would badge every GitHub Pages site with
+  /// GitHub's own logo. Requires [ensurePublicSuffixListLoaded].
   List<String> get faviconUrls {
     final String? host = url?.host;
     if (host == null || host.isEmpty) return const [];
 
-    final List<String> labels = host.split('.');
+    final String? parent = registrableDomain(host);
     return [
       for (final candidate in [
         host,
-        if (labels.length > 2) labels.sublist(1).join('.'),
+        if (parent != null && parent != host) parent,
       ])
         Uri.https('icons.duckduckgo.com', 'ip3/$candidate.ico').toString(),
     ];

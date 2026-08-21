@@ -11,6 +11,7 @@ import 'package:glider/common/extensions/uri_extension.dart';
 import 'package:glider/common/extensions/widget_list_extension.dart';
 import 'package:glider/common/utils/brand_icon.dart';
 import 'package:glider/common/utils/image_luminance.dart';
+import 'package:glider/common/utils/public_suffix.dart';
 import 'package:glider/common/widgets/animated_visibility.dart';
 import 'package:glider/common/widgets/hacker_news_text.dart';
 import 'package:glider/common/widgets/metadata_widget.dart';
@@ -588,7 +589,11 @@ class _ItemFaviconState extends State<_ItemFavicon> {
     }
 
     if (_faviconResolution.containsKey(host)) return;
-    _tryCandidate(host, widget.item.faviconUrls, 0);
+    unawaited(
+      ensurePublicSuffixListLoaded().then((_) {
+        if (mounted) _tryCandidate(host, widget.item.faviconUrls, 0);
+      }),
+    );
   }
 
   /// The brand mark to draw instead of a favicon, if there is one.
