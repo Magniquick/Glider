@@ -202,10 +202,20 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
       alignment: Alignment.topCenter,
       child: child,
     ),
-    child: NavigationBar(
-      destinations: destinations,
-      selectedIndex: _currentIndex,
-      onDestinationSelected: onDestinationSelected,
+    // NavigationBar wraps itself in a SafeArea that honours the TOP inset as
+    // well as the bottom. Sitting at the bottom of a Column it still sees the
+    // status bar's 40dp, and reserves that above the icons -- so the bar
+    // measured 136dp (80 content + 16 bottom + 40 status bar) instead of 96,
+    // with the surplus showing as dead space above the icons.
+    // flutter_adaptive_scaffold stripped this in its bottomNavigation slot.
+    child: MediaQuery.removePadding(
+      context: context,
+      removeTop: true,
+      child: NavigationBar(
+        destinations: destinations,
+        selectedIndex: _currentIndex,
+        onDestinationSelected: onDestinationSelected,
+      ),
     ),
   );
 
