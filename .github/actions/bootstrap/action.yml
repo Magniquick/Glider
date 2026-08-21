@@ -8,6 +8,26 @@ runs:
       uses: jdx/mise-action@v2
       with:
         cache: true
+    - name: Install Android SDK components and accept licences
+      shell: bash
+      # mise's android-sdk provides cmdline-tools only, and it exports
+      # ANDROID_HOME at its own install, which shadows the runner's preinstalled
+      # SDK and its accepted licences. Without this the Gradle build fails with
+      # LicenceNotAcceptedException.
+      run: |
+        yes | sdkmanager --licenses > /dev/null 2>&1 || true
+        sdkmanager --install \
+          "platforms;android-37" \
+          "platforms;android-36" \
+          "build-tools;36.1.0" \
+          "platform-tools" \
+          "ndk;28.2.13676358" > /dev/null
+    - name: Cache Android SDK
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/mise/installs/android-sdk
+        key: ${{ runner.os }}-android-sdk-${{ hashFiles('mise.toml') }}
+        restore-keys: ${{ runner.os }}-android-sdk-
     - name: Cache pub
       uses: actions/cache@v4
       with:

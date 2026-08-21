@@ -10,9 +10,9 @@ import 'package:http/http.dart' as http;
 /// In practice this means the stored session cookie is no longer valid: a
 /// logged-out item page carries no `auth` parameter, and `/submit` renders
 /// "You have to be logged in to submit." with no hidden `fnid`.
-class HackerNewsAuthException implements Exception {
+class const HackerNewsAuthException(this.action) implements Exception {
   /// Creates an exception for the named [action].
-  const HackerNewsAuthException(this.action);
+  this;
 
   /// The action that could not be authorised, e.g. `vote`.
   final String action;
@@ -24,9 +24,10 @@ class HackerNewsAuthException implements Exception {
 }
 
 /// Thrown when Hacker News answers a request with a non-success status.
-class HackerNewsRequestException implements Exception {
+class const HackerNewsRequestException(this.statusCode, this.uri)
+    implements Exception {
   /// Creates an exception for [statusCode] returned by [uri].
-  const HackerNewsRequestException(this.statusCode, this.uri);
+  this;
 
   /// The HTTP status Hacker News returned.
   final int statusCode;

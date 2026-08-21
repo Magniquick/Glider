@@ -14,6 +14,7 @@ import 'package:glider/common/mixins/data_mixin.dart';
 import 'package:glider/common/models/status.dart';
 import 'package:glider/common/widgets/app_bar_progress_indicator.dart';
 import 'package:glider/common/widgets/refreshable_scroll_view.dart';
+import 'package:glider/common/widgets/sliver_animated_paint_extent.dart';
 import 'package:glider/item/cubit/item_cubit.dart';
 import 'package:glider/item/extensions/item_extension.dart';
 import 'package:glider/item/models/item_action.dart';
@@ -30,7 +31,6 @@ import 'package:glider/story_similar/cubit/story_similar_cubit.dart';
 import 'package:glider/story_similar/view/sliver_story_similar_body.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 // The key is derived from a constructor parameter, so this constructor can

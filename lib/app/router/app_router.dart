@@ -227,7 +227,7 @@ class AppRouter._(final RouterConfig<Object> config) {
               appContainer.userItemSearchBlocFactory,
               appContainer.authCubit,
               appContainer.settingsCubit,
-              username: state.uri.queryParameters['id']!,
+              username: state.uri.username,
             ),
           ),
           parentNavigatorKey: rootNavigatorKey,
@@ -239,7 +239,7 @@ class AppRouter._(final RouterConfig<Object> config) {
                   appContainer.userCubitFactory,
                   appContainer.authCubit,
                   appContainer.settingsCubit,
-                  username: state.uri.queryParameters['id']!,
+                  username: state.uri.username,
                   title: state.extra as String?,
                 ),
               ),
@@ -275,6 +275,11 @@ class AppRouter._(final RouterConfig<Object> config) {
 /// non-numeric `id` must therefore be handled rather than asserted.
 extension on Uri {
   int get itemId => int.tryParse(queryParameters['id'] ?? '') ?? _invalidItemId;
+
+  /// The `/user` filter matches with no query string just as `/item` does, so
+  /// a missing `id` must not be asserted either. An empty username simply
+  /// fails to load and shows the page's normal error state.
+  String get username => queryParameters['id'] ?? '';
 }
 
 /// Sentinel for a deep link whose `id` was absent or unparseable. No Hacker

@@ -45,7 +45,6 @@ dependencies:
   rxdart: ^0.28.0
   share_plus: ^13.3.0
   shared_preferences: ^2.5.5
-  sliver_tools: ^0.2.12
   super_sliver_list: ^0.4.1
   url_launcher: ^6.3.2
 
@@ -78,8 +77,8 @@ melos:
   scripts:
     lint:
       run: |
-        melos run analyze
-        melos run format-check
+        dart run melos run analyze
+        dart run melos run format-check
       description: Run all static analysis checks.
 
     analyze:
@@ -109,8 +108,8 @@ melos:
       # Pub workspaces exclude the root package from melos' package list, so the
       # app's own tests need running separately from the members'.
       run: |
-        melos run test:app
-        melos run test:packages
+        dart run melos run test:app
+        dart run melos run test:packages
       description: Run every test in the workspace.
 
     test:app:
