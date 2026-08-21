@@ -50,6 +50,8 @@ android {
         }
     }
 
+    val hasKeystore = rootProject.file("key.properties").exists()
+
     buildTypes {
         debug {
             // Install alongside a release/store install instead of replacing it
@@ -60,18 +62,10 @@ android {
 
         release {
             // Fall back to debug signing so `flutter build apk` works locally
-            // without key.properties -- but never in CI, where a silently
-            // debug-signed release artifact could be published. The Android
-            // debug key is a well-known constant, so such a build would be
-            // forgeable by anyone and could not upgrade a real install.
-            val hasKeystore = rootProject.file("key.properties").exists()
-            val isCi = System.getenv("CI").toBoolean()
-            if (!hasKeystore && isCi) {
-                throw GradleException(
-                    "android/key.properties is missing. Refusing to produce a " +
-                        "debug-signed release build in CI.",
-                )
-            }
+            // without key.properties. Producing one in CI is refused, but that
+            // check lives below: this block is evaluated on every Gradle
+            // invocation, so throwing here would also fail a profile build,
+            // which never touches the release signing config.
             signingConfig = if (hasKeystore) {
                 signingConfigs.getByName("release")
             } else {
@@ -83,6 +77,24 @@ android {
             )
         }
     }
+}
+
+// Refuse to hand out a release artifact signed with the Android debug key: it
+// is a well-known constant, so the build would be forgeable by anyone and
+// could not upgrade a real install. Scoped to the tasks that actually package
+// a release, so profile and debug builds are unaffected.
+if (!rootProject.file("key.properties").exists() &&
+    System.getenv("CI").toBoolean()
+) {
+    tasks.matching { it.name == "assembleRelease" || it.name == "bundleRelease" }
+        .configureEach {
+            doFirst {
+                throw GradleException(
+                    "android/key.properties is missing. Refusing to produce a " +
+                        "debug-signed release build in CI.",
+                )
+            }
+        }
 }
 
 configurations.all {
