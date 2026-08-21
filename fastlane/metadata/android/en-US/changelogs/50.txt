@@ -1,0 +1,10 @@
+Logging in works again. Hacker News began rejecting embedded browsers, which is
+how Glider used to sign you in, so login is now a form inside the app. Your
+password is sent only to news.ycombinator.com and is never stored.
+
+Also in this release:
+- Rebuilt on Flutter 3.47 and updated for Android 16
+- The display refresh rate is left to your device instead of being forced
+- Links in comments show readable URLs again instead of percent-encoded ones
+- Opening a Hacker News link no longer risks crashing the app
+- An expired session shows an error instead of crashing

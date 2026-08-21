@@ -89,6 +89,7 @@ coverage/
 
 # Submodules
 !pubspec.lock
+!Podfile.lock
 packages/**/pubspec.lock
 
 # Web related

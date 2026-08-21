@@ -21,6 +21,21 @@ Future<void> bootstrap(
     WidgetsFlutterBinding.ensureInitialized();
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
+    // The bundled Noto fonts are SIL OFL 1.1. Register their licence so it
+    // shows up in the app's own licence page instead of shipping the files
+    // with no attribution at all.
+    LicenseRegistry.addLicense(() async* {
+      for (final path in const [
+        'assets/google_fonts/OFL.txt',
+        'assets/fonts/OFL.txt',
+      ]) {
+        yield LicenseEntryWithLineBreaks(const [
+          'Noto Sans',
+          'Noto Sans Mono',
+        ], await rootBundle.loadString(path));
+      }
+    });
+
     Bloc.observer = const AppBlocObserver();
     HydratedBloc.storage = await HydratedStorage.build(
       storageDirectory: kIsWeb
