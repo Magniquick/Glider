@@ -488,17 +488,45 @@ class const _ItemFavicon(
     _faviconRequestSize,
   );
 
+  // Inset so the icon sits on the tile rather than bleeding to its edges.
+  static const _inset = 2.0;
+
   @override
-  Widget build(BuildContext context) => Ink.image(
-    image: ResizeImage(
-      NetworkImage(item.faviconUrl!),
-      width: _faviconSize,
-      height: _faviconSize,
-      policy: ResizeImagePolicy.fit,
-    ),
-    width: _faviconSize.toDouble(),
-    height: _faviconSize.toDouble(),
-  );
+  Widget build(BuildContext context) {
+    final double imageSize = _faviconSize - _inset * 2;
+    return DecoratedBox(
+      // Every favicon is authored against whatever background its own site
+      // uses, and there is no way to ask for a dark variant: no favicon
+      // service serves one, `/favicon-dark.*` is not a real convention, and
+      // the standards-track `<link media="(prefers-color-scheme: dark)">`
+      // lives in each site's HTML under an arbitrary filename. So a dark logo
+      // vanishes against a dark surface while one with a baked-in white box
+      // glares. A neutral tile behind every icon normalises both.
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: const BorderRadius.all(Radius.circular(4)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(_inset),
+        // A plain Image, not Ink.image: Ink paints onto the ancestor Material's
+        // canvas, which sits *behind* the tile above, so the tile would cover
+        // the icon entirely.
+        child: Image(
+          image: ResizeImage(
+            NetworkImage(item.faviconUrl!),
+            width: imageSize.round(),
+            height: imageSize.round(),
+            policy: ResizeImagePolicy.fit,
+          ),
+          width: imageSize,
+          height: imageSize,
+          // A favicon that fails to load should leave the tile empty rather
+          // than an error glyph; plenty of sites simply have none.
+          errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
+        ),
+      ),
+    );
+  }
 }
 
 class const _MetadataActionButton({
