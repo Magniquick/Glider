@@ -496,12 +496,17 @@ class const _ItemFavicon(
     final double imageSize = _faviconSize - _inset * 2;
     return DecoratedBox(
       // Every favicon is authored against whatever background its own site
-      // uses, and there is no way to ask for a dark variant: no favicon
-      // service serves one, `/favicon-dark.*` is not a real convention, and
-      // the standards-track `<link media="(prefers-color-scheme: dark)">`
-      // lives in each site's HTML under an arbitrary filename. So a dark logo
-      // vanishes against a dark surface while one with a baked-in white box
-      // glares. A neutral tile behind every icon normalises both.
+      // uses, so a dark logo vanishes against a dark surface while one with a
+      // baked-in white box glares. A neutral tile behind every icon
+      // normalises both.
+      //
+      // Asking for a dark variant is not practical here. `/favicon-dark.*` is
+      // not a convention, and while `<link media="(prefers-color-scheme:
+      // dark)">` is standards-track and Chromium has honoured it since 91,
+      // it lives in each site's HTML under an arbitrary filename -- reading
+      // it would mean a page fetch per story. Brandfetch does serve
+      // `/theme/dark`, but it needs an API key an open-source client cannot
+      // ship, and its coverage of the long tail Hacker News links to is poor.
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: const BorderRadius.all(Radius.circular(4)),
