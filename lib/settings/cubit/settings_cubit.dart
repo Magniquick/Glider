@@ -37,6 +37,7 @@ class SettingsCubit(
     final bool? useLargeStoryStyle = await _settingsRepository
         .getUseLargeStoryStyle();
     final bool? showFavicons = await _settingsRepository.getShowFavicons();
+    final bool? useBrandIcons = await _settingsRepository.getUseBrandIcons();
     final bool? showStoryMetadata = await _settingsRepository
         .getShowStoryMetadata();
     final bool? showUserAvatars = await _settingsRepository
@@ -70,6 +71,7 @@ class SettingsCubit(
             ? () => useLargeStoryStyle
             : null,
         showFavicons: showFavicons != null ? () => showFavicons : null,
+        useBrandIcons: useBrandIcons != null ? () => useBrandIcons : null,
         showStoryMetadata: showStoryMetadata != null
             ? () => showStoryMetadata
             : null,
@@ -167,6 +169,15 @@ class SettingsCubit(
 
     if (font != null) {
       safeEmit(state.copyWith(font: () => font));
+    }
+  }
+
+  Future<void> setUseBrandIcons(bool value) async {
+    await _settingsRepository.setUseBrandIcons(value: value);
+    final bool? useBrandIcons = await _settingsRepository.getUseBrandIcons();
+
+    if (useBrandIcons != null) {
+      safeEmit(state.copyWith(useBrandIcons: () => useBrandIcons));
     }
   }
 

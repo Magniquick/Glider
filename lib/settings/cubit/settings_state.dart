@@ -10,6 +10,7 @@ class const SettingsState({
   final int storyLines = 2,
   final bool useLargeStoryStyle = true,
   final bool showFavicons = true,
+  final bool useBrandIcons = true,
   final bool showStoryMetadata = true,
   final bool showUserAvatars = true,
   final bool useActionButtons = false,
@@ -32,6 +33,7 @@ class const SettingsState({
     int Function()? storyLines,
     bool Function()? useLargeStoryStyle,
     bool Function()? showFavicons,
+    bool Function()? useBrandIcons,
     bool Function()? showStoryMetadata,
     bool Function()? showUserAvatars,
     bool Function()? useActionButtons,
@@ -59,6 +61,7 @@ class const SettingsState({
         ? useLargeStoryStyle()
         : this.useLargeStoryStyle,
     showFavicons: showFavicons != null ? showFavicons() : this.showFavicons,
+    useBrandIcons: useBrandIcons != null ? useBrandIcons() : this.useBrandIcons,
     showStoryMetadata: showStoryMetadata != null
         ? showStoryMetadata()
         : this.showStoryMetadata,

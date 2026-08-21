@@ -1,11 +1,15 @@
+import 'dart:async';
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:glider/app/models/app_route.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/common/extensions/date_time_extension.dart';
 import 'package:glider/common/extensions/uri_extension.dart';
 import 'package:glider/common/extensions/widget_list_extension.dart';
+import 'package:glider/common/utils/brand_icon.dart';
 import 'package:glider/common/utils/image_luminance.dart';
 import 'package:glider/common/widgets/animated_visibility.dart';
 import 'package:glider/common/widgets/hacker_news_text.dart';
@@ -36,6 +40,7 @@ class const ItemDataTile(
   final int storyLines = 2,
   final bool useLargeStoryStyle = true,
   final bool showFavicons = true,
+  final bool useBrandIcons = true,
   final bool showMetadata = true,
   final bool showUserAvatars = true,
   final bool useInAppBrowser = false,
@@ -155,6 +160,7 @@ class const ItemDataTile(
                     item,
                     storyLines: storyLines,
                     useLargeStoryStyle: useLargeStoryStyle,
+                    useBrandIcons: useBrandIcons,
                   ),
                 ),
               ),
@@ -363,6 +369,7 @@ class const ItemDataTile(
                           item,
                           storyLines: 1,
                           useLargeStoryStyle: false,
+                          useBrandIcons: useBrandIcons,
                         ),
                       ),
                     )
@@ -506,15 +513,21 @@ class _ItemFavicon extends StatefulWidget {
     this.item, {
     required this.storyLines,
     required this.useLargeStoryStyle,
+    required this.useBrandIcons,
   });
 
   final Item item;
   final int storyLines;
   final bool useLargeStoryStyle;
+  final bool useBrandIcons;
 
   @override
   State<_ItemFavicon> createState() => _ItemFaviconState();
 }
+
+/// Simple Icons mark per host, resolved once and reused across rows. A host
+/// with no brand icon caches a null so the index is not consulted again.
+final _brandIcons = <String, BrandIcon?>{};
 
 class _ItemFaviconState extends State<_ItemFavicon> {
   // WCAG's minimum for non-text content. Chromium scopes this same 3.0 to
@@ -562,10 +575,25 @@ class _ItemFaviconState extends State<_ItemFavicon> {
   /// straight to it, and the icon's mean luminance so the plate can be chosen
   /// per icon rather than applied to all of them.
   void _resolveIfNeeded() {
-    final host = _host;
-    if (host == null || _faviconResolution.containsKey(host)) return;
+    final String? host = _host;
+    if (host == null) return;
+
+    if (widget.useBrandIcons && !_brandIcons.containsKey(host)) {
+      unawaited(
+        brandIconFor(host).then((brand) {
+          _brandIcons[host] = brand;
+          if (mounted) setState(() {});
+        }),
+      );
+    }
+
+    if (_faviconResolution.containsKey(host)) return;
     _tryCandidate(host, widget.item.faviconUrls, 0);
   }
+
+  /// The brand mark to draw instead of a favicon, if there is one.
+  BrandIcon? get _brand =>
+      widget.useBrandIcons && _host != null ? _brandIcons[_host] : null;
 
   void _tryCandidate(String host, List<String> candidates, int index) {
     if (index >= candidates.length) {
@@ -635,6 +663,30 @@ class _ItemFaviconState extends State<_ItemFavicon> {
   @override
   Widget build(BuildContext context) {
     final String? host = _host;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    // Simple Icons are single-colour paths, so tinting them is what buys both
+    // guaranteed contrast and a correct dark mode -- no plate measurement
+    // needed, and no chance of recolouring a mark that carries its own brand
+    // colours, because these carry none.
+    if (_brand case final BrandIcon brand) {
+      final double size = _faviconSize.toDouble();
+      return SizedBox.square(
+        dimension: size,
+        child: Padding(
+          padding: const EdgeInsets.all(_inset),
+          child: SvgPicture.network(
+            brand.url,
+            colorFilter: ColorFilter.mode(
+              colorScheme.onSurface,
+              BlendMode.srcIn,
+            ),
+            placeholderBuilder: (context) => const SizedBox.shrink(),
+          ),
+        ),
+      );
+    }
+
     final String? resolved = host != null ? _faviconResolution[host] : null;
 
     // No icon anywhere for this host: take up no room at all, so the title
@@ -694,7 +746,7 @@ class _ItemFaviconState extends State<_ItemFavicon> {
 
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: _plate(Theme.of(context).colorScheme),
+        color: _plate(colorScheme),
         borderRadius: const BorderRadius.all(Radius.circular(4)),
       ),
       child: Padding(

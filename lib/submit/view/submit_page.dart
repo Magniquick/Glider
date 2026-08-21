@@ -259,6 +259,7 @@ class const _SubmitPreview(
                           ),
                           useLargeStoryStyle: settingsState.useLargeStoryStyle,
                           showFavicons: settingsState.showFavicons,
+                          useBrandIcons: settingsState.useBrandIcons,
                           showUserAvatars: settingsState.showUserAvatars,
                           usernameStyle: UsernameStyle.loggedInUser,
                           useInAppBrowser: settingsState.useInAppBrowser,

@@ -131,6 +131,7 @@ class _ItemTileState()
                     previous.storyLines != current.storyLines ||
                     previous.useLargeStoryStyle != current.useLargeStoryStyle ||
                     previous.showFavicons != current.showFavicons ||
+                    previous.useBrandIcons != current.useBrandIcons ||
                     previous.showUserAvatars != current.showUserAvatars ||
                     previous.useActionButtons != current.useActionButtons ||
                     previous.useInAppBrowser != current.useInAppBrowser,
@@ -195,6 +196,7 @@ class _ItemTileState()
                           storyLines: settingsState.storyLines,
                           useLargeStoryStyle: settingsState.useLargeStoryStyle,
                           showFavicons: settingsState.showFavicons,
+                          useBrandIcons: settingsState.useBrandIcons,
                           showMetadata:
                               settingsState.showStoryMetadata ||
                               widget.forceShowMetadata,

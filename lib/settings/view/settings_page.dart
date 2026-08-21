@@ -183,6 +183,17 @@ class const _SettingsBody(final SettingsCubit _settingsCubit)
             ),
           ),
           SwitchListTile.adaptive(
+            value: state.useBrandIcons,
+            onChanged: state.showFavicons
+                ? _settingsCubit.setUseBrandIcons
+                : null,
+            title: Text(context.l10n.brandIcons),
+            subtitle: Text(context.l10n.brandIconsDescription),
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xl,
+            ),
+          ),
+          SwitchListTile.adaptive(
             value: state.showStoryMetadata,
             onChanged: _settingsCubit.setShowStoryMetadata,
             title: Text(context.l10n.storyMetadata),

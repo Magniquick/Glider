@@ -12,6 +12,7 @@ class const SharedPreferencesService(
   static const String _storyLinesKey = 'story_lines';
   static const String _useLargeStoryStyleKey = 'use_large_story_style';
   static const String _showFaviconsKey = 'show_favicons';
+  static const String _useBrandIconsKey = 'use_brand_icons';
   static const String _showStoryMetadataKey = 'show_story_metadata';
   static const String _showUserAvatars = 'show_user_avatars';
   static const String _useActionButtonsKey = 'use_action_buttons';
@@ -82,6 +83,12 @@ class const SharedPreferencesService(
 
   Future<void> setShowFavicons({required bool value}) =>
       _sharedPreferences.setBool(_showFaviconsKey, value);
+
+  Future<bool?> getUseBrandIcons() async =>
+      _sharedPreferences.getBool(_useBrandIconsKey);
+
+  Future<void> setUseBrandIcons({required bool value}) =>
+      _sharedPreferences.setBool(_useBrandIconsKey, value);
 
   Future<bool?> getShowStoryMetadata() async =>
       _sharedPreferences.getBool(_showStoryMetadataKey);

@@ -208,6 +208,7 @@ class const _ReplyPreview(
                           storyLines: settingsState.storyLines,
                           useLargeStoryStyle: settingsState.useLargeStoryStyle,
                           showFavicons: settingsState.showFavicons,
+                          useBrandIcons: settingsState.useBrandIcons,
                           showUserAvatars: settingsState.showUserAvatars,
                           usernameStyle: UsernameStyle.loggedInUser,
                           useInAppBrowser: settingsState.useInAppBrowser,

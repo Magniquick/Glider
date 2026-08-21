@@ -25,6 +25,8 @@
   "largeStoryStyle": "Large stories",
   "largeStoryStyleDescription": "Shows URL, larger title, larger favicon",
   "favicons": "Story favicons",
+  "brandIcons": "Prefer brand icons",
+  "brandIconsDescription": "Sharp monochrome marks for recognised sites",
   "storyMetadata": "Story metadata",
   "storyMetadataDescription": "Always shows on some pages",
   "actionButtons": "Action buttons",

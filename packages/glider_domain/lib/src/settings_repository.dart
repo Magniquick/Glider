@@ -65,6 +65,12 @@ class const SettingsRepository(
   Future<void> setShowFavicons({required bool value}) =>
       _sharedPreferencesService.setShowFavicons(value: value);
 
+  Future<bool?> getUseBrandIcons() =>
+      _sharedPreferencesService.getUseBrandIcons();
+
+  Future<void> setUseBrandIcons({required bool value}) =>
+      _sharedPreferencesService.setUseBrandIcons(value: value);
+
   Future<bool?> getShowStoryMetadata() =>
       _sharedPreferencesService.getShowStoryMetadata();
 
