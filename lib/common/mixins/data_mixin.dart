@@ -5,10 +5,8 @@ import 'package:glider/common/widgets/empty_widget.dart';
 import 'package:glider/common/widgets/failure_widget.dart';
 import 'package:glider/common/widgets/loading_widget.dart';
 
-Widget _sliverWrap({required Widget child}) => SliverFillRemaining(
-      hasScrollBody: false,
-      child: child,
-    );
+Widget _sliverWrap({required Widget child}) =>
+    SliverFillRemaining(hasScrollBody: false, child: child);
 
 mixin DataMixin<T> {
   Status get status;
@@ -26,18 +24,18 @@ extension DataMixinExtension<T> on DataMixin<T> {
     VoidCallback? onRetry,
   }) {
     return switch (status) {
-      Status.initial ||
-      Status.loading =>
+      Status.initial || Status.loading =>
         data != null ? success() : loading?.call() ?? const LoadingWidget(),
       Status.success => success(),
-      Status.failure => data != null
-          ? success()
-          : failure?.call() ??
-              FailureWidget(
-                exception: exception,
-                onRetry: onRetry,
-                compact: true,
-              ),
+      Status.failure =>
+        data != null
+            ? success()
+            : failure?.call() ??
+                  FailureWidget(
+                    exception: exception,
+                    onRetry: onRetry,
+                    compact: true,
+                  ),
     };
   }
 
@@ -48,37 +46,39 @@ extension DataMixinExtension<T> on DataMixin<T> {
     VoidCallback? onRetry,
   }) {
     return switch (status) {
-      Status.initial || Status.loading => data != null
-          ? success()
-          : loading?.call() ?? _sliverWrap(child: const LoadingWidget()),
+      Status.initial || Status.loading =>
+        data != null
+            ? success()
+            : loading?.call() ?? _sliverWrap(child: const LoadingWidget()),
       Status.success => success(),
-      Status.failure => data != null
-          ? SliverMainAxisGroup(
-              slivers: [
-                if (onRetry != null)
-                  SliverPadding(
-                    padding: AppSpacing.defaultTilePadding,
-                    sliver: SliverToBoxAdapter(
-                      child: Card(
-                        child: FailureWidget(
-                          exception: exception,
-                          onRetry: onRetry,
-                          compact: true,
-                          // compact: true,
+      Status.failure =>
+        data != null
+            ? SliverMainAxisGroup(
+                slivers: [
+                  if (onRetry != null)
+                    SliverPadding(
+                      padding: AppSpacing.defaultTilePadding,
+                      sliver: SliverToBoxAdapter(
+                        child: Card(
+                          child: FailureWidget(
+                            exception: exception,
+                            onRetry: onRetry,
+                            compact: true,
+                            // compact: true,
+                          ),
                         ),
                       ),
                     ),
+                  success(),
+                ],
+              )
+            : failure?.call() ??
+                  _sliverWrap(
+                    child: FailureWidget(
+                      exception: exception,
+                      onRetry: onRetry,
+                    ),
                   ),
-                success(),
-              ],
-            )
-          : failure?.call() ??
-              _sliverWrap(
-                child: FailureWidget(
-                  exception: exception,
-                  onRetry: onRetry,
-                ),
-              ),
     };
   }
 }

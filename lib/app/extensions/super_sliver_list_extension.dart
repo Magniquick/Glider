@@ -6,16 +6,12 @@ extension SuperSliverListExtension on SuperSliverList {
     ListController? listController,
     required NullableIndexedWidgetBuilder itemBuilder,
     required int itemCount,
-  }) =>
-      SuperSliverList(
-        listController: listController,
-        delegate: SliverChildBuilderDelegate(
-          itemBuilder,
-          childCount: itemCount,
-        ),
-        extentPrecalculationPolicy: AlwaysPrecalculateExtentPolicy(),
-        layoutKeptAliveChildren: true,
-      );
+  }) => SuperSliverList(
+    listController: listController,
+    delegate: SliverChildBuilderDelegate(itemBuilder, childCount: itemCount),
+    extentPrecalculationPolicy: AlwaysPrecalculateExtentPolicy(),
+    layoutKeptAliveChildren: true,
+  );
 }
 
 class AlwaysPrecalculateExtentPolicy extends ExtentPrecalculationPolicy {

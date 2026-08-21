@@ -39,11 +39,11 @@ class AppRouter {
           StatefulShellRoute.indexedStack(
             builder: (context, state, navigationShell) =>
                 NavigationShellScaffold(
-              appContainer.navigationShellCubit,
-              appContainer.authCubit,
-              appContainer.settingsCubit,
-              navigationShell,
-            ),
+                  appContainer.navigationShellCubit,
+                  appContainer.authCubit,
+                  appContainer.settingsCubit,
+                  navigationShell,
+                ),
             branches: [
               StatefulShellBranch(
                 routes: [
@@ -112,9 +112,7 @@ class AppRouter {
             path: AppRoute.whatsNew.path,
             pageBuilder: (context, state) => MaterialPage<void>(
               fullscreenDialog: true,
-              child: WhatsNewPage(
-                appContainer.settingsCubit,
-              ),
+              child: WhatsNewPage(appContainer.settingsCubit),
             ),
             parentNavigatorKey: rootNavigatorKey,
           ),
@@ -136,27 +134,23 @@ class AppRouter {
             path: AppRoute.settings.path,
             pageBuilder: (context, state) => MaterialPage<void>(
               fullscreenDialog: true,
-              child: SettingsPage(
-                appContainer.settingsCubit,
-              ),
+              child: SettingsPage(appContainer.settingsCubit),
             ),
             parentNavigatorKey: rootNavigatorKey,
             routes: [
               GoRoute(
                 path: AppRoute.themeColorDialog.path,
                 pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) => ThemeColorDialog(
-                    appContainer.settingsCubit,
-                  ),
+                  builder: (context) =>
+                      ThemeColorDialog(appContainer.settingsCubit),
                 ),
                 parentNavigatorKey: rootNavigatorKey,
               ),
               GoRoute(
                 path: AppRoute.filtersDialog.path,
                 pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) => FiltersDialog(
-                    appContainer.settingsCubit,
-                  ),
+                  builder: (context) =>
+                      FiltersDialog(appContainer.settingsCubit),
                 ),
                 parentNavigatorKey: rootNavigatorKey,
               ),
@@ -261,9 +255,8 @@ class AppRouter {
           GoRoute(
             path: AppRoute.textSelectDialog.path,
             pageBuilder: (context, state) => DialogPage<void>(
-              builder: (context) => TextSelectDialog(
-                text: state.extra! as String,
-              ),
+              builder: (context) =>
+                  TextSelectDialog(text: state.extra! as String),
             ),
             parentNavigatorKey: rootNavigatorKey,
           ),

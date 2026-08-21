@@ -15,7 +15,7 @@ class LoadingBlock extends StatelessWidget {
       height: height,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.all(Radius.circular(4)),
-        color: Theme.of(context).colorScheme.outline.withOpacity(opacity),
+        color: Theme.of(context).colorScheme.outline.withValues(alpha: opacity),
       ),
     );
   }

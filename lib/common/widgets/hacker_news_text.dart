@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/common/extensions/theme_data_extension.dart';
 import 'package:glider/common/extensions/uri_extension.dart';
@@ -15,8 +15,8 @@ class HackerNewsText extends StatelessWidget {
     String data, {
     ParsedData? parsedData,
     required this.useInAppBrowser,
-  })  : parsedData = parsedData ?? parse(data),
-        super(key: ValueKey(data));
+  }) : parsedData = parsedData ?? parse(data),
+       super(key: ValueKey(data));
 
   final ParsedData parsedData;
   final bool useInAppBrowser;
@@ -60,28 +60,25 @@ class HackerNewsText extends StatelessWidget {
     final styleSheet = MarkdownStyleSheet(
       blockSpacing: Theme.of(context).textTheme.bodyMedium?.fontSize,
       blockquote: Theme.of(context).textTheme.bodyMedium,
-      blockquoteDecoration:
-          Theme.of(context).elevationToBoxDecoration(1).copyWith(
-                borderRadius: const BorderRadius.all(Radius.circular(12)),
-              ),
+      blockquoteDecoration: Theme.of(context)
+          .elevationToBoxDecoration(1)
+          .copyWith(borderRadius: const BorderRadius.all(Radius.circular(12))),
       blockquotePadding: AppSpacing.defaultTilePadding,
       a: Theme.of(context).textTheme.bodyMedium?.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            decoration: TextDecoration.underline,
-          ),
+        color: Theme.of(context).colorScheme.primary,
+        decoration: TextDecoration.underline,
+      ),
       code: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.secondary,
-            fontFamily: 'NotoSansMono',
-          ),
+        color: Theme.of(context).colorScheme.secondary,
+        fontFamily: 'NotoSansMono',
+      ),
       codeblockPadding: AppSpacing.defaultTilePadding,
       codeblockDecoration: BoxDecoration(
         color: Theme.of(context).elevationToColor(4),
       ),
       horizontalRuleDecoration: BoxDecoration(
         border: Border(
-          top: BorderSide(
-            color: Theme.of(context).colorScheme.outline,
-          ),
+          top: BorderSide(color: Theme.of(context).colorScheme.outline),
         ),
       ),
     );
@@ -90,11 +87,9 @@ class HackerNewsText extends StatelessWidget {
       styleSheet: styleSheet,
       onTapLink: (text, href, title) async {
         if (href != null) {
-          await Uri.tryParse(href)?.tryLaunch(
-            context,
-            title: title,
-            useInAppBrowser: useInAppBrowser,
-          );
+          await Uri.tryParse(
+            href,
+          )?.tryLaunch(context, title: title, useInAppBrowser: useInAppBrowser);
         }
       },
       builders: {'pre': _PreElementBuilder(styleSheet)},
@@ -209,13 +204,13 @@ class HackerNewsCodeBlockSyntax extends md.CodeBlockSyntax {
 // Unlike default Markdown, double asterisks do not result in a strong tag.
 class HackerNewsEmphasisSyntax extends md.DelimiterSyntax {
   HackerNewsEmphasisSyntax.asterisk()
-      : super(
-          r'\*+',
-          requiresDelimiterRun: true,
-          allowIntraWord: true,
-          tags: _tags,
-          startCharacter: '*'.codeUnits.single,
-        );
+    : super(
+        r'\*+',
+        requiresDelimiterRun: true,
+        allowIntraWord: true,
+        tags: _tags,
+        startCharacter: '*'.codeUnits.single,
+      );
 
   static final _tags = [md.DelimiterTag('em', 1)];
 }
@@ -224,10 +219,7 @@ class HackerNewsEmphasisSyntax extends md.DelimiterSyntax {
 // or another asterisk. Markdown already takes care of the former.
 class HackerNewsAsteriskEscapeSyntax extends md.InlineSyntax {
   HackerNewsAsteriskEscapeSyntax()
-      : super(
-          r'\*(\*)',
-          startCharacter: '*'.codeUnits.single,
-        );
+    : super(r'\*(\*)', startCharacter: '*'.codeUnits.single);
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {

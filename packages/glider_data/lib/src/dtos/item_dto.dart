@@ -18,26 +18,26 @@ class ItemDto {
   });
 
   factory ItemDto.fromMap(Map<String, dynamic> json) => ItemDto(
-        id: json['id'] as int,
-        deleted: json['deleted'] as bool?,
-        type: json['type'] as String?,
-        by: json['by'] as String?,
-        time: json['time'] as int?,
-        text: json['text'] as String?,
-        dead: json['dead'] as bool?,
-        parent: json['parent'] as int?,
-        poll: json['poll'] as int?,
-        kids: (json['kids'] as List<dynamic>?)
-            ?.map((e) => e as int)
-            .toList(growable: false),
-        url: json['url'] as String?,
-        score: json['score'] as int?,
-        title: json['title'] as String?,
-        parts: (json['parts'] as List<dynamic>?)
-            ?.map((e) => e as int)
-            .toList(growable: false),
-        descendants: json['descendants'] as int?,
-      );
+    id: json['id'] as int,
+    deleted: json['deleted'] as bool?,
+    type: json['type'] as String?,
+    by: json['by'] as String?,
+    time: json['time'] as int?,
+    text: json['text'] as String?,
+    dead: json['dead'] as bool?,
+    parent: json['parent'] as int?,
+    poll: json['poll'] as int?,
+    kids: (json['kids'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(growable: false),
+    url: json['url'] as String?,
+    score: json['score'] as int?,
+    title: json['title'] as String?,
+    parts: (json['parts'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(growable: false),
+    descendants: json['descendants'] as int?,
+  );
 
   final int id;
   final bool? deleted;

@@ -4,7 +4,7 @@ enum ItemStyle {
   primary(showPrimary: true),
   secondary(showSecondary: true);
 
-  const ItemStyle({
+  ItemStyle({
     this.showPrimary = false,
     this.showSecondary = false,
     this.showUrlHost = false,

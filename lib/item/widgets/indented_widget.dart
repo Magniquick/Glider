@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 
 class IndentedWidget extends StatelessWidget {
-  const IndentedWidget({
-    super.key,
-    required this.depth,
-    required this.child,
-  });
+  const IndentedWidget({super.key, required this.depth, required this.child});
 
   final int depth;
   final Widget child;
@@ -41,20 +37,15 @@ class IndentedWidget extends StatelessWidget {
             bottom: 0,
             child: VerticalDivider(
               width: 0,
-              color: Theme.of(context)
-                  .colorScheme
-                  .outline
-                  .withOpacity(_fadedOpacity),
+              color: Theme.of(context).colorScheme.outline
+                  .withValues(alpha: _fadedOpacity),
             ),
           ),
         PositionedDirectional(
           start: _getIndentation(depth),
           top: AppSpacing.s,
           bottom: AppSpacing.s,
-          child: VerticalDivider(
-            width: 0,
-            color: _getCurrentColor(colors),
-          ),
+          child: VerticalDivider(width: 0, color: _getCurrentColor(colors)),
         ),
       ],
     );

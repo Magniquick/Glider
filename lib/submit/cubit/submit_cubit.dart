@@ -10,10 +10,8 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'submit_state.dart';
 
 class SubmitCubit extends HydratedCubit<SubmitState> {
-  SubmitCubit(
-    this._itemInteractionRepository,
-    this._genericRepository,
-  ) : super(const SubmitState());
+  SubmitCubit(this._itemInteractionRepository, this._genericRepository)
+    : super(const SubmitState());
 
   final ItemInteractionRepository _itemInteractionRepository;
   final WebsiteRepository _genericRepository;
@@ -53,9 +51,7 @@ class SubmitCubit extends HydratedCubit<SubmitState> {
   }
 
   void setPreview(bool preview) {
-    safeEmit(
-      state.copyWith(preview: () => preview),
-    );
+    safeEmit(state.copyWith(preview: () => preview));
   }
 
   Future<void> autofillTitle() async {

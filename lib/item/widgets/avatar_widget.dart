@@ -71,11 +71,7 @@ class _AvatarPainter extends CustomPainter with EquatableMixin {
       oldDelegate != this;
 
   @override
-  List<Object?> get props => [
-        username,
-        pixelSize,
-        offset,
-      ];
+  List<Object?> get props => [username, pixelSize, offset];
 
   static int _xorShift32(int number) {
     var result = number;

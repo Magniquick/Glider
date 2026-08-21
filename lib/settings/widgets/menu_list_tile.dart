@@ -23,9 +23,7 @@ class MenuListTile<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MenuAnchor(
-      style: Theme.of(context)
-          .menuTheme
-          .style
+      style: Theme.of(context).menuTheme.style
           ?.copyWith(alignment: AlignmentDirectional.bottomEnd),
       menuChildren: [
         for (final value in values)

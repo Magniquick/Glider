@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:compute/compute.dart';
+import 'package:flutter/foundation.dart';
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/entities/user.dart';
 import 'package:glider_domain/src/extensions/behavior_subject_map_extension.dart';

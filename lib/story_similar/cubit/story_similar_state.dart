@@ -20,10 +20,10 @@ class StorySimilarState with DataMixin<List<int>>, EquatableMixin {
       );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'status': status.name,
-        'item': item?.toMap(),
-        'data': data,
-      };
+    'status': status.name,
+    'item': item?.toMap(),
+    'data': data,
+  };
 
   @override
   final Status status;
@@ -38,19 +38,13 @@ class StorySimilarState with DataMixin<List<int>>, EquatableMixin {
     Item? Function()? item,
     List<int>? Function()? data,
     Object? Function()? exception,
-  }) =>
-      StorySimilarState(
-        status: status != null ? status() : this.status,
-        item: item != null ? item() : this.item,
-        data: data != null ? data() : this.data,
-        exception: exception != null ? exception() : this.exception,
-      );
+  }) => StorySimilarState(
+    status: status != null ? status() : this.status,
+    item: item != null ? item() : this.item,
+    data: data != null ? data() : this.data,
+    exception: exception != null ? exception() : this.exception,
+  );
 
   @override
-  List<Object?> get props => [
-        status,
-        item,
-        data,
-        exception,
-      ];
+  List<Object?> get props => [status, item, data, exception];
 }

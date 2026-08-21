@@ -15,9 +15,11 @@ class EditCubit extends HydratedCubit<EditState> {
     this._itemRepository,
     this._itemInteractionRepository, {
     required int id,
-  })  : itemId = id,
-        super(const EditState()) {
-    _itemSubscription = _itemRepository.getItemStream(itemId).listen(
+  }) : itemId = id,
+       super(const EditState()) {
+    _itemSubscription = _itemRepository
+        .getItemStream(itemId)
+        .listen(
           (item) => safeEmit(
             state.copyWith(
               item: () => item,
@@ -46,9 +48,7 @@ class EditCubit extends HydratedCubit<EditState> {
     safeEmit(
       state.copyWith(
         title: () => titleInput,
-        isValid: () => Formz.validate(
-          [titleInput, if (state.text case final text?) text],
-        ),
+        isValid: () => Formz.validate([titleInput, ?state.text]),
       ),
     );
   }
@@ -58,17 +58,13 @@ class EditCubit extends HydratedCubit<EditState> {
     safeEmit(
       state.copyWith(
         text: () => textInput,
-        isValid: () => Formz.validate(
-          [if (state.title case final title?) title, textInput],
-        ),
+        isValid: () => Formz.validate([?state.title, textInput]),
       ),
     );
   }
 
   void setPreview(bool preview) {
-    safeEmit(
-      state.copyWith(preview: () => preview),
-    );
+    safeEmit(state.copyWith(preview: () => preview));
   }
 
   Future<void> edit() async {

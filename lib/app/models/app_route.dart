@@ -18,19 +18,19 @@ enum AppRoute {
   textSelectDialog,
   confirmDialog;
 
-  const AppRoute({this.parent});
+  AppRoute({this.parent});
 
   final AppRoute? parent;
 
   String get path => [if (parent == null) '/', name].join();
 
   String location({Map<String, Object?>? parameters}) => Uri(
-        path: [if (parent case final parent?) '${parent.path}/', path].join(),
-        queryParameters: parameters != null
-            ? {
-                for (final parameter in parameters.entries)
-                  parameter.key: parameter.value?.toString(),
-              }
-            : null,
-      ).toString();
+    path: [if (parent case final parent?) '${parent.path}/', path].join(),
+    queryParameters: parameters != null
+        ? {
+            for (final parameter in parameters.entries)
+              parameter.key: parameter.value?.toString(),
+          }
+        : null,
+  ).toString();
 }

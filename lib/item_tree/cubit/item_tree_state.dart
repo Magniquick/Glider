@@ -10,25 +10,24 @@ class ItemTreeState with DataMixin<List<ItemDescendant>>, EquatableMixin {
   });
 
   factory ItemTreeState.fromMap(Map<String, dynamic> json) => ItemTreeState(
-        status: Status.values.byName(json['status'] as String),
-        data: (json['data'] as List<dynamic>?)
-            ?.map((e) => ItemDescendant.fromMap(e as Map<String, dynamic>))
-            .toList(growable: false),
-        previousData: (json['previousData'] as List<dynamic>?)
-            ?.map((e) => ItemDescendant.fromMap(e as Map<String, dynamic>))
-            .toList(growable: false),
-        collapsedIds: (json['collapsedIds'] as List<dynamic>)
-            .map((e) => e as int)
-            .toSet(),
-      );
+    status: Status.values.byName(json['status'] as String),
+    data: (json['data'] as List<dynamic>?)
+        ?.map((e) => ItemDescendant.fromMap(e as Map<String, dynamic>))
+        .toList(growable: false),
+    previousData: (json['previousData'] as List<dynamic>?)
+        ?.map((e) => ItemDescendant.fromMap(e as Map<String, dynamic>))
+        .toList(growable: false),
+    collapsedIds: (json['collapsedIds'] as List<dynamic>)
+        .map((e) => e as int)
+        .toSet(),
+  );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'status': status.name,
-        'data': data?.map((e) => e.toMap()).toList(growable: false),
-        'previousData':
-            previousData?.map((e) => e.toMap()).toList(growable: false),
-        'collapsedIds': collapsedIds.toList(growable: false),
-      };
+    'status': status.name,
+    'data': data?.map((e) => e.toMap()).toList(growable: false),
+    'previousData': previousData?.map((e) => e.toMap()).toList(growable: false),
+    'collapsedIds': collapsedIds.toList(growable: false),
+  };
 
   @override
   final Status status;
@@ -53,23 +52,22 @@ class ItemTreeState with DataMixin<List<ItemDescendant>>, EquatableMixin {
     List<ItemDescendant>? Function()? previousData,
     Set<int> Function()? collapsedIds,
     Object? Function()? exception,
-  }) =>
-      ItemTreeState(
-        status: status != null ? status() : this.status,
-        data: data != null ? data() : this.data,
-        previousData: previousData != null ? previousData() : this.previousData,
-        collapsedIds: collapsedIds != null ? collapsedIds() : this.collapsedIds,
-        exception: exception != null ? exception() : this.exception,
-      );
+  }) => ItemTreeState(
+    status: status != null ? status() : this.status,
+    data: data != null ? data() : this.data,
+    previousData: previousData != null ? previousData() : this.previousData,
+    collapsedIds: collapsedIds != null ? collapsedIds() : this.collapsedIds,
+    exception: exception != null ? exception() : this.exception,
+  );
 
   @override
   List<Object?> get props => [
-        status,
-        data,
-        previousData,
-        collapsedIds,
-        exception,
-      ];
+    status,
+    data,
+    previousData,
+    collapsedIds,
+    exception,
+  ];
 }
 
 extension ItemTreeStateExtension on ItemTreeState {

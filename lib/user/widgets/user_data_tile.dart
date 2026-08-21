@@ -43,8 +43,9 @@ class UserDataTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap != null ? () => onTap!(context, user) : null,
-      onLongPress:
-          onLongPress != null ? () => onLongPress!(context, user) : null,
+      onLongPress: onLongPress != null
+          ? () => onLongPress!(context, user)
+          : null,
       child: Padding(
         padding: padding,
         child: Column(

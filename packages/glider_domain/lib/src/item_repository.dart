@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:compute/compute.dart';
+import 'package:flutter/foundation.dart';
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/entities/item.dart';
 import 'package:glider_domain/src/entities/item_descendant.dart';
@@ -9,10 +9,8 @@ import 'package:rxdart/streams.dart';
 import 'package:rxdart/subjects.dart';
 
 class ItemRepository {
-  ItemRepository(
-    this._algoliaApiService,
-    this._hackerNewsApiService,
-  ) : _itemStreamControllers = {};
+  ItemRepository(this._algoliaApiService, this._hackerNewsApiService)
+    : _itemStreamControllers = {};
 
   final AlgoliaApiService _algoliaApiService;
   final HackerNewsApiService _hackerNewsApiService;
@@ -146,38 +144,33 @@ class ItemRepository {
       await for (final item in _getItemTreeStream(id)) {
         if (item.partIds != null && item.partIds!.isNotEmpty ||
             item.childIds != null && item.childIds!.isNotEmpty) {
-          yield descendants = await compute(
-            (descendants) {
-              final index = descendants
-                  .indexWhere((descendant) => descendant.id == item.id);
-              final ancestorIds = [
-                if (index == -1)
-                  id
-                else ...[
-                  ...descendants[index].ancestorIds,
-                  descendants[index].id,
-                ],
-              ];
-              return [
-                ...descendants.take(index + 1),
-                if (item.partIds case final partIds?)
-                  for (final partId in partIds)
-                    ItemDescendant(
-                      id: partId,
-                      ancestorIds: ancestorIds,
-                      isPart: true,
-                    ),
-                if (item.childIds case final childIds?)
-                  for (final childId in childIds)
-                    ItemDescendant(
-                      id: childId,
-                      ancestorIds: ancestorIds,
-                    ),
-                ...descendants.skip(index + 1),
-              ];
-            },
-            descendants,
-          );
+          yield descendants = await compute((descendants) {
+            final index = descendants.indexWhere(
+              (descendant) => descendant.id == item.id,
+            );
+            final ancestorIds = [
+              if (index == -1)
+                id
+              else ...[
+                ...descendants[index].ancestorIds,
+                descendants[index].id,
+              ],
+            ];
+            return [
+              ...descendants.take(index + 1),
+              if (item.partIds case final partIds?)
+                for (final partId in partIds)
+                  ItemDescendant(
+                    id: partId,
+                    ancestorIds: ancestorIds,
+                    isPart: true,
+                  ),
+              if (item.childIds case final childIds?)
+                for (final childId in childIds)
+                  ItemDescendant(id: childId, ancestorIds: ancestorIds),
+              ...descendants.skip(index + 1),
+            ];
+          }, descendants);
         }
 
         if (item.isDeleted) {
@@ -197,11 +190,9 @@ class ItemRepository {
   Stream<Item> _getItemTreeStream(int id, {int depth = 0}) async* {
     final item = await getItem(id);
     yield item;
-    yield* MergeStream(
-      [
-        for (final childId in [...?item.partIds, ...?item.childIds])
-          _getItemTreeStream(childId, depth: depth + 1),
-      ],
-    );
+    yield* MergeStream([
+      for (final childId in [...?item.partIds, ...?item.childIds])
+        _getItemTreeStream(childId, depth: depth + 1),
+    ]);
   }
 }

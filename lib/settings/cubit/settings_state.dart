@@ -66,69 +66,70 @@ class SettingsState with EquatableMixin {
     Set<String> Function()? wordFilters,
     Set<String> Function()? domainFilters,
     Version? Function()? appVersion,
-  }) =>
-      SettingsState(
-        themeMode: themeMode != null ? themeMode() : this.themeMode,
-        useDynamicTheme:
-            useDynamicTheme != null ? useDynamicTheme() : this.useDynamicTheme,
-        themeColor: themeColor != null ? themeColor() : this.themeColor,
-        themeVariant: themeVariant != null ? themeVariant() : this.themeVariant,
-        usePureBackground: usePureBackground != null
-            ? usePureBackground()
-            : this.usePureBackground,
-        font: font != null ? font() : this.font,
-        storyLines: storyLines != null ? storyLines() : this.storyLines,
-        useLargeStoryStyle: useLargeStoryStyle != null
-            ? useLargeStoryStyle()
-            : this.useLargeStoryStyle,
-        showFavicons: showFavicons != null ? showFavicons() : this.showFavicons,
-        showStoryMetadata: showStoryMetadata != null
-            ? showStoryMetadata()
-            : this.showStoryMetadata,
-        showUserAvatars:
-            showUserAvatars != null ? showUserAvatars() : this.showUserAvatars,
-        useActionButtons: useActionButtons != null
-            ? useActionButtons()
-            : this.useActionButtons,
-        showJobs: showJobs != null ? showJobs() : this.showJobs,
-        useThreadNavigation: useThreadNavigation != null
-            ? useThreadNavigation()
-            : this.useThreadNavigation,
-        enableDownvoting: enableDownvoting != null
-            ? enableDownvoting()
-            : this.enableDownvoting,
-        useInAppBrowser:
-            useInAppBrowser != null ? useInAppBrowser() : this.useInAppBrowser,
-        useNavigationDrawer: useNavigationDrawer != null
-            ? useNavigationDrawer()
-            : this.useNavigationDrawer,
-        wordFilters: wordFilters != null ? wordFilters() : this.wordFilters,
-        domainFilters:
-            domainFilters != null ? domainFilters() : this.domainFilters,
-        appVersion: appVersion != null ? appVersion() : this.appVersion,
-      );
+  }) => SettingsState(
+    themeMode: themeMode != null ? themeMode() : this.themeMode,
+    useDynamicTheme: useDynamicTheme != null
+        ? useDynamicTheme()
+        : this.useDynamicTheme,
+    themeColor: themeColor != null ? themeColor() : this.themeColor,
+    themeVariant: themeVariant != null ? themeVariant() : this.themeVariant,
+    usePureBackground: usePureBackground != null
+        ? usePureBackground()
+        : this.usePureBackground,
+    font: font != null ? font() : this.font,
+    storyLines: storyLines != null ? storyLines() : this.storyLines,
+    useLargeStoryStyle: useLargeStoryStyle != null
+        ? useLargeStoryStyle()
+        : this.useLargeStoryStyle,
+    showFavicons: showFavicons != null ? showFavicons() : this.showFavicons,
+    showStoryMetadata: showStoryMetadata != null
+        ? showStoryMetadata()
+        : this.showStoryMetadata,
+    showUserAvatars: showUserAvatars != null
+        ? showUserAvatars()
+        : this.showUserAvatars,
+    useActionButtons: useActionButtons != null
+        ? useActionButtons()
+        : this.useActionButtons,
+    showJobs: showJobs != null ? showJobs() : this.showJobs,
+    useThreadNavigation: useThreadNavigation != null
+        ? useThreadNavigation()
+        : this.useThreadNavigation,
+    enableDownvoting: enableDownvoting != null
+        ? enableDownvoting()
+        : this.enableDownvoting,
+    useInAppBrowser: useInAppBrowser != null
+        ? useInAppBrowser()
+        : this.useInAppBrowser,
+    useNavigationDrawer: useNavigationDrawer != null
+        ? useNavigationDrawer()
+        : this.useNavigationDrawer,
+    wordFilters: wordFilters != null ? wordFilters() : this.wordFilters,
+    domainFilters: domainFilters != null ? domainFilters() : this.domainFilters,
+    appVersion: appVersion != null ? appVersion() : this.appVersion,
+  );
 
   @override
   List<Object?> get props => [
-        themeMode,
-        useDynamicTheme,
-        themeColor,
-        themeVariant,
-        usePureBackground,
-        font,
-        storyLines,
-        useLargeStoryStyle,
-        showFavicons,
-        showStoryMetadata,
-        showUserAvatars,
-        useActionButtons,
-        showJobs,
-        useThreadNavigation,
-        enableDownvoting,
-        useInAppBrowser,
-        useNavigationDrawer,
-        wordFilters,
-        domainFilters,
-        appVersion,
-      ];
+    themeMode,
+    useDynamicTheme,
+    themeColor,
+    themeVariant,
+    usePureBackground,
+    font,
+    storyLines,
+    useLargeStoryStyle,
+    showFavicons,
+    showStoryMetadata,
+    showUserAvatars,
+    useActionButtons,
+    showJobs,
+    useThreadNavigation,
+    enableDownvoting,
+    useInAppBrowser,
+    useNavigationDrawer,
+    wordFilters,
+    domainFilters,
+    appVersion,
+  ];
 }

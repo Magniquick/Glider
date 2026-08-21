@@ -1,12 +1,10 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_displaymode/flutter_displaymode.dart';
 import 'package:glider/app/bootstrap/app_bloc_observer.dart';
 import 'package:glider/app/container/app_container.dart';
 import 'package:glider/app/router/app_router.dart';
@@ -16,29 +14,27 @@ import 'package:path_provider/path_provider.dart';
 Future<void> bootstrap(
   FutureOr<Widget> Function(AppContainer, AppRouter, BaseDeviceInfo) builder,
 ) async {
-  await runZonedGuarded(
-    () async {
-      FlutterError.onError = (details) =>
-          log(details.exceptionAsString(), stackTrace: details.stack);
+  await runZonedGuarded(() async {
+    FlutterError.onError = (details) =>
+        log(details.exceptionAsString(), stackTrace: details.stack);
 
-      WidgetsFlutterBinding.ensureInitialized();
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-      if (Platform.isAndroid) await FlutterDisplayMode.setHighRefreshRate();
+    WidgetsFlutterBinding.ensureInitialized();
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 
-      Bloc.observer = const AppBlocObserver();
-      HydratedBloc.storage = await HydratedStorage.build(
-        storageDirectory: kIsWeb
-            ? HydratedStorage.webStorageDirectory
-            : await getApplicationCacheDirectory(),
-      );
-      final deviceInfo = await DeviceInfoPlugin().deviceInfo;
+    Bloc.observer = const AppBlocObserver();
+    HydratedBloc.storage = await HydratedStorage.build(
+      storageDirectory: kIsWeb
+          ? HydratedStorageDirectory.web
+          : HydratedStorageDirectory(
+              (await getApplicationCacheDirectory()).path,
+            ),
+    );
+    final deviceInfo = await DeviceInfoPlugin().deviceInfo;
 
-      final appContainer = await AppContainer.create();
-      unawaited(appContainer.authCubit.init());
-      final appRouter = AppRouter.create(appContainer);
+    final appContainer = await AppContainer.create();
+    unawaited(appContainer.authCubit.init());
+    final appRouter = AppRouter.create(appContainer);
 
-      runApp(await builder(appContainer, appRouter, deviceInfo));
-    },
-    (error, stackTrace) => log(error.toString(), stackTrace: stackTrace),
-  );
+    runApp(await builder(appContainer, appRouter, deviceInfo));
+  }, (error, stackTrace) => log(error.toString(), stackTrace: stackTrace));
 }

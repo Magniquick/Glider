@@ -14,23 +14,19 @@ part 'user_item_search_state.dart';
 class UserItemSearchBloc
     extends Bloc<UserItemSearchEvent, UserItemSearchState> {
   UserItemSearchBloc(this._itemRepository, {required this.username})
-      : super(const UserItemSearchState()) {
+    : super(const UserItemSearchState()) {
     on<LoadUserItemSearchEvent>(
       (event, emit) async => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextUserItemSearchEvent>(
-      (event, emit) async => _setText(event),
-    );
+    on<SetTextUserItemSearchEvent>((event, emit) async => _setText(event));
   }
 
   final ItemRepository _itemRepository;
   final String username;
 
   Future<void> _load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
       final items = await _itemRepository.searchUserItems(
@@ -55,9 +51,7 @@ class UserItemSearchBloc
   }
 
   Future<void> _setText(SetTextUserItemSearchEvent event) async {
-    safeEmit(
-      state.copyWith(searchText: () => event.text),
-    );
+    safeEmit(state.copyWith(searchText: () => event.text));
     add(const LoadUserItemSearchEvent());
   }
 }

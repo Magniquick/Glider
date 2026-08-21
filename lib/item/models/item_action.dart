@@ -24,7 +24,7 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
   copy(options: ItemValue.values),
   share(options: ItemValue.values);
 
-  const ItemAction({this.options});
+  ItemAction({this.options});
 
   final List<T>? options;
 
@@ -38,32 +38,36 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
     if (item == null) return false;
     return switch (this) {
       ItemAction.visit => true,
-      ItemAction.upvote => !item.isDeleted &&
-          item.type != ItemType.job &&
-          authState.isLoggedIn &&
-          item.username != authState.username,
-      ItemAction.downvote => !item.isDeleted &&
-          item.type != ItemType.job &&
-          authState.isLoggedIn &&
-          item.username != authState.username &&
-          settingsState.enableDownvoting,
+      ItemAction.upvote =>
+        !item.isDeleted &&
+            item.type != ItemType.job &&
+            authState.isLoggedIn &&
+            item.username != authState.username,
+      ItemAction.downvote =>
+        !item.isDeleted &&
+            item.type != ItemType.job &&
+            authState.isLoggedIn &&
+            item.username != authState.username &&
+            settingsState.enableDownvoting,
       ItemAction.favorite => !item.isDeleted && item.type != ItemType.job,
       ItemAction.flag =>
         !item.isDeleted && item.type != ItemType.job && authState.isLoggedIn,
-      ItemAction.edit => !item.isDeleted &&
-          item.isMaxTwoHoursAge &&
-          // Restricted because of uncertainty on how editing a job, poll or
-          // pollopt even works.
-          (item.type == ItemType.story || item.type == ItemType.comment) &&
-          authState.isLoggedIn &&
-          item.username == authState.username,
-      ItemAction.delete => !item.isDeleted &&
-          item.isMaxTwoHoursAge &&
-          item.childIds != null &&
-          item.childIds!.isEmpty &&
-          item.type != ItemType.job &&
-          authState.isLoggedIn &&
-          item.username == authState.username,
+      ItemAction.edit =>
+        !item.isDeleted &&
+            item.isMaxTwoHoursAge &&
+            // Restricted because of uncertainty on how editing a job, poll or
+            // pollopt even works.
+            (item.type == ItemType.story || item.type == ItemType.comment) &&
+            authState.isLoggedIn &&
+            item.username == authState.username,
+      ItemAction.delete =>
+        !item.isDeleted &&
+            item.isMaxTwoHoursAge &&
+            item.childIds != null &&
+            item.childIds!.isEmpty &&
+            item.type != ItemType.job &&
+            authState.isLoggedIn &&
+            item.username == authState.username,
       ItemAction.reply =>
         !item.isDeleted && item.type != ItemType.job && authState.isLoggedIn,
       ItemAction.select => item.text != null,
@@ -98,16 +102,19 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
     return switch (this) {
       ItemAction.upvote =>
         state.vote.upvoted ? Icons.undo_outlined : Icons.arrow_upward_outlined,
-      ItemAction.downvote => state.vote.downvoted
-          ? Icons.undo_outlined
-          : Icons.arrow_downward_outlined,
-      ItemAction.favorite => state.favorited
-          ? Icons.heart_broken_outlined
-          : Icons.favorite_outline_outlined,
+      ItemAction.downvote =>
+        state.vote.downvoted
+            ? Icons.undo_outlined
+            : Icons.arrow_downward_outlined,
+      ItemAction.favorite =>
+        state.favorited
+            ? Icons.heart_broken_outlined
+            : Icons.favorite_outline_outlined,
       ItemAction.flag => state.flagged ? Icons.flag : Icons.flag_outlined,
-      ItemAction.visit => state.visited
-          ? Icons.visibility_off_outlined
-          : Icons.visibility_outlined,
+      ItemAction.visit =>
+        state.visited
+            ? Icons.visibility_off_outlined
+            : Icons.visibility_outlined,
       ItemAction.edit => Icons.edit_outlined,
       ItemAction.delete => Icons.delete_outline_outlined,
       ItemAction.reply => Icons.reply_outlined,
@@ -135,31 +142,30 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
         await itemCubit.favorite(!itemCubit.state.favorited);
       case ItemAction.flag:
         if (!itemCubit.state.flagged) {
-          final confirm =
-              await context.push<bool>(AppRoute.confirmDialog.location());
+          final confirm = await context.push<bool>(
+            AppRoute.confirmDialog.location(),
+          );
           if (confirm ?? false) await itemCubit.flag(true);
         } else {
           await itemCubit.flag(false);
         }
       case ItemAction.edit:
-        await context.push(
-          AppRoute.edit.location(parameters: {'id': id}),
-        );
+        await context.push(AppRoute.edit.location(parameters: {'id': id}));
       case ItemAction.delete:
-        final confirm =
-            await context.push<bool>(AppRoute.confirmDialog.location());
+        final confirm = await context.push<bool>(
+          AppRoute.confirmDialog.location(),
+        );
         if (confirm ?? false) await itemCubit.delete();
       case ItemAction.reply:
-        await context.push(
-          AppRoute.reply.location(parameters: {'id': id}),
-        );
+        await context.push(AppRoute.reply.location(parameters: {'id': id}));
       case ItemAction.select:
         await context.push(
           AppRoute.textSelectDialog.location(),
           extra: itemCubit.state.data!.text,
         );
       case ItemAction.copy:
-        final valueAction = option as ItemValue? ??
+        final valueAction =
+            option as ItemValue? ??
             await context.push(
               AppRoute.itemValueDialog.location(parameters: {'id': id}),
               extra: context.l10n.copy,
@@ -169,7 +175,8 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
           await itemCubit.copy(valueAction.value(itemCubit)!);
         }
       case ItemAction.share:
-        final valueAction = option as ItemValue? ??
+        final valueAction =
+            option as ItemValue? ??
             await context.push(
               AppRoute.itemValueDialog.location(parameters: {'id': id}),
               extra: context.l10n.share,

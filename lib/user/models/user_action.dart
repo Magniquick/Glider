@@ -15,7 +15,7 @@ enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
   share(options: UserValue.values),
   logout;
 
-  const UserAction({this.options});
+  UserAction({this.options});
 
   final List<T>? options;
 
@@ -48,9 +48,7 @@ enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
   }
 
   @override
-  IconData icon(
-    UserState state,
-  ) {
+  IconData icon(UserState state) {
     return switch (this) {
       UserAction.block =>
         state.blocked ? Icons.healing_outlined : Icons.block_outlined,
@@ -70,8 +68,9 @@ enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
     switch (this) {
       case UserAction.block:
         if (!userCubit.state.blocked) {
-          final confirm =
-              await context.push<bool>(AppRoute.confirmDialog.location());
+          final confirm = await context.push<bool>(
+            AppRoute.confirmDialog.location(),
+          );
           if (confirm ?? false) await userCubit.block(true);
         } else {
           await userCubit.block(false);
@@ -82,10 +81,12 @@ enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
           extra: userCubit.state.data!.about,
         );
       case UserAction.copy:
-        final valueAction = option as UserValue? ??
+        final valueAction =
+            option as UserValue? ??
             await context.push(
-              AppRoute.userValueDialog
-                  .location(parameters: {'id': userCubit.username}),
+              AppRoute.userValueDialog.location(
+                parameters: {'id': userCubit.username},
+              ),
               extra: context.l10n.copy,
             );
 
@@ -93,10 +94,12 @@ enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
           await userCubit.copy(valueAction.value(userCubit)!);
         }
       case UserAction.share:
-        final valueAction = option as UserValue? ??
+        final valueAction =
+            option as UserValue? ??
             await context.push(
-              AppRoute.userValueDialog
-                  .location(parameters: {'id': userCubit.username}),
+              AppRoute.userValueDialog.location(
+                parameters: {'id': userCubit.username},
+              ),
               extra: context.l10n.share,
             );
 

@@ -45,12 +45,14 @@ class StoriesSearchRangeView extends StatelessWidget {
           padding: EdgeInsetsDirectional.only(
             top: AppSpacing.s,
             bottom: AppSpacing.s,
-            start: AppSpacing.xl +
+            start:
+                AppSpacing.xl +
                 switch (directionality) {
                   TextDirection.ltr => padding.left,
                   TextDirection.rtl => padding.right,
                 },
-            end: AppSpacing.xl +
+            end:
+                AppSpacing.xl +
                 switch (directionality) {
                   TextDirection.ltr => padding.right,
                   TextDirection.rtl => padding.left,
@@ -61,10 +63,7 @@ class StoriesSearchRangeView extends StatelessWidget {
               for (final searchRange in SearchRange.values)
                 ChoiceChip(
                   label: Text(
-                    searchRange.label(
-                      context,
-                      dateRange: state.dateRange,
-                    ),
+                    searchRange.label(context, dateRange: state.dateRange),
                   ),
                   selected: state.searchRange == searchRange,
                   onSelected: (selected) => _storiesSearchBloc.add(

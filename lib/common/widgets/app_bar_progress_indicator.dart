@@ -6,8 +6,11 @@ import 'package:glider/common/models/status.dart';
 
 const _height = 2.0;
 
-class AppBarProgressIndicator<B extends BlocBase<S>,
-    S extends DataMixin<dynamic>> extends StatelessWidget {
+class AppBarProgressIndicator<
+  B extends BlocBase<S>,
+  S extends DataMixin<dynamic>
+>
+    extends StatelessWidget {
   const AppBarProgressIndicator(this._bloc, {super.key});
 
   final B _bloc;

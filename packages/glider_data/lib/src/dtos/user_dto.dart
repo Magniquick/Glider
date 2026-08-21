@@ -8,14 +8,14 @@ class UserDto {
   });
 
   factory UserDto.fromMap(Map<String, dynamic> json) => UserDto(
-        id: json['id'] as String,
-        created: json['created'] as int,
-        karma: json['karma'] as int,
-        about: json['about'] as String?,
-        submitted: (json['submitted'] as List<dynamic>?)
-            ?.map((e) => e as int)
-            .toList(growable: false),
-      );
+    id: json['id'] as String,
+    created: json['created'] as int,
+    karma: json['karma'] as int,
+    about: json['about'] as String?,
+    submitted: (json['submitted'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(growable: false),
+  );
 
   final String id;
   final int created;

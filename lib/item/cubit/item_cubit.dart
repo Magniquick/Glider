@@ -22,12 +22,10 @@ class ItemCubit extends HydratedCubit<ItemState>
     this._itemInteractionRepository,
     this._userInteractionRepository, {
     required int id,
-  })  : itemId = id,
-        _blockedSubscription = null,
-        super(const ItemState()) {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+  }) : itemId = id,
+       _blockedSubscription = null,
+       super(const ItemState()) {
+    safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
       (item) async {
         if (item.username != state.data?.username ||
@@ -35,12 +33,12 @@ class ItemCubit extends HydratedCubit<ItemState>
           unawaited(_blockedSubscription?.cancel());
 
           if (item.username case final username?) {
-            _blockedSubscription =
-                _userInteractionRepository.blockedStream.listen(
-              (blocked) => safeEmit(
-                state.copyWith(blocked: () => blocked.contains(username)),
-              ),
-            );
+            _blockedSubscription = _userInteractionRepository.blockedStream
+                .listen(
+                  (blocked) => safeEmit(
+                    state.copyWith(blocked: () => blocked.contains(username)),
+                  ),
+                );
           }
         }
 
@@ -56,7 +54,6 @@ class ItemCubit extends HydratedCubit<ItemState>
           ),
         );
       },
-      // ignore: avoid_types_on_closure_parameters
       onError: (Object exception) => safeEmit(
         state.copyWith(
           status: () => Status.failure,
@@ -65,9 +62,8 @@ class ItemCubit extends HydratedCubit<ItemState>
       ),
     );
     _visitedSubscription = _itemInteractionRepository.visitedStream.listen(
-      (visited) => safeEmit(
-        state.copyWith(visited: () => visited.contains(itemId)),
-      ),
+      (visited) =>
+          safeEmit(state.copyWith(visited: () => visited.contains(itemId))),
     );
     _upvotedSubscription = _itemInteractionRepository.upvotedStream.listen(
       (upvoted) => safeEmit(
@@ -75,8 +71,8 @@ class ItemCubit extends HydratedCubit<ItemState>
           vote: () => upvoted.contains(itemId)
               ? VoteType.upvote
               : state.vote.upvoted
-                  ? null
-                  : state.vote,
+              ? null
+              : state.vote,
         ),
       ),
     );
@@ -86,20 +82,18 @@ class ItemCubit extends HydratedCubit<ItemState>
           vote: () => downvoted.contains(itemId)
               ? VoteType.downvote
               : state.vote.downvoted
-                  ? null
-                  : state.vote,
+              ? null
+              : state.vote,
         ),
       ),
     );
     _favoritedSubscription = _itemInteractionRepository.favoritedStream.listen(
-      (favorited) => safeEmit(
-        state.copyWith(favorited: () => favorited.contains(itemId)),
-      ),
+      (favorited) =>
+          safeEmit(state.copyWith(favorited: () => favorited.contains(itemId))),
     );
     _flaggedSubscription = _itemInteractionRepository.flaggedStream.listen(
-      (flagged) => safeEmit(
-        state.copyWith(flagged: () => flagged.contains(itemId)),
-      ),
+      (flagged) =>
+          safeEmit(state.copyWith(flagged: () => flagged.contains(itemId))),
     );
   }
 
@@ -120,39 +114,33 @@ class ItemCubit extends HydratedCubit<ItemState>
   String get id => itemId.toString();
 
   Future<void> load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
     await _itemRepository.getItem(itemId);
   }
 
   Future<void> visit(bool visit) async {
     final visited = state.visited;
-    safeEmit(
-      state.copyWith(visited: () => visit),
+    safeEmit(state.copyWith(visited: () => visit));
+    final success = await _itemInteractionRepository.visit(
+      itemId,
+      visit: visit,
     );
-    final success =
-        await _itemInteractionRepository.visit(itemId, visit: visit);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(visited: () => visited),
-      );
+      safeEmit(state.copyWith(visited: () => visited));
     }
   }
 
   Future<void> upvote(bool upvote) async {
     final vote = state.vote;
-    safeEmit(
-      state.copyWith(vote: () => VoteType.upvote),
+    safeEmit(state.copyWith(vote: () => VoteType.upvote));
+    final success = await _itemInteractionRepository.upvote(
+      itemId,
+      upvote: upvote,
     );
-    final success =
-        await _itemInteractionRepository.upvote(itemId, upvote: upvote);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(vote: () => vote),
-      );
+      safeEmit(state.copyWith(vote: () => vote));
       emitPresentation(const ItemActionFailedEvent());
     } else {
       await load();
@@ -161,16 +149,14 @@ class ItemCubit extends HydratedCubit<ItemState>
 
   Future<void> downvote(bool downvote) async {
     final vote = state.vote;
-    safeEmit(
-      state.copyWith(vote: () => VoteType.downvote),
+    safeEmit(state.copyWith(vote: () => VoteType.downvote));
+    final success = await _itemInteractionRepository.downvote(
+      itemId,
+      downvote: downvote,
     );
-    final success =
-        await _itemInteractionRepository.downvote(itemId, downvote: downvote);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(vote: () => vote),
-      );
+      safeEmit(state.copyWith(vote: () => vote));
       emitPresentation(const ItemActionFailedEvent());
     } else {
       await load();
@@ -179,31 +165,25 @@ class ItemCubit extends HydratedCubit<ItemState>
 
   Future<void> favorite(bool favorite) async {
     final favorited = state.favorited;
-    safeEmit(
-      state.copyWith(favorited: () => favorite),
+    safeEmit(state.copyWith(favorited: () => favorite));
+    final success = await _itemInteractionRepository.favorite(
+      itemId,
+      favorite: favorite,
     );
-    final success =
-        await _itemInteractionRepository.favorite(itemId, favorite: favorite);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(favorited: () => favorited),
-      );
+      safeEmit(state.copyWith(favorited: () => favorited));
       emitPresentation(const ItemActionFailedEvent());
     }
   }
 
   Future<void> flag(bool flag) async {
     final flagged = state.flagged;
-    safeEmit(
-      state.copyWith(flagged: () => flag),
-    );
+    safeEmit(state.copyWith(flagged: () => flag));
     final success = await _itemInteractionRepository.flag(itemId, flag: flag);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(flagged: () => flagged),
-      );
+      safeEmit(state.copyWith(flagged: () => flagged));
       emitPresentation(const ItemActionFailedEvent());
     } else {
       await load();
@@ -213,9 +193,7 @@ class ItemCubit extends HydratedCubit<ItemState>
   Future<void> delete() async {
     final isDeleted = state.data?.isDeleted ?? false;
     safeEmit(
-      state.copyWith(
-        data: () => state.data?.copyWith(isDeleted: () => true),
-      ),
+      state.copyWith(data: () => state.data?.copyWith(isDeleted: () => true)),
     );
     final success = await _itemInteractionRepository.delete(itemId);
 

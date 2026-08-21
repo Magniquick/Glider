@@ -6,10 +6,7 @@ import 'package:glider/common/widgets/metadata_widget.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
 class PreviewCard extends StatelessWidget {
-  const PreviewCard({
-    super.key,
-    required this.child,
-  });
+  const PreviewCard({super.key, required this.child});
 
   final Widget child;
 

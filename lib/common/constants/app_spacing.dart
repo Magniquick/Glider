@@ -20,9 +20,11 @@ abstract final class AppSpacing {
 
   static const defaultShadowPadding = EdgeInsets.all(2);
 
-  static const floatingActionButtonPageBottomPadding =
-      EdgeInsets.only(bottom: 88);
+  static const floatingActionButtonPageBottomPadding = EdgeInsets.only(
+    bottom: 88,
+  );
 
-  static const twoSmallFloatingActionButtonsPageBottomPadding =
-      EdgeInsets.only(bottom: 136);
+  static const twoSmallFloatingActionButtonsPageBottomPadding = EdgeInsets.only(
+    bottom: 136,
+  );
 }

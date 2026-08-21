@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/entities/theme_mode.dart';
-import 'package:material_color_utilities/scheme/variant.dart';
+import 'package:material_color_utilities/dynamiccolor/variant.dart';
 
 class SettingsRepository {
   const SettingsRepository(this._sharedPreferencesService);
@@ -29,7 +29,7 @@ class SettingsRepository {
   }
 
   Future<bool> setThemeColor({required Color value}) async =>
-      _sharedPreferencesService.setThemeColor(value: value.value);
+      _sharedPreferencesService.setThemeColor(value: value.toARGB32());
 
   Future<Variant?> getThemeVariant() async {
     final value = await _sharedPreferencesService.getThemeVariant();

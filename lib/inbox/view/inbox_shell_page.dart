@@ -97,24 +97,25 @@ class _SliverInboxAppBar extends StatelessWidget {
           bloc: _authCubit,
           builder: (context, authState) =>
               BlocBuilder<SettingsCubit, SettingsState>(
-            bloc: _settingsCubit,
-            builder: (context, settingsState) => MenuAnchor(
-              menuChildren: [
-                for (final action in NavigationShellAction.values)
-                  if (action.isVisible(null, authState, settingsState))
-                    MenuItemButton(
-                      onPressed: () async => action.execute(context),
-                      child: Text(action.label(context, null)),
-                    ),
-              ],
-              builder: (context, controller, child) => IconButton(
-                icon: Icon(Icons.adaptive.more_outlined),
-                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                onPressed: () =>
-                    controller.isOpen ? controller.close() : controller.open(),
+                bloc: _settingsCubit,
+                builder: (context, settingsState) => MenuAnchor(
+                  menuChildren: [
+                    for (final action in NavigationShellAction.values)
+                      if (action.isVisible(null, authState, settingsState))
+                        MenuItemButton(
+                          onPressed: () async => action.execute(context),
+                          child: Text(action.label(context, null)),
+                        ),
+                  ],
+                  builder: (context, controller, child) => IconButton(
+                    icon: Icon(Icons.adaptive.more_outlined),
+                    tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                    onPressed: () => controller.isOpen
+                        ? controller.close()
+                        : controller.open(),
+                  ),
+                ),
               ),
-            ),
-          ),
         ),
       ],
       floating: true,

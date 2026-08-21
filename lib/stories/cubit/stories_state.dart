@@ -11,18 +11,18 @@ class StoriesState
   });
 
   factory StoriesState.fromMap(Map<String, dynamic> json) => StoriesState(
-        status: Status.values.byName(json['status'] as String),
-        data: (json['data'] as List<dynamic>?)
-            ?.map((e) => e as int)
-            .toList(growable: false),
-        storyType: StoryType.values.byName(json['storyType'] as String),
-      );
+    status: Status.values.byName(json['status'] as String),
+    data: (json['data'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(growable: false),
+    storyType: StoryType.values.byName(json['storyType'] as String),
+  );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'status': status.name,
-        'data': data,
-        'storyType': storyType.name,
-      };
+    'status': status.name,
+    'data': data,
+    'storyType': storyType.name,
+  };
 
   @override
   final Status status;
@@ -38,8 +38,9 @@ class StoriesState
   late List<int>? loadedData = super.loadedData?.toList(growable: false);
 
   @override
-  late List<int>? currentPageData =
-      super.currentPageData?.toList(growable: false);
+  late List<int>? currentPageData = super.currentPageData?.toList(
+    growable: false,
+  );
 
   StoriesState copyWith({
     Status Function()? status,
@@ -47,21 +48,14 @@ class StoriesState
     int Function()? page,
     StoryType Function()? storyType,
     Object? Function()? exception,
-  }) =>
-      StoriesState(
-        status: status != null ? status() : this.status,
-        data: data != null ? data() : this.data,
-        page: page != null ? page() : this.page,
-        storyType: storyType != null ? storyType() : this.storyType,
-        exception: exception != null ? exception() : this.exception,
-      );
+  }) => StoriesState(
+    status: status != null ? status() : this.status,
+    data: data != null ? data() : this.data,
+    page: page != null ? page() : this.page,
+    storyType: storyType != null ? storyType() : this.storyType,
+    exception: exception != null ? exception() : this.exception,
+  );
 
   @override
-  List<Object?> get props => [
-        status,
-        data,
-        page,
-        storyType,
-        exception,
-      ];
+  List<Object?> get props => [status, data, page, storyType, exception];
 }

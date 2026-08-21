@@ -2,11 +2,11 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:glider/app/extensions/theme_mode_extension.dart';
 import 'package:glider/app/extensions/variant_extension.dart';
 import 'package:glider/common/constants/app_spacing.dart';
+import 'package:glider/l10n/app_localizations.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:relative_time/relative_time.dart';
@@ -28,31 +28,41 @@ class App extends StatelessWidget {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) =>
           BlocBuilder<SettingsCubit, SettingsState>(
-        bloc: _settingsCubit,
-        buildWhen: (previous, current) =>
-            previous.themeMode != current.themeMode ||
-            previous.useDynamicTheme != current.useDynamicTheme ||
-            previous.themeColor != current.themeColor ||
-            previous.themeVariant != current.themeVariant ||
-            previous.usePureBackground != current.usePureBackground ||
-            previous.font != current.font,
-        builder: (context, state) => MaterialApp.router(
-          routerConfig: _routerConfig,
-          theme: _buildTheme(context, state, lightDynamic, Brightness.light),
-          darkTheme: _buildTheme(context, state, darkDynamic, Brightness.dark),
-          themeMode: state.themeMode.toMaterialThemeMode(),
-          localizationsDelegates: const [
-            AppLocalizations.delegate,
-            RelativeTimeLocalizations.delegate,
-            GlobalMaterialLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-          ],
-          supportedLocales: AppLocalizations.supportedLocales,
-          debugShowCheckedModeBanner: false,
-          scrollBehavior: _AppScrollBehavior(_deviceInfo),
-        ),
-      ),
+            bloc: _settingsCubit,
+            buildWhen: (previous, current) =>
+                previous.themeMode != current.themeMode ||
+                previous.useDynamicTheme != current.useDynamicTheme ||
+                previous.themeColor != current.themeColor ||
+                previous.themeVariant != current.themeVariant ||
+                previous.usePureBackground != current.usePureBackground ||
+                previous.font != current.font,
+            builder: (context, state) => MaterialApp.router(
+              routerConfig: _routerConfig,
+              theme: _buildTheme(
+                context,
+                state,
+                lightDynamic,
+                Brightness.light,
+              ),
+              darkTheme: _buildTheme(
+                context,
+                state,
+                darkDynamic,
+                Brightness.dark,
+              ),
+              themeMode: state.themeMode.toMaterialThemeMode(),
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                RelativeTimeLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+              ],
+              supportedLocales: AppLocalizations.supportedLocales,
+              debugShowCheckedModeBanner: false,
+              scrollBehavior: _AppScrollBehavior(_deviceInfo),
+            ),
+          ),
     );
   }
 
@@ -62,25 +72,26 @@ class App extends StatelessWidget {
     ColorScheme? dynamicColorScheme,
     Brightness brightness,
   ) {
-    final colorScheme = switch (state) {
-      SettingsState(useDynamicTheme: true) when dynamicColorScheme != null =>
-        dynamicColorScheme,
-      SettingsState(useDynamicTheme: true) => ColorScheme.fromSeed(
-          seedColor: state.themeColor,
-          brightness: brightness,
-        ),
-      final state => state.themeVariant.toColorScheme(
-          state.themeColor,
-          brightness,
-        ),
-    }
-        .copyWith(
-      surface: state.usePureBackground
-          ? brightness == Brightness.dark
-              ? Colors.black
-              : Colors.white
-          : null,
-    );
+    final colorScheme =
+        switch (state) {
+          SettingsState(useDynamicTheme: true)
+              when dynamicColorScheme != null =>
+            dynamicColorScheme,
+          SettingsState(useDynamicTheme: true) => ColorScheme.fromSeed(
+            seedColor: state.themeColor,
+            brightness: brightness,
+          ),
+          final state => state.themeVariant.toColorScheme(
+            state.themeColor,
+            brightness,
+          ),
+        }.copyWith(
+          surface: state.usePureBackground
+              ? brightness == Brightness.dark
+                    ? Colors.black
+                    : Colors.white
+              : null,
+        );
     return ThemeData(
       visualDensity: VisualDensity.comfortable,
       brightness: brightness,
@@ -88,7 +99,7 @@ class App extends StatelessWidget {
       scaffoldBackgroundColor: colorScheme.surface,
       textTheme: GoogleFonts.getTextTheme(state.font, const TextTheme()),
       appBarTheme: AppBarTheme(
-        color: colorScheme.surface,
+        backgroundColor: colorScheme.surface,
         centerTitle: false,
       ),
       badgeTheme: BadgeThemeData(
@@ -101,20 +112,14 @@ class App extends StatelessWidget {
         // Material 3 dictates a maximum width for bottom sheets.
         constraints: BoxConstraints(maxWidth: 640),
       ),
-      cardTheme: const CardTheme(
-        margin: EdgeInsets.zero,
-      ),
+      cardTheme: const CardThemeData(margin: EdgeInsets.zero),
       chipTheme: ChipThemeData(
-        iconTheme: IconThemeData(
-          color: colorScheme.onSurface,
-        ),
+        iconTheme: IconThemeData(color: colorScheme.onSurface),
       ),
       inputDecorationTheme: const InputDecorationTheme(filled: true),
       menuButtonTheme: const MenuButtonThemeData(
         style: ButtonStyle(
-          padding: WidgetStatePropertyAll(
-            AppSpacing.defaultTilePadding,
-          ),
+          padding: WidgetStatePropertyAll(AppSpacing.defaultTilePadding),
         ),
       ),
       menuTheme: const MenuThemeData(
@@ -157,10 +162,7 @@ class _AppScrollBehavior extends MaterialScrollBehavior {
   ) {
     return switch (axisDirectionToAxis(details.direction)) {
       Axis.horizontal => child,
-      Axis.vertical => Scrollbar(
-          controller: details.controller,
-          child: child,
-        ),
+      Axis.vertical => Scrollbar(controller: details.controller, child: child),
     };
   }
 
@@ -174,8 +176,7 @@ class _AppScrollBehavior extends MaterialScrollBehavior {
       TargetPlatform.iOS ||
       TargetPlatform.linux ||
       TargetPlatform.macOS ||
-      TargetPlatform.windows =>
-        child,
+      TargetPlatform.windows => child,
       TargetPlatform.android
           when _deviceInfo is AndroidDeviceInfo &&
               _deviceInfo.version.sdkInt >= 31 =>
@@ -185,10 +186,10 @@ class _AppScrollBehavior extends MaterialScrollBehavior {
           child: child,
         ),
       _ => GlowingOverscrollIndicator(
-          axisDirection: details.direction,
-          color: Theme.of(context).colorScheme.secondary,
-          child: child,
-        ),
+        axisDirection: details.direction,
+        color: Theme.of(context).colorScheme.secondary,
+        child: child,
+      ),
     };
   }
 }

@@ -147,10 +147,12 @@ class _ItemPageState extends State<ItemPage> {
                   floatingActionButtonTheme: Theme.of(context)
                       .floatingActionButtonTheme
                       .copyWith(
-                        foregroundColor:
-                            Theme.of(context).colorScheme.onSecondaryContainer,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
+                        foregroundColor: Theme.of(context)
+                            .colorScheme
+                            .onSecondaryContainer,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .secondaryContainer,
                       ),
                 ),
                 child: Column(
@@ -239,8 +241,9 @@ class _SliverItemAppBarState extends State<_SliverItemAppBar> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance
-        .addPostFrameCallback((timeStamp) => _updateBodyRenderSliver());
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) => _updateBodyRenderSliver(),
+    );
     widget.scrollController?.addListener(_scrollListener);
     _hasOverlapNotifier = ValueNotifier(false);
   }
@@ -250,8 +253,9 @@ class _SliverItemAppBarState extends State<_SliverItemAppBar> {
     super.didUpdateWidget(oldWidget);
 
     if (widget.bodyKey != oldWidget.bodyKey) {
-      WidgetsBinding.instance
-          .addPostFrameCallback((timeStamp) => _updateBodyRenderSliver());
+      WidgetsBinding.instance.addPostFrameCallback(
+        (timeStamp) => _updateBodyRenderSliver(),
+      );
     }
 
     if (widget.scrollController != oldWidget.scrollController) {
@@ -272,7 +276,8 @@ class _SliverItemAppBarState extends State<_SliverItemAppBar> {
       // Checking the body overlap seems like it should be enough, but the
       // scroll listener has limited granularity. At the point that the scroll
       // controller offset reaches 0, the body overlap may not be fully updated.
-      _hasOverlapNotifier.value = bodyRenderSliver!.constraints.overlap > 0 &&
+      _hasOverlapNotifier.value =
+          bodyRenderSliver!.constraints.overlap > 0 &&
           widget.scrollController!.offset > 0;
     }
   }
@@ -335,10 +340,10 @@ class _SliverItemAppBarState extends State<_SliverItemAppBar> {
                     style: hasOverlap ? ItemStyle.overview : ItemStyle.primary,
                     onTap: (context, item) async =>
                         widget.scrollController?.animateTo(
-                      0,
-                      duration: AppAnimation.emphasized.duration,
-                      curve: AppAnimation.emphasized.easing,
-                    ),
+                          0,
+                          duration: AppAnimation.emphasized.duration,
+                          curve: AppAnimation.emphasized.easing,
+                        ),
                   ),
                 ),
               ),
@@ -392,8 +397,9 @@ class _ItemSearchAnchorState extends State<_ItemSearchAnchor> {
     _searchController = SearchController()
       ..text = widget._storyItemSearchBloc.state.searchText ?? ''
       ..addListener(
-        () async => widget._storyItemSearchBloc
-            .add(SetTextStoryItemSearchEvent(_searchController.text)),
+        () async => widget._storyItemSearchBloc.add(
+          SetTextStoryItemSearchEvent(_searchController.text),
+        ),
       );
   }
 
@@ -468,46 +474,48 @@ class _ItemOverflowMenu extends StatelessWidget {
         bloc: _authCubit,
         builder: (context, authState) =>
             BlocBuilder<SettingsCubit, SettingsState>(
-          bloc: _settingsCubit,
-          builder: (context, settingsState) => MenuAnchor(
-            menuChildren: [
-              for (final action in ItemAction.values)
-                if (action.isVisible(state, authState, settingsState))
-                  if (action.options case final options?)
-                    SubmenuButton(
-                      menuChildren: [
-                        for (final option in options)
-                          if (option.isVisible(state, authState, settingsState))
-                            MenuItemButton(
-                              onPressed: () async => action.execute(
-                                context,
-                                _itemCubit,
-                                _authCubit,
-                                option: option,
-                              ),
-                              child: Text(option.label(context, state)),
-                            ),
-                      ],
-                      child: Text(action.label(context, state)),
-                    )
-                  else
-                    MenuItemButton(
-                      onPressed: () async => action.execute(
-                        context,
-                        _itemCubit,
-                        _authCubit,
-                      ),
-                      child: Text(action.label(context, state)),
-                    ),
-            ],
-            builder: (context, controller, child) => IconButton(
-              icon: Icon(Icons.adaptive.more_outlined),
-              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-              onPressed: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
+              bloc: _settingsCubit,
+              builder: (context, settingsState) => MenuAnchor(
+                menuChildren: [
+                  for (final action in ItemAction.values)
+                    if (action.isVisible(state, authState, settingsState))
+                      if (action.options case final options?)
+                        SubmenuButton(
+                          menuChildren: [
+                            for (final option in options)
+                              if (option.isVisible(
+                                state,
+                                authState,
+                                settingsState,
+                              ))
+                                MenuItemButton(
+                                  onPressed: () async => action.execute(
+                                    context,
+                                    _itemCubit,
+                                    _authCubit,
+                                    option: option,
+                                  ),
+                                  child: Text(option.label(context, state)),
+                                ),
+                          ],
+                          child: Text(action.label(context, state)),
+                        )
+                      else
+                        MenuItemButton(
+                          onPressed: () async =>
+                              action.execute(context, _itemCubit, _authCubit),
+                          child: Text(action.label(context, state)),
+                        ),
+                ],
+                builder: (context, controller, child) => IconButton(
+                  icon: Icon(Icons.adaptive.more_outlined),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () => controller.isOpen
+                      ? controller.close()
+                      : controller.open(),
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }

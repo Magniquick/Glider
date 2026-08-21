@@ -177,12 +177,14 @@ class SharedPreferencesService {
     }
   }
 
-  Future<List<int>> getVisitedIds() async =>
-      [...?_sharedPreferences.getStringList(_visitedKey)?.map(int.parse)];
+  Future<List<int>> getVisitedIds() async => [
+    ...?_sharedPreferences.getStringList(_visitedKey)?.map(int.parse),
+  ];
 
   Future<bool> setVisitedIds({required Iterable<int> ids}) async {
-    return _sharedPreferences
-        .setStringList(_visitedKey, [...ids.map((id) => id.toString())]);
+    return _sharedPreferences.setStringList(_visitedKey, [
+      ...ids.map((id) => id.toString()),
+    ]);
   }
 
   Future<bool> getUpvoted({required int id}) async =>
@@ -196,12 +198,14 @@ class SharedPreferencesService {
     }
   }
 
-  Future<List<int>> getUpvotedIds() async =>
-      [...?_sharedPreferences.getStringList(_upvotedKey)?.map(int.parse)];
+  Future<List<int>> getUpvotedIds() async => [
+    ...?_sharedPreferences.getStringList(_upvotedKey)?.map(int.parse),
+  ];
 
   Future<bool> setUpvotedIds({required Iterable<int> ids}) async {
-    return _sharedPreferences
-        .setStringList(_upvotedKey, [...ids.map((id) => id.toString())]);
+    return _sharedPreferences.setStringList(_upvotedKey, [
+      ...ids.map((id) => id.toString()),
+    ]);
   }
 
   Future<bool> getDownvoted({required int id}) async =>
@@ -215,12 +219,14 @@ class SharedPreferencesService {
     }
   }
 
-  Future<List<int>> getDownvotedIds() async =>
-      [...?_sharedPreferences.getStringList(_downvotedKey)?.map(int.parse)];
+  Future<List<int>> getDownvotedIds() async => [
+    ...?_sharedPreferences.getStringList(_downvotedKey)?.map(int.parse),
+  ];
 
   Future<bool> setDownvotedIds({required Iterable<int> ids}) async {
-    return _sharedPreferences
-        .setStringList(_downvotedKey, [...ids.map((id) => id.toString())]);
+    return _sharedPreferences.setStringList(_downvotedKey, [
+      ...ids.map((id) => id.toString()),
+    ]);
   }
 
   Future<bool> getFavorited({required int id}) async =>
@@ -234,12 +240,14 @@ class SharedPreferencesService {
     }
   }
 
-  Future<List<int>> getFavoritedIds() async =>
-      [...?_sharedPreferences.getStringList(_favoritedKey)?.map(int.parse)];
+  Future<List<int>> getFavoritedIds() async => [
+    ...?_sharedPreferences.getStringList(_favoritedKey)?.map(int.parse),
+  ];
 
   Future<bool> setFavoritedIds({required Iterable<int> ids}) async {
-    return _sharedPreferences
-        .setStringList(_favoritedKey, [...ids.map((id) => id.toString())]);
+    return _sharedPreferences.setStringList(_favoritedKey, [
+      ...ids.map((id) => id.toString()),
+    ]);
   }
 
   Future<bool> getFlagged({required int id}) async =>
@@ -253,16 +261,19 @@ class SharedPreferencesService {
     }
   }
 
-  Future<List<int>> getFlaggedIds() async =>
-      [...?_sharedPreferences.getStringList(_flaggedKey)?.map(int.parse)];
+  Future<List<int>> getFlaggedIds() async => [
+    ...?_sharedPreferences.getStringList(_flaggedKey)?.map(int.parse),
+  ];
 
   Future<bool> setFlaggedIds({required Iterable<int> ids}) async {
-    return _sharedPreferences
-        .setStringList(_flaggedKey, [...ids.map((id) => id.toString())]);
+    return _sharedPreferences.setStringList(_flaggedKey, [
+      ...ids.map((id) => id.toString()),
+    ]);
   }
 
-  Future<List<String>> getBlockedUsernames() async =>
-      [...?_sharedPreferences.getStringList(_blockedKey)];
+  Future<List<String>> getBlockedUsernames() async => [
+    ...?_sharedPreferences.getStringList(_blockedKey),
+  ];
 
   Future<bool> getBlocked({required String username}) async =>
       _sharedPreferences.containsElement(_blockedKey, username);
@@ -283,15 +294,12 @@ extension on SharedPreferences {
   bool containsElement(String key, String element) =>
       getStringList(key)?.contains(element) ?? false;
 
-  Future<bool> addElement(String key, String element) => setStringList(
-        key,
-        [element, ..._getDistinctElements(key)],
-      );
+  Future<bool> addElement(String key, String element) =>
+      setStringList(key, [element, ..._getDistinctElements(key)]);
 
-  Future<bool> removeElement(String key, String element) => setStringList(
-        key,
-        [..._getDistinctElements(key).where((e) => e != element)],
-      );
+  Future<bool> removeElement(String key, String element) => setStringList(key, [
+    ..._getDistinctElements(key).where((e) => e != element),
+  ]);
 
   Set<String> _getDistinctElements(String key) => {...?getStringList(key)};
 }

@@ -159,8 +159,9 @@ class _SubmitFormState extends State<_SubmitForm> {
         if (state.title.value != _titleController.text) {
           _titleController.value = TextEditingValue(
             text: state.title.value,
-            selection:
-                TextSelection.collapsed(offset: state.title.value.length),
+            selection: TextSelection.collapsed(
+              offset: state.title.value.length,
+            ),
           );
         }
 
@@ -204,8 +205,10 @@ class _SubmitFormState extends State<_SubmitForm> {
               controller: _urlController,
               decoration: InputDecoration(
                 labelText: context.l10n.link,
-                errorText: state.url.displayError
-                    ?.label(context, otherField: context.l10n.text),
+                errorText: state.url.displayError?.label(
+                  context,
+                  otherField: context.l10n.text,
+                ),
               ),
               keyboardType: TextInputType.url,
               onChanged: widget._submitCubit.setUrl,
@@ -219,8 +222,10 @@ class _SubmitFormState extends State<_SubmitForm> {
               controller: _textController,
               decoration: InputDecoration(
                 labelText: context.l10n.text,
-                errorText: state.text.displayError
-                    ?.label(context, otherField: context.l10n.link),
+                errorText: state.text.displayError?.label(
+                  context,
+                  otherField: context.l10n.link,
+                ),
               ),
               keyboardType: TextInputType.multiline,
               textCapitalization: TextCapitalization.sentences,
@@ -235,11 +240,7 @@ class _SubmitFormState extends State<_SubmitForm> {
 }
 
 class _SubmitPreview extends StatelessWidget {
-  const _SubmitPreview(
-    this._submitCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
+  const _SubmitPreview(this._submitCubit, this._authCubit, this._settingsCubit);
 
   final SubmitCubit _submitCubit;
   final AuthCubit _authCubit;
@@ -260,37 +261,39 @@ class _SubmitPreview extends StatelessWidget {
                 previous.text != current.text,
             builder: (context, state) =>
                 BlocSelector<AuthCubit, AuthState, String?>(
-              bloc: _authCubit,
-              selector: (state) => state.username,
-              builder: (context, username) =>
-                  BlocBuilder<SettingsCubit, SettingsState>(
-                bloc: _settingsCubit,
-                builder: (context, settingsState) => HeroMode(
-                  enabled: false,
-                  child: ItemDataTile(
-                    Item(
-                      id: 0,
-                      username: username,
-                      type: ItemType.story,
-                      title: state.title.value.isNotEmpty
-                          ? state.title.value
-                          : null,
-                      url: state.url.value.isNotEmpty
-                          ? Uri.tryParse(state.url.value)
-                          : null,
-                      text:
-                          state.text.value.isNotEmpty ? state.text.value : null,
-                      dateTime: clock.now(),
-                    ),
-                    useLargeStoryStyle: settingsState.useLargeStoryStyle,
-                    showFavicons: settingsState.showFavicons,
-                    showUserAvatars: settingsState.showUserAvatars,
-                    usernameStyle: UsernameStyle.loggedInUser,
-                    useInAppBrowser: settingsState.useInAppBrowser,
-                  ),
+                  bloc: _authCubit,
+                  selector: (state) => state.username,
+                  builder: (context, username) =>
+                      BlocBuilder<SettingsCubit, SettingsState>(
+                        bloc: _settingsCubit,
+                        builder: (context, settingsState) => HeroMode(
+                          enabled: false,
+                          child: ItemDataTile(
+                            Item(
+                              id: 0,
+                              username: username,
+                              type: ItemType.story,
+                              title: state.title.value.isNotEmpty
+                                  ? state.title.value
+                                  : null,
+                              url: state.url.value.isNotEmpty
+                                  ? Uri.tryParse(state.url.value)
+                                  : null,
+                              text: state.text.value.isNotEmpty
+                                  ? state.text.value
+                                  : null,
+                              dateTime: clock.now(),
+                            ),
+                            useLargeStoryStyle:
+                                settingsState.useLargeStoryStyle,
+                            showFavicons: settingsState.showFavicons,
+                            showUserAvatars: settingsState.showUserAvatars,
+                            usernameStyle: UsernameStyle.loggedInUser,
+                            useInAppBrowser: settingsState.useInAppBrowser,
+                          ),
+                        ),
+                      ),
                 ),
-              ),
-            ),
           ),
         ),
       ),

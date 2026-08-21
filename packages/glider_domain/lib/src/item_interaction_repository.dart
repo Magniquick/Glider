@@ -187,10 +187,7 @@ class ItemInteractionRepository {
   Future<bool> delete(int id) async {
     try {
       final userCookie = await _secureStorageService.getUserCookie();
-      await _hackerNewsWebsiteService.delete(
-        id: id,
-        userCookie: userCookie!,
-      );
+      await _hackerNewsWebsiteService.delete(id: id, userCookie: userCookie!);
       return true;
     } on Object {
       return false;

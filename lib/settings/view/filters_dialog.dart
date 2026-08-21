@@ -16,9 +16,7 @@ class FiltersDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(context.l10n.filters),
-      content: SingleChildScrollView(
-        child: _FiltersBody(_settingsCubit),
-      ),
+      content: SingleChildScrollView(child: _FiltersBody(_settingsCubit)),
       actions: [
         TextButton(
           onPressed: () => context.pop(),
@@ -105,8 +103,10 @@ class _FiltersBodyState extends State<_FiltersBody> {
                   for (final word in state.wordFilters)
                     InputChip(
                       label: Text(word),
-                      onDeleted: () => widget._settingsCubit
-                          .setWordFilter(word, filter: false),
+                      onDeleted: () => widget._settingsCubit.setWordFilter(
+                        word,
+                        filter: false,
+                      ),
                     ),
                 ],
               ),
@@ -122,8 +122,9 @@ class _FiltersBodyState extends State<_FiltersBody> {
                 child: TextFormField(
                   controller: _domainsController,
                   focusNode: _domainsFocusNode,
-                  decoration:
-                      InputDecoration(hintText: context.l10n.domainsHelp),
+                  decoration: InputDecoration(
+                    hintText: context.l10n.domainsHelp,
+                  ),
                   keyboardType: TextInputType.url,
                   onFieldSubmitted: (text) async => _addDomainFilter(),
                 ),
@@ -146,8 +147,10 @@ class _FiltersBodyState extends State<_FiltersBody> {
                   for (final domain in state.domainFilters)
                     InputChip(
                       label: Text(domain),
-                      onDeleted: () => widget._settingsCubit
-                          .setDomainFilter(domain, filter: false),
+                      onDeleted: () => widget._settingsCubit.setDomainFilter(
+                        domain,
+                        filter: false,
+                      ),
                     ),
                 ],
               ),

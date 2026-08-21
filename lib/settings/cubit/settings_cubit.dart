@@ -7,7 +7,7 @@ import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
-import 'package:material_color_utilities/scheme/variant.dart';
+import 'package:material_color_utilities/dynamiccolor/variant.dart';
 import 'package:pub_semver/pub_semver.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -36,19 +36,19 @@ class SettingsCubit extends Cubit<SettingsState>
     final usePureBackground = await _settingsRepository.getUsePureBackground();
     final font = await _settingsRepository.getFont();
     final storyLines = await _settingsRepository.getStoryLines();
-    final useLargeStoryStyle =
-        await _settingsRepository.getUseLargeStoryStyle();
+    final useLargeStoryStyle = await _settingsRepository
+        .getUseLargeStoryStyle();
     final showFavicons = await _settingsRepository.getShowFavicons();
     final showStoryMetadata = await _settingsRepository.getShowStoryMetadata();
     final showUserAvatars = await _settingsRepository.getShowUserAvatars();
     final useActionButtons = await _settingsRepository.getUseActionButtons();
     final showJobs = await _settingsRepository.getShowJobs();
-    final useThreadNavigation =
-        await _settingsRepository.getUseThreadNavigation();
+    final useThreadNavigation = await _settingsRepository
+        .getUseThreadNavigation();
     final enableDownvoting = await _settingsRepository.getEnableDownvoting();
     final useInAppBrowser = await _settingsRepository.getUseInAppBrowser();
-    final useNavigationDrawer =
-        await _settingsRepository.getUseNavigationDrawer();
+    final useNavigationDrawer = await _settingsRepository
+        .getUseNavigationDrawer();
     final wordFilters = await _settingsRepository.getWordFilters();
     final domainFilters = await _settingsRepository.getDomainFilters();
     safeEmit(
@@ -57,26 +57,33 @@ class SettingsCubit extends Cubit<SettingsState>
         useDynamicTheme: useDynamicTheme != null ? () => useDynamicTheme : null,
         themeColor: themeColor != null ? () => themeColor : null,
         themeVariant: themeVariant != null ? () => themeVariant : null,
-        usePureBackground:
-            usePureBackground != null ? () => usePureBackground : null,
+        usePureBackground: usePureBackground != null
+            ? () => usePureBackground
+            : null,
         font: font != null ? () => font : null,
         storyLines: storyLines != null ? () => storyLines : null,
-        useLargeStoryStyle:
-            useLargeStoryStyle != null ? () => useLargeStoryStyle : null,
+        useLargeStoryStyle: useLargeStoryStyle != null
+            ? () => useLargeStoryStyle
+            : null,
         showFavicons: showFavicons != null ? () => showFavicons : null,
-        showStoryMetadata:
-            showStoryMetadata != null ? () => showStoryMetadata : null,
+        showStoryMetadata: showStoryMetadata != null
+            ? () => showStoryMetadata
+            : null,
         showUserAvatars: showUserAvatars != null ? () => showUserAvatars : null,
-        useActionButtons:
-            useActionButtons != null ? () => useActionButtons : null,
+        useActionButtons: useActionButtons != null
+            ? () => useActionButtons
+            : null,
         showJobs: showJobs != null ? () => showJobs : null,
-        useThreadNavigation:
-            useThreadNavigation != null ? () => useThreadNavigation : null,
-        enableDownvoting:
-            enableDownvoting != null ? () => enableDownvoting : null,
+        useThreadNavigation: useThreadNavigation != null
+            ? () => useThreadNavigation
+            : null,
+        enableDownvoting: enableDownvoting != null
+            ? () => enableDownvoting
+            : null,
         useInAppBrowser: useInAppBrowser != null ? () => useInAppBrowser : null,
-        useNavigationDrawer:
-            useNavigationDrawer != null ? () => useNavigationDrawer : null,
+        useNavigationDrawer: useNavigationDrawer != null
+            ? () => useNavigationDrawer
+            : null,
         wordFilters: wordFilters != null ? () => wordFilters : null,
         domainFilters: domainFilters != null ? () => domainFilters : null,
         appVersion: _packageRepository.getVersion,
@@ -86,13 +93,11 @@ class SettingsCubit extends Cubit<SettingsState>
 
   Future<void> setUseLargeStoryStyle(bool value) async {
     await _settingsRepository.setUseLargeStoryStyle(value: value);
-    final useLargeStoryStyle =
-        await _settingsRepository.getUseLargeStoryStyle();
+    final useLargeStoryStyle = await _settingsRepository
+        .getUseLargeStoryStyle();
 
     if (useLargeStoryStyle != null) {
-      safeEmit(
-        state.copyWith(useLargeStoryStyle: () => useLargeStoryStyle),
-      );
+      safeEmit(state.copyWith(useLargeStoryStyle: () => useLargeStoryStyle));
     }
   }
 
@@ -101,9 +106,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final themeMode = await _settingsRepository.getThemeMode();
 
     if (themeMode != null) {
-      safeEmit(
-        state.copyWith(themeMode: () => themeMode),
-      );
+      safeEmit(state.copyWith(themeMode: () => themeMode));
     }
   }
 
@@ -112,9 +115,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final useDynamicTheme = await _settingsRepository.getUseDynamicTheme();
 
     if (useDynamicTheme != null) {
-      safeEmit(
-        state.copyWith(useDynamicTheme: () => useDynamicTheme),
-      );
+      safeEmit(state.copyWith(useDynamicTheme: () => useDynamicTheme));
     }
   }
 
@@ -123,9 +124,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final themeColor = await _settingsRepository.getThemeColor();
 
     if (themeColor != null) {
-      safeEmit(
-        state.copyWith(themeColor: () => themeColor),
-      );
+      safeEmit(state.copyWith(themeColor: () => themeColor));
     }
   }
 
@@ -134,9 +133,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final themeVariant = await _settingsRepository.getThemeVariant();
 
     if (themeVariant != null) {
-      safeEmit(
-        state.copyWith(themeVariant: () => themeVariant),
-      );
+      safeEmit(state.copyWith(themeVariant: () => themeVariant));
     }
   }
 
@@ -145,9 +142,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final usePureBackground = await _settingsRepository.getUsePureBackground();
 
     if (usePureBackground != null) {
-      safeEmit(
-        state.copyWith(usePureBackground: () => usePureBackground),
-      );
+      safeEmit(state.copyWith(usePureBackground: () => usePureBackground));
     }
   }
 
@@ -156,9 +151,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final storyLines = await _settingsRepository.getStoryLines();
 
     if (storyLines != null) {
-      safeEmit(
-        state.copyWith(storyLines: () => storyLines),
-      );
+      safeEmit(state.copyWith(storyLines: () => storyLines));
     }
   }
 
@@ -167,9 +160,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final font = await _settingsRepository.getFont();
 
     if (font != null) {
-      safeEmit(
-        state.copyWith(font: () => font),
-      );
+      safeEmit(state.copyWith(font: () => font));
     }
   }
 
@@ -178,9 +169,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final showFavicons = await _settingsRepository.getShowFavicons();
 
     if (showFavicons != null) {
-      safeEmit(
-        state.copyWith(showFavicons: () => showFavicons),
-      );
+      safeEmit(state.copyWith(showFavicons: () => showFavicons));
     }
   }
 
@@ -189,9 +178,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final showStoryMetadata = await _settingsRepository.getShowStoryMetadata();
 
     if (showStoryMetadata != null) {
-      safeEmit(
-        state.copyWith(showStoryMetadata: () => showStoryMetadata),
-      );
+      safeEmit(state.copyWith(showStoryMetadata: () => showStoryMetadata));
     }
   }
 
@@ -200,9 +187,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final showUserAvatars = await _settingsRepository.getShowUserAvatars();
 
     if (showUserAvatars != null) {
-      safeEmit(
-        state.copyWith(showUserAvatars: () => showUserAvatars),
-      );
+      safeEmit(state.copyWith(showUserAvatars: () => showUserAvatars));
     }
   }
 
@@ -211,9 +196,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final useActionButtons = await _settingsRepository.getUseActionButtons();
 
     if (useActionButtons != null) {
-      safeEmit(
-        state.copyWith(useActionButtons: () => useActionButtons),
-      );
+      safeEmit(state.copyWith(useActionButtons: () => useActionButtons));
     }
   }
 
@@ -222,21 +205,17 @@ class SettingsCubit extends Cubit<SettingsState>
     final showJobs = await _settingsRepository.getShowJobs();
 
     if (showJobs != null) {
-      safeEmit(
-        state.copyWith(showJobs: () => showJobs),
-      );
+      safeEmit(state.copyWith(showJobs: () => showJobs));
     }
   }
 
   Future<void> setUseThreadNavigation(bool value) async {
     await _settingsRepository.setUseThreadNavigation(value: value);
-    final useThreadNavigation =
-        await _settingsRepository.getUseThreadNavigation();
+    final useThreadNavigation = await _settingsRepository
+        .getUseThreadNavigation();
 
     if (useThreadNavigation != null) {
-      safeEmit(
-        state.copyWith(useThreadNavigation: () => useThreadNavigation),
-      );
+      safeEmit(state.copyWith(useThreadNavigation: () => useThreadNavigation));
     }
   }
 
@@ -245,9 +224,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final enableDownvoting = await _settingsRepository.getEnableDownvoting();
 
     if (enableDownvoting != null) {
-      safeEmit(
-        state.copyWith(enableDownvoting: () => enableDownvoting),
-      );
+      safeEmit(state.copyWith(enableDownvoting: () => enableDownvoting));
     }
   }
 
@@ -256,21 +233,17 @@ class SettingsCubit extends Cubit<SettingsState>
     final useInAppBrowser = await _settingsRepository.getUseInAppBrowser();
 
     if (useInAppBrowser != null) {
-      safeEmit(
-        state.copyWith(useInAppBrowser: () => useInAppBrowser),
-      );
+      safeEmit(state.copyWith(useInAppBrowser: () => useInAppBrowser));
     }
   }
 
   Future<void> setUseNavigationDrawer(bool value) async {
     await _settingsRepository.setUseNavigationDrawer(value: value);
-    final useNavigationDrawer =
-        await _settingsRepository.getUseNavigationDrawer();
+    final useNavigationDrawer = await _settingsRepository
+        .getUseNavigationDrawer();
 
     if (useNavigationDrawer != null) {
-      safeEmit(
-        state.copyWith(useNavigationDrawer: () => useNavigationDrawer),
-      );
+      safeEmit(state.copyWith(useNavigationDrawer: () => useNavigationDrawer));
     }
   }
 
@@ -279,9 +252,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final wordFilters = await _settingsRepository.getWordFilters();
 
     if (wordFilters != null) {
-      safeEmit(
-        state.copyWith(wordFilters: () => wordFilters),
-      );
+      safeEmit(state.copyWith(wordFilters: () => wordFilters));
     }
   }
 
@@ -290,9 +261,7 @@ class SettingsCubit extends Cubit<SettingsState>
     final domainFilters = await _settingsRepository.getDomainFilters();
 
     if (domainFilters != null) {
-      safeEmit(
-        state.copyWith(domainFilters: () => domainFilters),
-      );
+      safeEmit(state.copyWith(domainFilters: () => domainFilters));
     }
   }
 

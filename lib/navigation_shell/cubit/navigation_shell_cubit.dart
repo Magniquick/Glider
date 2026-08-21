@@ -9,9 +9,8 @@ part 'navigation_shell_state.dart';
 class NavigationShellCubit extends Cubit<NavigationShellState>
     with
         BlocPresentationMixin<NavigationShellState, NavigationShellCubitEvent> {
-  NavigationShellCubit(
-    this._packageRepository,
-  ) : super(const NavigationShellState());
+  NavigationShellCubit(this._packageRepository)
+    : super(const NavigationShellState());
 
   final PackageRepository _packageRepository;
 

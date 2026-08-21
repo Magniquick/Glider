@@ -27,34 +27,34 @@ class ItemBottomSheet extends StatelessWidget {
         bloc: _authCubit,
         builder: (context, authState) =>
             BlocBuilder<SettingsCubit, SettingsState>(
-          bloc: _settingsCubit,
-          builder: (context, settingsState) =>
-              NotificationCanceler<ScrollNotification>(
-            child: ListView(
-              primary: false,
-              shrinkWrap: true,
-              children: [
-                for (final action in ItemAction.values)
-                  if (action.isVisible(state, authState, settingsState))
-                    ListTile(
-                      leading: Icon(action.icon(state)),
-                      title: Text(action.label(context, state)),
-                      trailing: action.options != null
-                          ? const Icon(Icons.chevron_right)
-                          : null,
-                      onTap: () async {
-                        context.pop();
-                        await action.execute(
-                          context,
-                          _itemCubit,
-                          _authCubit,
-                        );
-                      },
+              bloc: _settingsCubit,
+              builder: (context, settingsState) =>
+                  NotificationCanceler<ScrollNotification>(
+                    child: ListView(
+                      primary: false,
+                      shrinkWrap: true,
+                      children: [
+                        for (final action in ItemAction.values)
+                          if (action.isVisible(state, authState, settingsState))
+                            ListTile(
+                              leading: Icon(action.icon(state)),
+                              title: Text(action.label(context, state)),
+                              trailing: action.options != null
+                                  ? const Icon(Icons.chevron_right)
+                                  : null,
+                              onTap: () async {
+                                context.pop();
+                                await action.execute(
+                                  context,
+                                  _itemCubit,
+                                  _authCubit,
+                                );
+                              },
+                            ),
+                      ],
                     ),
-              ],
+                  ),
             ),
-          ),
-        ),
       ),
     );
   }

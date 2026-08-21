@@ -18,19 +18,18 @@ part 'stories_search_state.dart';
 class StoriesSearchBloc
     extends HydratedBloc<StoriesSearchEvent, StoriesSearchState> {
   StoriesSearchBloc(this._itemRepository, {this.searchType = SearchType.search})
-      : super(
-          StoriesSearchState(
-            searchRange:
-                searchType == SearchType.catchUp ? SearchRange.past3Days : null,
-          ),
-        ) {
+    : super(
+        StoriesSearchState(
+          searchRange: searchType == SearchType.catchUp
+              ? SearchRange.past3Days
+              : null,
+        ),
+      ) {
     on<LoadStoriesSearchEvent>(
       (event, emit) async => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextStoriesSearchEvent>(
-      (event, emit) async => _setText(event),
-    );
+    on<SetTextStoriesSearchEvent>((event, emit) async => _setText(event));
     on<SetSearchRangeStoriesSearchEvent>(
       (event, emit) async => _setSearchRange(event),
     );
@@ -57,11 +56,11 @@ class StoriesSearchBloc
     try {
       final dateRange =
           state.searchRange == SearchRange.custom && state.dateRange != null
-              ? DateTimeRange(
-                  start: state.dateRange!.start,
-                  end: state.dateRange!.end.add(const Duration(days: 1)),
-                )
-              : state.searchRange?.dateRange();
+          ? DateTimeRange(
+              start: state.dateRange!.start,
+              end: state.dateRange!.end.add(const Duration(days: 1)),
+            )
+          : state.searchRange?.dateRange();
       final items = await _itemRepository.searchStories(
         text: state.searchText,
         startDate: dateRange?.start,
@@ -85,15 +84,11 @@ class StoriesSearchBloc
   }
 
   Future<void> showMore() async {
-    safeEmit(
-      state.copyWith(page: () => state.page + 1),
-    );
+    safeEmit(state.copyWith(page: () => state.page + 1));
   }
 
   Future<void> _setText(SetTextStoriesSearchEvent event) async {
-    safeEmit(
-      state.copyWith(searchText: () => event.text),
-    );
+    safeEmit(state.copyWith(searchText: () => event.text));
     add(const LoadStoriesSearchEvent());
   }
 
@@ -111,9 +106,7 @@ class StoriesSearchBloc
   }
 
   Future<void> _setDateRange(SetDateRangeStoriesSearchEvent event) async {
-    safeEmit(
-      state.copyWith(dateRange: () => event.dateRange),
-    );
+    safeEmit(state.copyWith(dateRange: () => event.dateRange));
     add(const LoadStoriesSearchEvent());
   }
 

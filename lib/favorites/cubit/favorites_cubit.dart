@@ -11,24 +11,23 @@ part 'favorites_state.dart';
 
 class FavoritesCubit extends HydratedCubit<FavoritesState> {
   FavoritesCubit(this._itemInteractionRepository)
-      : super(const FavoritesState()) {
-    _favoriteIdsSubscription =
-        _itemInteractionRepository.favoritedStream.listen(
-      (itemIds) => safeEmit(
-        state.copyWith(
-          status: () => Status.success,
-          data: () => itemIds,
-          exception: () => null,
-        ),
-      ),
-      // ignore: avoid_types_on_closure_parameters
-      onError: (Object exception) => safeEmit(
-        state.copyWith(
-          status: () => Status.failure,
-          exception: () => exception,
-        ),
-      ),
-    );
+    : super(const FavoritesState()) {
+    _favoriteIdsSubscription = _itemInteractionRepository.favoritedStream
+        .listen(
+          (itemIds) => safeEmit(
+            state.copyWith(
+              status: () => Status.success,
+              data: () => itemIds,
+              exception: () => null,
+            ),
+          ),
+          onError: (Object exception) => safeEmit(
+            state.copyWith(
+              status: () => Status.failure,
+              exception: () => exception,
+            ),
+          ),
+        );
   }
 
   final ItemInteractionRepository _itemInteractionRepository;
@@ -36,9 +35,7 @@ class FavoritesCubit extends HydratedCubit<FavoritesState> {
   late final StreamSubscription<List<int>> _favoriteIdsSubscription;
 
   Future<void> load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
     await _itemInteractionRepository.getFavoritedIds();
   }
 

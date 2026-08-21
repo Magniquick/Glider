@@ -32,9 +32,7 @@ class SettingsPage extends StatelessWidget {
           const _SliverSettingsAppBar(),
           SliverSafeArea(
             top: false,
-            sliver: SliverToBoxAdapter(
-              child: _SettingsBody(_settingsCubit),
-            ),
+            sliver: SliverToBoxAdapter(child: _SettingsBody(_settingsCubit)),
           ),
         ],
       ),
@@ -71,26 +69,26 @@ class _SettingsBody extends StatelessWidget {
     'Source Sans 3',
     'Source Serif 4',
   ];
-  static final Uri _privacyPolicyUrl = AppUris.projectUri
-      .replace(path: '${AppUris.projectUri.path}/blob/master/PRIVACY.md');
+  static final Uri _privacyPolicyUrl = AppUris.projectUri.replace(
+    path: '${AppUris.projectUri.path}/blob/master/PRIVACY.md',
+  );
   static const String _license = 'MIT';
-  static final Uri _licenseUrl = AppUris.projectUri
-      .replace(path: '${AppUris.projectUri.path}/blob/master/LICENSE');
+  static final Uri _licenseUrl = AppUris.projectUri.replace(
+    path: '${AppUris.projectUri.path}/blob/master/LICENSE',
+  );
   static final Uri _sourceCodeUrl = AppUris.projectUri;
-  static final Uri _issueTrackerUrl =
-      AppUris.projectUri.replace(path: '${AppUris.projectUri.path}/issues');
+  static final Uri _issueTrackerUrl = AppUris.projectUri.replace(
+    path: '${AppUris.projectUri.path}/issues',
+  );
 
   @override
   Widget build(BuildContext context) {
     return BlocPresentationListener<SettingsCubit, SettingsCubitEvent>(
       bloc: _settingsCubit,
       listener: (context, event) => switch (event) {
-        SettingsActionFailedEvent() =>
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.l10n.failure),
-            ),
-          ),
+        SettingsActionFailedEvent() => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.failure))),
       },
       child: BlocBuilder<SettingsCubit, SettingsState>(
         bloc: _settingsCubit,
@@ -101,9 +99,8 @@ class _SettingsBody extends StatelessWidget {
               padding: AppSpacing.defaultTilePadding,
               child: Text(
                 context.l10n.theme,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             MenuListTile(
@@ -119,20 +116,16 @@ class _SettingsBody extends StatelessWidget {
               onChanged: _settingsCubit.setUseDynamicTheme,
               title: Text(context.l10n.dynamicTheme),
               subtitle: Text(context.l10n.dynamicThemeDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             ListTile(
               title: Text(context.l10n.themeColor),
-              trailing: Icon(
-                Icons.circle,
-                color: state.themeColor,
-                size: 40,
-              ),
+              trailing: Icon(Icons.circle, color: state.themeColor, size: 40),
               enabled: !state.useDynamicTheme,
-              onTap: () async => context.push<void>(
-                AppRoute.themeColorDialog.location(),
-              ),
+              onTap: () async =>
+                  context.push<void>(AppRoute.themeColorDialog.location()),
             ),
             MenuListTile(
               title: Text(context.l10n.themeVariant),
@@ -148,8 +141,9 @@ class _SettingsBody extends StatelessWidget {
               onChanged: _settingsCubit.setUsePureBackground,
               title: Text(context.l10n.pureBackground),
               subtitle: Text(context.l10n.pureBackgroundDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             MenuListTile(
               title: Text(context.l10n.font),
@@ -164,9 +158,8 @@ class _SettingsBody extends StatelessWidget {
               padding: AppSpacing.defaultTilePadding,
               child: Text(
                 context.l10n.appearance,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             MenuListTile(
@@ -187,38 +180,43 @@ class _SettingsBody extends StatelessWidget {
               onChanged: _settingsCubit.setUseLargeStoryStyle,
               title: Text(context.l10n.largeStoryStyle),
               subtitle: Text(context.l10n.largeStoryStyleDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.showFavicons,
               onChanged: _settingsCubit.setShowFavicons,
               title: Text(context.l10n.favicons),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.showStoryMetadata,
               onChanged: _settingsCubit.setShowStoryMetadata,
               title: Text(context.l10n.storyMetadata),
               subtitle: Text(context.l10n.storyMetadataDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.showUserAvatars,
               onChanged: _settingsCubit.setShowUserAvatars,
               title: Text(context.l10n.userAvatars),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.useActionButtons,
               onChanged: _settingsCubit.setUseActionButtons,
               title: Text(context.l10n.actionButtons),
               subtitle: Text(context.l10n.actionButtonsDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             BlocBuilder<SettingsCubit, SettingsState>(
               bloc: _settingsCubit,
@@ -232,13 +230,10 @@ class _SettingsBody extends StatelessWidget {
                         id: -1,
                         username: 'cats4ever',
                         dateTime: clock.now(),
-                        title:
-                            'Show HN: A fat cat on a treadmill under water [video]',
-                        url: Uri.https(
-                          'www.youtube.com',
-                          'watch',
-                          {'v': '1A37RTaoEuM'},
-                        ),
+                        title: 'Show HN: A fat cat on a treadmill under water [video]',
+                        url: Uri.https('www.youtube.com', 'watch', {
+                          'v': '1A37RTaoEuM',
+                        }),
                         score: 42,
                         descendantCount: 7,
                       ),
@@ -262,9 +257,8 @@ class _SettingsBody extends StatelessWidget {
               padding: AppSpacing.defaultTilePadding,
               child: Text(
                 context.l10n.behavior,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             SwitchListTile.adaptive(
@@ -272,56 +266,59 @@ class _SettingsBody extends StatelessWidget {
               onChanged: _settingsCubit.setShowJobs,
               title: Text(context.l10n.showJobs),
               subtitle: Text(context.l10n.showJobsDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.useThreadNavigation,
               onChanged: _settingsCubit.setUseThreadNavigation,
               title: Text(context.l10n.threadNavigation),
               subtitle: Text(context.l10n.threadNavigationDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.enableDownvoting,
               onChanged: _settingsCubit.setEnableDownvoting,
               title: Text(context.l10n.downvoting),
               subtitle: Text(context.l10n.downvotingDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.useInAppBrowser,
               onChanged: _settingsCubit.setUseInAppBrowser,
               title: Text(context.l10n.inAppBrowser),
               subtitle: Text(context.l10n.inAppBrowserDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             SwitchListTile.adaptive(
               value: state.useNavigationDrawer,
               onChanged: _settingsCubit.setUseNavigationDrawer,
               title: Text(context.l10n.navigationDrawer),
               subtitle: Text(context.l10n.navigationDrawerDescription),
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
+              ),
             ),
             ListTile(
               title: Text(context.l10n.filters),
               subtitle: Text(context.l10n.filtersDescription),
-              onTap: () async => context.push<void>(
-                AppRoute.filtersDialog.location(),
-              ),
+              onTap: () async =>
+                  context.push<void>(AppRoute.filtersDialog.location()),
             ),
             const Divider(),
             Padding(
               padding: AppSpacing.defaultTilePadding,
               child: Text(
                 context.l10n.data,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
             ),
             ListTile(
@@ -343,9 +340,8 @@ class _SettingsBody extends StatelessWidget {
               padding: AppSpacing.defaultTilePadding,
               child: Text(
                 context.l10n.about,
-                style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
+                style: Theme.of(context).textTheme.labelLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
             ),
             if (state.appVersion case final appVersion?)
@@ -390,9 +386,7 @@ class _SettingsBody extends StatelessWidget {
               ),
             ),
             ListTile(
-              title: Text(
-                MaterialLocalizations.of(context).licensesPageTitle,
-              ),
+              title: Text(MaterialLocalizations.of(context).licensesPageTitle),
               onTap: () => showLicensePage(
                 context: context,
                 applicationName: context.l10n.appName,

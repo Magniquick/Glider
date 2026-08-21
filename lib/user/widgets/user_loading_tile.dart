@@ -33,8 +33,8 @@ class UserLoadingTile extends StatelessWidget {
 
   Widget _buildPrimary(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final color =
-        Theme.of(context).colorScheme.outline.withOpacity(LoadingBlock.opacity);
+    final color = Theme.of(context).colorScheme.outline
+        .withValues(alpha: LoadingBlock.opacity);
     return Row(
       children: [
         MetadataWidget(
@@ -73,16 +73,9 @@ class UserLoadingTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (style.showPrimary) const SizedBox(height: AppSpacing.m),
-        LoadingTextBlock(
-          style: textTheme.bodyMedium,
-        ),
-        LoadingTextBlock(
-          style: textTheme.bodyMedium,
-        ),
-        LoadingTextBlock(
-          width: 200,
-          style: textTheme.bodyMedium,
-        ),
+        LoadingTextBlock(style: textTheme.bodyMedium),
+        LoadingTextBlock(style: textTheme.bodyMedium),
+        LoadingTextBlock(width: 200, style: textTheme.bodyMedium),
       ],
     );
   }

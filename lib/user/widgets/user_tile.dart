@@ -37,11 +37,9 @@ class UserTile extends StatelessWidget {
     return BlocPresentationListener<UserCubit, UserCubitEvent>(
       bloc: _userCubit,
       listener: (context, event) => switch (event) {
-        UserActionFailedEvent() => ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.l10n.failure),
-            ),
-          ),
+        UserActionFailedEvent() => ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(context.l10n.failure))),
       },
       child: BlocBuilder<UserCubit, UserState>(
         bloc: _userCubit,
@@ -54,10 +52,7 @@ class UserTile extends StatelessWidget {
             duration: AppAnimation.emphasized.duration,
             curve: AppAnimation.emphasized.easing,
             child: state.whenOrDefaultWidgets(
-              loading: () => UserLoadingTile(
-                style: style,
-                padding: padding,
-              ),
+              loading: () => UserLoadingTile(style: style, padding: padding),
               success: () {
                 final user = state.data!;
                 return UserDataTile(
@@ -70,11 +65,8 @@ class UserTile extends StatelessWidget {
                   onTap: onTap,
                   onLongPress: (context, item) async => showModalBottomSheet(
                     context: rootNavigatorKey.currentContext!,
-                    builder: (context) => UserBottomSheet(
-                      _userCubit,
-                      _authCubit,
-                      _settingsCubit,
-                    ),
+                    builder: (context) =>
+                        UserBottomSheet(_userCubit, _authCubit, _settingsCubit),
                   ),
                 );
               },

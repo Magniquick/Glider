@@ -11,9 +11,7 @@ class TextSelectDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(context.l10n.select),
-      content: SingleChildScrollView(
-        child: SelectionArea(child: Text(text)),
-      ),
+      content: SingleChildScrollView(child: SelectionArea(child: Text(text))),
       actions: [
         TextButton(
           onPressed: () => context.pop(true),

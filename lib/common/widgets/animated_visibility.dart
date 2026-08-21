@@ -8,8 +8,8 @@ class AnimatedVisibility extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.alignment = -1,
     required this.child,
-  })  : _axis = Axis.horizontal,
-        _replacement = const SizedBox.shrink();
+  }) : _axis = Axis.horizontal,
+       _replacement = const SizedBox.shrink();
 
   const AnimatedVisibility.vertical({
     super.key,
@@ -17,8 +17,8 @@ class AnimatedVisibility extends StatelessWidget {
     this.padding = EdgeInsets.zero,
     this.alignment = -1,
     required this.child,
-  })  : _axis = Axis.vertical,
-        _replacement = const SizedBox(width: double.infinity);
+  }) : _axis = Axis.vertical,
+       _replacement = const SizedBox(width: double.infinity);
 
   final bool visible;
   final EdgeInsetsGeometry padding;
@@ -37,10 +37,7 @@ class AnimatedVisibility extends StatelessWidget {
         axis: _axis,
         axisAlignment: alignment,
         sizeFactor: animation,
-        child: FadeTransition(
-          opacity: animation,
-          child: child,
-        ),
+        child: FadeTransition(opacity: animation, child: child),
       ),
       child: visible
           ? AnimatedPadding(

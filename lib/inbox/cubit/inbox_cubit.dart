@@ -9,15 +9,13 @@ part 'inbox_state.dart';
 
 class InboxCubit extends HydratedCubit<InboxState> {
   InboxCubit(this._itemRepository, this._authRepository)
-      : super(const InboxState());
+    : super(const InboxState());
 
   final ItemRepository _itemRepository;
   final AuthRepository _authRepository;
 
   Future<void> load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
       final (username, _) = await _authRepository.getUserAuth();

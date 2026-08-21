@@ -3,10 +3,7 @@ enum UserStyle {
   primary(showPrimary: true),
   secondary(showSecondary: true);
 
-  const UserStyle({
-    this.showPrimary = false,
-    this.showSecondary = false,
-  });
+  UserStyle({this.showPrimary = false, this.showSecondary = false});
 
   final bool showPrimary;
   final bool showSecondary;

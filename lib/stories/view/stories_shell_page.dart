@@ -108,10 +108,7 @@ class _SliverStoriesAppBarState extends State<_SliverStoriesAppBar> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
-      title: StoriesTypeView(
-        widget._storiesCubit,
-        widget._settingsCubit,
-      ),
+      title: StoriesTypeView(widget._storiesCubit, widget._settingsCubit),
       flexibleSpace: AppBarProgressIndicator(widget._storiesCubit),
       actions: [
         _StoriesSearchAnchor(
@@ -124,24 +121,25 @@ class _SliverStoriesAppBarState extends State<_SliverStoriesAppBar> {
           bloc: widget._authCubit,
           builder: (context, authState) =>
               BlocBuilder<SettingsCubit, SettingsState>(
-            bloc: widget._settingsCubit,
-            builder: (context, settingsState) => MenuAnchor(
-              menuChildren: [
-                for (final action in NavigationShellAction.values)
-                  if (action.isVisible(null, authState, settingsState))
-                    MenuItemButton(
-                      onPressed: () async => action.execute(context),
-                      child: Text(action.label(context, null)),
-                    ),
-              ],
-              builder: (context, controller, child) => IconButton(
-                icon: Icon(Icons.adaptive.more_outlined),
-                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                onPressed: () =>
-                    controller.isOpen ? controller.close() : controller.open(),
+                bloc: widget._settingsCubit,
+                builder: (context, settingsState) => MenuAnchor(
+                  menuChildren: [
+                    for (final action in NavigationShellAction.values)
+                      if (action.isVisible(null, authState, settingsState))
+                        MenuItemButton(
+                          onPressed: () async => action.execute(context),
+                          child: Text(action.label(context, null)),
+                        ),
+                  ],
+                  builder: (context, controller, child) => IconButton(
+                    icon: Icon(Icons.adaptive.more_outlined),
+                    tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                    onPressed: () => controller.isOpen
+                        ? controller.close()
+                        : controller.open(),
+                  ),
+                ),
               ),
-            ),
-          ),
         ),
       ],
       floating: true,
@@ -175,8 +173,9 @@ class _StoriesSearchAnchorState extends State<_StoriesSearchAnchor> {
     _searchController = SearchController()
       ..text = widget._storiesSearchBloc.state.searchText ?? ''
       ..addListener(
-        () async => widget._storiesSearchBloc
-            .add(SetTextStoriesSearchEvent(_searchController.text)),
+        () async => widget._storiesSearchBloc.add(
+          SetTextStoriesSearchEvent(_searchController.text),
+        ),
       );
   }
 
@@ -253,15 +252,15 @@ class _SliverStoriesBody extends StatelessWidget {
           itemCount: PaginatedListMixin.pageSize,
           itemBuilder: (context, index) =>
               BlocBuilder<SettingsCubit, SettingsState>(
-            bloc: _settingsCubit,
-            builder: (context, settingsState) => ItemLoadingTile(
-              type: ItemType.story,
-              storyLines: settingsState.storyLines,
-              useLargeStoryStyle: settingsState.useLargeStoryStyle,
-              showMetadata: settingsState.showStoryMetadata,
-              style: ItemStyle.overview,
-            ),
-          ),
+                bloc: _settingsCubit,
+                builder: (context, settingsState) => ItemLoadingTile(
+                  type: ItemType.story,
+                  storyLines: settingsState.storyLines,
+                  useLargeStoryStyle: settingsState.useLargeStoryStyle,
+                  showMetadata: settingsState.showStoryMetadata,
+                  style: ItemStyle.overview,
+                ),
+              ),
         ),
         nonEmpty: () => SliverMainAxisGroup(
           slivers: [

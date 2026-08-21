@@ -75,9 +75,8 @@ class _SliverUserItemSearchBody extends StatelessWidget {
               _settingsCubit,
               id: id,
               loadingType: ItemType.story,
-              onTap: (context, item) async => context.push(
-                AppRoute.item.location(parameters: {'id': id}),
-              ),
+              onTap: (context, item) async =>
+                  context.push(AppRoute.item.location(parameters: {'id': id})),
             );
           },
         ),

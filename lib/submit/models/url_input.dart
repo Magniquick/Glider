@@ -22,10 +22,10 @@ final class UrlInput extends FormzInput<String, UrlValidationError> {
 
   @override
   UrlValidationError? validator(String value) => switch (value) {
-        final url when url.isEmpty && text.isEmpty => UrlValidationError.empty,
-        final url when url.isNotEmpty && !hasHost => UrlValidationError.invalid,
-        _ => null,
-      };
+    final url when url.isEmpty && text.isEmpty => UrlValidationError.empty,
+    final url when url.isNotEmpty && !hasHost => UrlValidationError.invalid,
+    _ => null,
+  };
 
   bool get hasHost => Uri.tryParse(value)?.host.isNotEmpty ?? false;
 }

@@ -64,9 +64,7 @@ class _ReplyPageState extends State<ReplyPage> {
             const _SliverReplyAppBar(),
             SliverSafeArea(
               top: false,
-              sliver: SliverToBoxAdapter(
-                child: _ReplyBody(_replyCubit),
-              ),
+              sliver: SliverToBoxAdapter(child: _ReplyBody(_replyCubit)),
             ),
             const SliverPadding(
               padding: AppSpacing.floatingActionButtonPageBottomPadding,
@@ -192,11 +190,7 @@ class _ReplyFormState extends State<_ReplyForm> {
 }
 
 class _ReplyPreview extends StatelessWidget {
-  const _ReplyPreview(
-    this._replyCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
+  const _ReplyPreview(this._replyCubit, this._authCubit, this._settingsCubit);
 
   final ReplyCubit _replyCubit;
   final AuthCubit _authCubit;
@@ -214,32 +208,34 @@ class _ReplyPreview extends StatelessWidget {
             buildWhen: (previous, current) => previous.text != current.text,
             builder: (context, state) =>
                 BlocSelector<AuthCubit, AuthState, String?>(
-              bloc: _authCubit,
-              selector: (state) => state.username,
-              builder: (context, username) =>
-                  BlocBuilder<SettingsCubit, SettingsState>(
-                bloc: _settingsCubit,
-                builder: (context, settingsState) => HeroMode(
-                  enabled: false,
-                  child: ItemDataTile(
-                    Item(
-                      id: 0,
-                      username: username,
-                      type: ItemType.comment,
-                      text:
-                          state.text.value.isNotEmpty ? state.text.value : null,
-                      dateTime: clock.now(),
-                    ),
-                    storyLines: settingsState.storyLines,
-                    useLargeStoryStyle: settingsState.useLargeStoryStyle,
-                    showFavicons: settingsState.showFavicons,
-                    showUserAvatars: settingsState.showUserAvatars,
-                    usernameStyle: UsernameStyle.loggedInUser,
-                    useInAppBrowser: settingsState.useInAppBrowser,
-                  ),
+                  bloc: _authCubit,
+                  selector: (state) => state.username,
+                  builder: (context, username) =>
+                      BlocBuilder<SettingsCubit, SettingsState>(
+                        bloc: _settingsCubit,
+                        builder: (context, settingsState) => HeroMode(
+                          enabled: false,
+                          child: ItemDataTile(
+                            Item(
+                              id: 0,
+                              username: username,
+                              type: ItemType.comment,
+                              text: state.text.value.isNotEmpty
+                                  ? state.text.value
+                                  : null,
+                              dateTime: clock.now(),
+                            ),
+                            storyLines: settingsState.storyLines,
+                            useLargeStoryStyle:
+                                settingsState.useLargeStoryStyle,
+                            showFavicons: settingsState.showFavicons,
+                            showUserAvatars: settingsState.showUserAvatars,
+                            usernameStyle: UsernameStyle.loggedInUser,
+                            useInAppBrowser: settingsState.useInAppBrowser,
+                          ),
+                        ),
+                      ),
                 ),
-              ),
-            ),
           ),
         ),
       ),

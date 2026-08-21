@@ -15,10 +15,7 @@ class EmptyWidget extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
-            Icons.air_outlined,
-            size: _iconSize,
-          ),
+          const Icon(Icons.air_outlined, size: _iconSize),
           Text(context.l10n.empty),
         ].spaced(height: AppSpacing.xl),
       ),

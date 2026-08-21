@@ -19,10 +19,7 @@ class LoadingTextBlock extends StatelessWidget {
     return Column(
       children: [
         if (hasLeading) SizedBox(height: style?.leading(context)),
-        LoadingBlock(
-          width: width,
-          height: style?.scaledFontSize(context),
-        ),
+        LoadingBlock(width: width, height: style?.scaledFontSize(context)),
       ],
     );
   }

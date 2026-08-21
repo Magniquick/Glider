@@ -37,13 +37,9 @@ class StoriesCubit extends HydratedCubit<StoriesState> {
         StoryType.showStories => _itemRepository.getShowStoryIds,
         StoryType.jobStories => _itemRepository.getJobStoryIds,
       }();
-      safeEmit(
-        state.copyWith(data: () => itemIds),
-      );
+      safeEmit(state.copyWith(data: () => itemIds));
       await _loadCurrentPage();
-      safeEmit(
-        state.copyWith(status: () => Status.success),
-      );
+      safeEmit(state.copyWith(status: () => Status.success));
     } on Object catch (exception) {
       safeEmit(
         state.copyWith(
@@ -65,9 +61,7 @@ class StoriesCubit extends HydratedCubit<StoriesState> {
 
     try {
       await _loadCurrentPage();
-      safeEmit(
-        state.copyWith(status: () => Status.success),
-      );
+      safeEmit(state.copyWith(status: () => Status.success));
     } on Object catch (exception) {
       safeEmit(
         state.copyWith(
@@ -79,19 +73,15 @@ class StoriesCubit extends HydratedCubit<StoriesState> {
   }
 
   Future<List<Item>> _loadCurrentPage() async {
-    return Future.wait<Item>(
-      [
-        if (state.currentPageData case final ids?)
-          for (final id in ids) _itemRepository.getItem(id),
-      ],
-    );
+    return Future.wait<Item>([
+      if (state.currentPageData case final ids?)
+        for (final id in ids) _itemRepository.getItem(id),
+    ]);
   }
 
   Future<void> setStoryType(StoryType storyType) async {
     id = storyType.name;
-    safeEmit(
-      state.copyWith(storyType: () => storyType),
-    );
+    safeEmit(state.copyWith(storyType: () => storyType));
     await load();
   }
 

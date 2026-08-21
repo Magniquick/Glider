@@ -39,15 +39,15 @@ class SliverStoriesSearchBody extends StatelessWidget {
           itemCount: PaginatedListMixin.pageSize,
           itemBuilder: (context, index) =>
               BlocBuilder<SettingsCubit, SettingsState>(
-            bloc: _settingsCubit,
-            builder: (context, settingsState) => ItemLoadingTile(
-              type: ItemType.story,
-              storyLines: settingsState.storyLines,
-              useLargeStoryStyle: settingsState.useLargeStoryStyle,
-              showMetadata: settingsState.showStoryMetadata,
-              style: ItemStyle.overview,
-            ),
-          ),
+                bloc: _settingsCubit,
+                builder: (context, settingsState) => ItemLoadingTile(
+                  type: ItemType.story,
+                  storyLines: settingsState.storyLines,
+                  useLargeStoryStyle: settingsState.useLargeStoryStyle,
+                  showMetadata: settingsState.showStoryMetadata,
+                  style: ItemStyle.overview,
+                ),
+              ),
         ),
         nonEmpty: () => SliverMainAxisGroup(
           slivers: [

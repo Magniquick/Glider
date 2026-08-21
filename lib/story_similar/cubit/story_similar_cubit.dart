@@ -11,22 +11,17 @@ part 'story_similar_state.dart';
 
 class StorySimilarCubit extends HydratedCubit<StorySimilarState> {
   StorySimilarCubit(this._itemRepository, {required int id})
-      : itemId = id,
-        super(const StorySimilarState()) {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    : itemId = id,
+      super(const StorySimilarState()) {
+    safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
       (item) async {
         if (item.url != state.item?.url) {
-          safeEmit(
-            state.copyWith(item: () => item),
-          );
+          safeEmit(state.copyWith(item: () => item));
 
           await _load();
         }
       },
-      // ignore: avoid_types_on_closure_parameters
       onError: (Object exception) => safeEmit(
         state.copyWith(
           status: () => Status.failure,

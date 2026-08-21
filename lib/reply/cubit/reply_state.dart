@@ -10,18 +10,18 @@ class ReplyState with EquatableMixin {
   });
 
   factory ReplyState.fromMap(Map<String, dynamic> json) => ReplyState(
-        parentItem: json['parentItem'] != null
-            ? Item.fromMap(json['parentItem'] as Map<String, dynamic>)
-            : null,
-        text: TextInput.pure(json['text'] as String? ?? ''),
-        isValid: json['isValid'] as bool? ?? false,
-      );
+    parentItem: json['parentItem'] != null
+        ? Item.fromMap(json['parentItem'] as Map<String, dynamic>)
+        : null,
+    text: TextInput.pure(json['text'] as String? ?? ''),
+    isValid: json['isValid'] as bool? ?? false,
+  );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
-        'parentItem': parentItem,
-        'text': text.value,
-        'isValid': isValid,
-      };
+    'parentItem': parentItem,
+    'text': text.value,
+    'isValid': isValid,
+  };
 
   final Item? parentItem;
   final TextInput text;
@@ -35,21 +35,14 @@ class ReplyState with EquatableMixin {
     bool Function()? isValid,
     bool Function()? preview,
     bool Function()? success,
-  }) =>
-      ReplyState(
-        parentItem: parentItem != null ? parentItem() : this.parentItem,
-        text: text != null ? text() : this.text,
-        isValid: isValid != null ? isValid() : this.isValid,
-        preview: preview != null ? preview() : this.preview,
-        success: success != null ? success() : this.success,
-      );
+  }) => ReplyState(
+    parentItem: parentItem != null ? parentItem() : this.parentItem,
+    text: text != null ? text() : this.text,
+    isValid: isValid != null ? isValid() : this.isValid,
+    preview: preview != null ? preview() : this.preview,
+    success: success != null ? success() : this.success,
+  );
 
   @override
-  List<Object?> get props => [
-        parentItem,
-        text,
-        isValid,
-        preview,
-        success,
-      ];
+  List<Object?> get props => [parentItem, text, isValid, preview, success];
 }

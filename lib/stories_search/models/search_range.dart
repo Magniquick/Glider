@@ -12,14 +12,15 @@ enum SearchRange {
 
   String label(BuildContext context, {DateTimeRange? dateRange}) {
     return switch (this) {
-      SearchRange.custom => dateRange != null
-          ? dateRange.duration != Duration.zero
-              ? context.l10n.dateRangeCustomMulti(
-                  dateRange.start,
-                  dateRange.end,
-                )
-              : context.l10n.dateRangeCustomSingle(dateRange.start)
-          : context.l10n.dateRangeCustom,
+      SearchRange.custom =>
+        dateRange != null
+            ? dateRange.duration != Duration.zero
+                  ? context.l10n.dateRangeCustomMulti(
+                      dateRange.start,
+                      dateRange.end,
+                    )
+                  : context.l10n.dateRangeCustomSingle(dateRange.start)
+            : context.l10n.dateRangeCustom,
       SearchRange.pastDay => context.l10n.dateRangePastDay,
       SearchRange.past3Days => context.l10n.dateRangePast3Days,
       SearchRange.pastWeek => context.l10n.dateRangePastWeek,

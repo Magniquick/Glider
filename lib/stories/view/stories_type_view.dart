@@ -7,11 +7,7 @@ import 'package:glider/stories/cubit/stories_cubit.dart';
 import 'package:glider/stories/models/story_type.dart';
 
 class StoriesTypeView extends StatelessWidget {
-  const StoriesTypeView(
-    this._storiesCubit,
-    this._settingsCubit, {
-    super.key,
-  });
+  const StoriesTypeView(this._storiesCubit, this._settingsCubit, {super.key});
 
   final StoriesCubit _storiesCubit;
   final SettingsCubit _settingsCubit;
@@ -35,9 +31,7 @@ class StoriesTypeView extends StatelessWidget {
             avatar: Icon(state.storyType.icon),
             label: Row(
               children: [
-                Expanded(
-                  child: Text(state.storyType.label(context)),
-                ),
+                Expanded(child: Text(state.storyType.label(context))),
                 const Icon(Icons.arrow_drop_down),
               ].spaced(width: AppSpacing.m),
             ),

@@ -183,11 +183,7 @@ class _SliverUserAppBar extends StatelessWidget {
           _authCubit,
           _settingsCubit,
         ),
-        _UserOverflowMenu(
-          _userCubit,
-          _authCubit,
-          _settingsCubit,
-        ),
+        _UserOverflowMenu(_userCubit, _authCubit, _settingsCubit),
       ],
       floating: true,
     );
@@ -220,8 +216,9 @@ class _UserSearchAnchorState extends State<_UserSearchAnchor> {
     _searchController = SearchController()
       ..text = widget._userItemSearchBloc.state.searchText ?? ''
       ..addListener(
-        () async => widget._userItemSearchBloc
-            .add(SetTextUserItemSearchEvent(_searchController.text)),
+        () async => widget._userItemSearchBloc.add(
+          SetTextUserItemSearchEvent(_searchController.text),
+        ),
       );
   }
 
@@ -295,46 +292,48 @@ class _UserOverflowMenu extends StatelessWidget {
         bloc: _authCubit,
         builder: (context, authState) =>
             BlocBuilder<SettingsCubit, SettingsState>(
-          bloc: _settingsCubit,
-          builder: (context, settingsState) => MenuAnchor(
-            menuChildren: [
-              for (final action in UserAction.values)
-                if (action.isVisible(state, authState, settingsState))
-                  if (action.options case final options?)
-                    SubmenuButton(
-                      menuChildren: [
-                        for (final option in options)
-                          if (option.isVisible(state, authState, settingsState))
-                            MenuItemButton(
-                              onPressed: () async => action.execute(
-                                context,
-                                _userCubit,
-                                _authCubit,
-                                option: option,
-                              ),
-                              child: Text(option.label(context, state)),
-                            ),
-                      ],
-                      child: Text(action.label(context, state)),
-                    )
-                  else
-                    MenuItemButton(
-                      onPressed: () async => action.execute(
-                        context,
-                        _userCubit,
-                        _authCubit,
-                      ),
-                      child: Text(action.label(context, state)),
-                    ),
-            ],
-            builder: (context, controller, child) => IconButton(
-              icon: Icon(Icons.adaptive.more_outlined),
-              tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-              onPressed: () =>
-                  controller.isOpen ? controller.close() : controller.open(),
+              bloc: _settingsCubit,
+              builder: (context, settingsState) => MenuAnchor(
+                menuChildren: [
+                  for (final action in UserAction.values)
+                    if (action.isVisible(state, authState, settingsState))
+                      if (action.options case final options?)
+                        SubmenuButton(
+                          menuChildren: [
+                            for (final option in options)
+                              if (option.isVisible(
+                                state,
+                                authState,
+                                settingsState,
+                              ))
+                                MenuItemButton(
+                                  onPressed: () async => action.execute(
+                                    context,
+                                    _userCubit,
+                                    _authCubit,
+                                    option: option,
+                                  ),
+                                  child: Text(option.label(context, state)),
+                                ),
+                          ],
+                          child: Text(action.label(context, state)),
+                        )
+                      else
+                        MenuItemButton(
+                          onPressed: () async =>
+                              action.execute(context, _userCubit, _authCubit),
+                          child: Text(action.label(context, state)),
+                        ),
+                ],
+                builder: (context, controller, child) => IconButton(
+                  icon: Icon(Icons.adaptive.more_outlined),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () => controller.isOpen
+                      ? controller.close()
+                      : controller.open(),
+                ),
+              ),
             ),
-          ),
-        ),
       ),
     );
   }
@@ -399,11 +398,11 @@ class _SliverUserBody extends StatelessWidget {
         // friendly message when we suspect this is the case.
         failure: isLoggedInUser
             ? () => SliverFillRemaining(
-                  child: FailureWidget(
-                    title: context.l10n.userUnavailable,
-                    onRetry: () async => _userCubit.load(),
-                  ),
-                )
+                child: FailureWidget(
+                  title: context.l10n.userUnavailable,
+                  onRetry: () async => _userCubit.load(),
+                ),
+              )
             : null,
         onRetry: () async => _userCubit.load(),
       ),

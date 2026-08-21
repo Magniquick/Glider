@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:compute/compute.dart';
+import 'package:flutter/foundation.dart';
 import 'package:glider_data/src/dtos/item_dto.dart';
 import 'package:glider_data/src/dtos/user_dto.dart';
 import 'package:http/http.dart' as http;
@@ -26,36 +26,27 @@ class HackerNewsApiService {
 
   Future<List<int>> _getIds(String path) async {
     final response = await _client.get(Uri.https(authority, path));
-    return compute(
-      (body) {
-        final list = jsonDecode(body) as List<dynamic>;
-        return list.map((e) => e as int).toList(growable: false);
-      },
-      response.body,
-    );
+    return compute((body) {
+      final list = jsonDecode(body) as List<dynamic>;
+      return list.map((e) => e as int).toList(growable: false);
+    }, response.body);
   }
 
   Future<ItemDto> getItem(int id) async {
     final path = 'v0/item/$id.json';
     final response = await _client.get(Uri.https(authority, path));
-    return compute(
-      (body) {
-        final map = jsonDecode(body) as Map<String, dynamic>;
-        return ItemDto.fromMap(map);
-      },
-      response.body,
-    );
+    return compute((body) {
+      final map = jsonDecode(body) as Map<String, dynamic>;
+      return ItemDto.fromMap(map);
+    }, response.body);
   }
 
   Future<UserDto> getUser(String id) async {
     final path = 'v0/user/$id.json';
     final response = await _client.get(Uri.https(authority, path));
-    return compute(
-      (body) {
-        final map = jsonDecode(body) as Map<String, dynamic>;
-        return UserDto.fromMap(map);
-      },
-      response.body,
-    );
+    return compute((body) {
+      final map = jsonDecode(body) as Map<String, dynamic>;
+      return UserDto.fromMap(map);
+    }, response.body);
   }
 }

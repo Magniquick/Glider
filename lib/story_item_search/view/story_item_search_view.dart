@@ -77,9 +77,8 @@ class _SliverStoryItemSearchBody extends StatelessWidget {
               loadingType: _storyItemSearchBloc.itemId == id
                   ? ItemType.story
                   : ItemType.comment,
-              onTap: (context, item) async => context.push(
-                AppRoute.item.location(parameters: {'id': id}),
-              ),
+              onTap: (context, item) async =>
+                  context.push(AppRoute.item.location(parameters: {'id': id})),
             );
           },
         ),

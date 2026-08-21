@@ -22,7 +22,9 @@ class UserCubit extends HydratedCubit<UserState>
     this._itemInteractionRepository, {
     required this.username,
   }) : super(const UserState()) {
-    _userSubscription = _userRepository.getUserStream(username).listen(
+    _userSubscription = _userRepository
+        .getUserStream(username)
+        .listen(
           (user) => safeEmit(
             state.copyWith(
               status: () => Status.success,
@@ -34,7 +36,6 @@ class UserCubit extends HydratedCubit<UserState>
               exception: () => null,
             ),
           ),
-          // ignore: avoid_types_on_closure_parameters
           onError: (Object exception) => safeEmit(
             state.copyWith(
               status: () => Status.failure,
@@ -42,12 +43,11 @@ class UserCubit extends HydratedCubit<UserState>
             ),
           ),
         );
-    _synchronizingSubscription =
-        _userInteractionRepository.synchronizingStream.listen(
-      (synchronizing) => safeEmit(
-        state.copyWith(synchronizing: () => synchronizing),
-      ),
-    );
+    _synchronizingSubscription = _userInteractionRepository.synchronizingStream
+        .listen(
+          (synchronizing) =>
+              safeEmit(state.copyWith(synchronizing: () => synchronizing)),
+        );
   }
 
   final UserRepository _userRepository;
@@ -62,24 +62,20 @@ class UserCubit extends HydratedCubit<UserState>
   String get id => username;
 
   Future<void> load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
     await _userRepository.getUser(username);
   }
 
   Future<void> block(bool block) async {
     final blocked = state.blocked;
-    safeEmit(
-      state.copyWith(blocked: () => block),
+    safeEmit(state.copyWith(blocked: () => block));
+    final success = await _userInteractionRepository.block(
+      username,
+      block: block,
     );
-    final success =
-        await _userInteractionRepository.block(username, block: block);
 
     if (!success) {
-      safeEmit(
-        state.copyWith(blocked: () => blocked),
-      );
+      safeEmit(state.copyWith(blocked: () => blocked));
       emitPresentation(const UserActionFailedEvent());
     }
   }

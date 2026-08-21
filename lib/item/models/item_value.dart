@@ -54,12 +54,15 @@ enum ItemValue implements MenuItem<ItemState> {
       ItemValue.title => item?.title,
       ItemValue.link => item?.url.toString(),
       ItemValue.text => item?.text,
-      ItemValue.itemLink => AppUris.hackerNewsUri.replace(
-          path: 'item',
-          queryParameters: <String, String>{
-            'id': itemCubit.itemId.toString(),
-          },
-        ).toString(),
+      ItemValue.itemLink =>
+        AppUris.hackerNewsUri
+            .replace(
+              path: 'item',
+              queryParameters: <String, String>{
+                'id': itemCubit.itemId.toString(),
+              },
+            )
+            .toString(),
     };
   }
 }

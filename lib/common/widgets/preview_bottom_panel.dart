@@ -54,8 +54,9 @@ class PreviewBottomPanel extends StatelessWidget {
                 value: visible,
                 onChanged: onChanged,
                 title: Text(context.l10n.preview),
-                contentPadding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xl,
+                ),
               ),
             ),
           ),

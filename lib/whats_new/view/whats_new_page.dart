@@ -7,10 +7,7 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
 class WhatsNewPage extends StatelessWidget {
-  const WhatsNewPage(
-    this._settingsCubit, {
-    super.key,
-  });
+  const WhatsNewPage(this._settingsCubit, {super.key});
 
   final SettingsCubit _settingsCubit;
 
@@ -22,9 +19,7 @@ class WhatsNewPage extends StatelessWidget {
           const _SliverWhatsNewAppBar(),
           SliverSafeArea(
             top: false,
-            sliver: SliverToBoxAdapter(
-              child: _WhatsNewBody(_settingsCubit),
-            ),
+            sliver: SliverToBoxAdapter(child: _WhatsNewBody(_settingsCubit)),
           ),
           const SliverPadding(
             padding: AppSpacing.floatingActionButtonPageBottomPadding,

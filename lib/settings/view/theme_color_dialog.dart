@@ -24,10 +24,7 @@ class ThemeColorDialog extends StatelessWidget {
     return AlertDialog(
       title: Text(context.l10n.themeColor),
       contentPadding: AppSpacing.defaultTilePadding,
-      content: SizedBox(
-        width: 0,
-        child: _ThemeColorBody(_settingsCubit),
-      ),
+      content: SizedBox(width: 0, child: _ThemeColorBody(_settingsCubit)),
       actions: [
         TextButton(
           onPressed: () => context.pop(),
@@ -55,16 +52,8 @@ class _ThemeColorBody extends StatelessWidget {
         children: [
           for (final color in _colors)
             IconButton(
-              icon: Icon(
-                Icons.circle_outlined,
-                color: color,
-                size: _iconSize,
-              ),
-              selectedIcon: Icon(
-                Icons.circle,
-                color: color,
-                size: _iconSize,
-              ),
+              icon: Icon(Icons.circle_outlined, color: color, size: _iconSize),
+              selectedIcon: Icon(Icons.circle, color: color, size: _iconSize),
               isSelected: color == state.themeColor,
               padding: const EdgeInsets.all(AppSpacing.m),
               onPressed: () => _settingsCubit.setThemeColor(color),

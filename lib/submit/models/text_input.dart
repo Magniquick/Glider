@@ -21,8 +21,7 @@ final class TextInput extends FormzInput<String, TextValidationError> {
 
   @override
   TextValidationError? validator(String value) => switch (value) {
-        final text when text.isEmpty && url.isEmpty =>
-          TextValidationError.empty,
-        _ => null,
-      };
+    final text when text.isEmpty && url.isEmpty => TextValidationError.empty,
+    _ => null,
+  };
 }

@@ -104,11 +104,13 @@ class ItemDataTile extends StatelessWidget {
       );
     }
 
-    final hasPrimary = style.showPrimary &&
+    final hasPrimary =
+        style.showPrimary &&
         item.dateTime != null &&
         (showMetadata ||
             (item.title != null || item.url != null) && !blocked && !filtered);
-    final hasSecondary = style.showSecondary &&
+    final hasSecondary =
+        style.showSecondary &&
         (item.text != null || item.url != null) &&
         !blocked &&
         !filtered;
@@ -119,8 +121,9 @@ class ItemDataTile extends StatelessWidget {
 
     return InkWell(
       onTap: onTap != null ? () => onTap!(context, item) : null,
-      onLongPress:
-          onLongPress != null ? () => onLongPress!(context, item) : null,
+      onLongPress: onLongPress != null
+          ? () => onLongPress!(context, item)
+          : null,
       child: Padding(
         padding: padding,
         child: Opacity(
@@ -305,8 +308,9 @@ class ItemDataTile extends StatelessWidget {
               Hero(
                 tag: 'item_tile_username_tag_${item.id}',
                 child: Badge(
-                  backgroundColor:
-                      Theme.of(context).colorScheme.tertiaryContainer,
+                  backgroundColor: Theme.of(context)
+                      .colorScheme
+                      .tertiaryContainer,
                   textColor: Theme.of(context).colorScheme.onTertiaryContainer,
                   label: Text(item.usernameTag(context)!),
                 ),
@@ -334,21 +338,21 @@ class ItemDataTile extends StatelessWidget {
   }
 
   Widget _buildFavoritedMetadata(BuildContext context) => MetadataWidget(
-        icon: Icons.favorite_outline_outlined,
-        color: favorited ? Theme.of(context).colorScheme.tertiary : null,
-      );
+    icon: Icons.favorite_outline_outlined,
+    color: favorited ? Theme.of(context).colorScheme.tertiary : null,
+  );
 
   Widget _buildVotedMetadata(BuildContext context) => MetadataWidget(
-        icon: vote.downvoted
-            ? Icons.arrow_downward_outlined
-            : Icons.arrow_upward_outlined,
-        label: item.score != null ? Text(item.score!.toString()) : null,
-        color: vote.downvoted
-            ? Theme.of(context).colorScheme.secondary
-            : vote.upvoted
-                ? Theme.of(context).colorScheme.tertiary
-                : null,
-      );
+    icon: vote.downvoted
+        ? Icons.arrow_downward_outlined
+        : Icons.arrow_upward_outlined,
+    label: item.score != null ? Text(item.score!.toString()) : null,
+    color: vote.downvoted
+        ? Theme.of(context).colorScheme.secondary
+        : vote.upvoted
+        ? Theme.of(context).colorScheme.tertiary
+        : null,
+  );
 
   Widget _buildSecondary(BuildContext context) {
     return Column(
@@ -366,10 +370,8 @@ class ItemDataTile extends StatelessWidget {
           Card.outlined(
             child: InkWell(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
-              onTap: () async => url.tryLaunch(
-                context,
-                useInAppBrowser: useInAppBrowser,
-              ),
+              onTap: () async =>
+                  url.tryLaunch(context, useInAppBrowser: useInAppBrowser),
               // Explicitly override parent widget's long press.
               onLongPress: () {},
               child: Padding(
@@ -395,9 +397,7 @@ class ItemDataTile extends StatelessWidget {
                         tag: 'item_tile_url_${item.id}',
                         child: Text(
                           item.url!.toString(),
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
+                          style: Theme.of(context).textTheme.bodyMedium
                               ?.copyWith(
                                 color: Theme.of(context).colorScheme.primary,
                                 decoration: TextDecoration.underline,
@@ -446,8 +446,9 @@ class _ItemTitle extends StatelessWidget {
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: Badge(
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer,
                 textColor: Theme.of(context).colorScheme.onSecondaryContainer,
                 label: Text(item.prefix!),
               ),
@@ -473,8 +474,9 @@ class _ItemTitle extends StatelessWidget {
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: Badge(
-                backgroundColor:
-                    Theme.of(context).colorScheme.secondaryContainer,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .secondaryContainer,
                 textColor: Theme.of(context).colorScheme.onSecondaryContainer,
                 label: Text(item.originalDate!),
               ),
@@ -486,8 +488,9 @@ class _ItemTitle extends StatelessWidget {
               alignment: PlaceholderAlignment.baseline,
               baseline: TextBaseline.alphabetic,
               child: Badge(
-                backgroundColor:
-                    Theme.of(context).colorScheme.tertiaryContainer,
+                backgroundColor: Theme.of(context)
+                    .colorScheme
+                    .tertiaryContainer,
                 textColor: Theme.of(context).colorScheme.onTertiaryContainer,
                 label: Text(item.ycBatch!),
               ),
@@ -502,9 +505,8 @@ class _ItemTitle extends StatelessWidget {
               ),
               TextSpan(
                 text: url.host,
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
+                style: Theme.of(context).textTheme.titleSmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
               TextSpan(
                 text: ')',
@@ -536,17 +538,15 @@ class _ItemFavicon extends StatelessWidget {
   final bool useLargeStoryStyle;
 
   int get _faviconSize => min(
-        useLargeStoryStyle ? (storyLines >= 0 ? storyLines : 2) * 24 : 20,
-        _faviconRequestSize,
-      );
+    useLargeStoryStyle ? (storyLines >= 0 ? storyLines : 2) * 24 : 20,
+    _faviconRequestSize,
+  );
 
   @override
   Widget build(BuildContext context) {
     return Ink.image(
       image: ResizeImage(
-        NetworkImage(
-          item.faviconUrl(size: _faviconRequestSize)!,
-        ),
+        NetworkImage(item.faviconUrl(size: _faviconRequestSize)!),
         width: _faviconSize,
         height: _faviconSize,
         policy: ResizeImagePolicy.fit,

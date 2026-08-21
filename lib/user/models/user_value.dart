@@ -49,12 +49,13 @@ enum UserValue implements MenuItem<UserState> {
     return switch (this) {
       UserValue.username => userCubit.username,
       UserValue.about => user?.about,
-      UserValue.userLink => AppUris.hackerNewsUri.replace(
-          path: 'user',
-          queryParameters: <String, String>{
-            'id': userCubit.username,
-          },
-        ).toString(),
+      UserValue.userLink =>
+        AppUris.hackerNewsUri
+            .replace(
+              path: 'user',
+              queryParameters: <String, String>{'id': userCubit.username},
+            )
+            .toString(),
     };
   }
 }

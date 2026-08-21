@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 // This value happens to fit a page worth of items (30) with the standard height
 // of an item in the stories overview (92). It does not appear to have a
@@ -30,8 +31,8 @@ class RefreshableScrollView extends StatelessWidget {
       edgeOffset: edgeOffset ?? MediaQuery.paddingOf(context).top,
       child: CustomScrollView(
         controller: scrollController,
+        scrollCacheExtent: ScrollCacheExtent.pixels(_cacheExtent),
         physics: const AlwaysScrollableScrollPhysics(),
-        cacheExtent: _cacheExtent,
         slivers: slivers,
       ),
     );

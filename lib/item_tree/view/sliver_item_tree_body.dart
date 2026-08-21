@@ -44,8 +44,9 @@ class SliverItemTreeBody extends StatelessWidget {
         if (state.newDescendantsCount > 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content:
-                  Text(context.l10n.newDescendants(state.newDescendantsCount)),
+              content: Text(
+                context.l10n.newDescendants(state.newDescendantsCount),
+              ),
             ),
           );
         }
@@ -76,10 +77,11 @@ class SliverItemTreeBody extends StatelessWidget {
                     ? state.getDescendants(descendant)?.length
                     : null,
                 showVisited: false,
-                highlight: !(state.previousData
-                        ?.map((e) => e.id)
-                        .contains(descendant.id) ??
-                    true),
+                highlight:
+                    !(state.previousData
+                            ?.map((e) => e.id)
+                            .contains(descendant.id) ??
+                        true),
                 onTap: (context, item) async {
                   if (!item.isDeleted) {
                     _itemTreeCubit.toggleCollapsed(item.id);

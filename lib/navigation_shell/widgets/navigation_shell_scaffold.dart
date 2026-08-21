@@ -43,8 +43,10 @@ class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
   double get _paddedNavigationBarHeight =>
       _navigationBarHeight + MediaQuery.viewPaddingOf(context).bottom;
 
-  void onDestinationSelected(int index) => widget._navigationShell
-      .goBranch(index, initialLocation: index == _currentIndex);
+  void onDestinationSelected(int index) => widget._navigationShell.goBranch(
+    index,
+    initialLocation: index == _currentIndex,
+  );
 
   @override
   void initState() {
@@ -67,8 +69,10 @@ class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocPresentationListener<NavigationShellCubit,
-        NavigationShellCubitEvent>(
+    return BlocPresentationListener<
+      NavigationShellCubit,
+      NavigationShellCubitEvent
+    >(
       bloc: widget._navigationShellCubit,
       listener: (context, event) => switch (event) {
         ShowWhatsNewEvent() => context.push(AppRoute.whatsNew.location()),
@@ -78,85 +82,85 @@ class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
         selector: (state) => state.isLoggedIn,
         builder: (context, isLoggedIn) =>
             BlocBuilder<SettingsCubit, SettingsState>(
-          bloc: widget._settingsCubit,
-          buildWhen: (previous, current) =>
-              previous.useNavigationDrawer != current.useNavigationDrawer,
-          builder: (context, settingsState) {
-            final destinations = [
-              NavigationDestination(
-                icon: const Icon(Icons.whatshot_outlined),
-                selectedIcon: const Icon(Icons.whatshot),
-                label: context.l10n.stories,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.fast_rewind_outlined),
-                selectedIcon: const Icon(Icons.fast_rewind),
-                label: context.l10n.catchUp,
-              ),
-              NavigationDestination(
-                icon: const Icon(Icons.favorite_outline_outlined),
-                selectedIcon: const Icon(Icons.favorite),
-                label: context.l10n.favorites,
-              ),
-              if (isLoggedIn)
-                NavigationDestination(
-                  icon: const Icon(Icons.inbox_outlined),
-                  selectedIcon: const Icon(Icons.inbox),
-                  label: context.l10n.inbox,
-                ),
-            ];
-            final floatingActionButton = isLoggedIn
-                ? FloatingActionButton(
-                    onPressed: () => context.push(AppRoute.submit.location()),
-                    tooltip: context.l10n.submit,
-                    child: const Icon(Icons.add_outlined),
-                  )
-                : null;
-
-            return AdaptiveLayout(
-              primaryNavigation: settingsState.useNavigationDrawer
-                  ? null
-                  : SlotLayout(
-                      config: <Breakpoint, SlotLayoutConfig>{
-                        Breakpoints.mediumAndUp: SlotLayout.from(
-                          key: const Key('primaryNavigationMediumAndUp'),
-                          builder: (context) => _buildPrimaryNavigation(
-                            context,
-                            destinations,
-                            leading: floatingActionButton,
-                          ),
-                        ),
-                      },
-                    ),
-              bottomNavigation: settingsState.useNavigationDrawer
-                  ? null
-                  : SlotLayout(
-                      config: {
-                        Breakpoints.small: SlotLayout.from(
-                          key: const Key('bottomNavigationStandard'),
-                          builder: (context) => _buildBottomNavigation(
-                            context,
-                            destinations,
-                          ),
-                        ),
-                      },
-                    ),
-              body: SlotLayout(
-                config: {
-                  Breakpoints.standard: SlotLayout.from(
-                    key: const Key('bodyStandard'),
-                    builder: (context) => _buildBody(
-                      context,
-                      destinations,
-                      floatingActionButton: floatingActionButton,
-                      useNavigationDrawer: settingsState.useNavigationDrawer,
-                    ),
+              bloc: widget._settingsCubit,
+              buildWhen: (previous, current) =>
+                  previous.useNavigationDrawer != current.useNavigationDrawer,
+              builder: (context, settingsState) {
+                final destinations = [
+                  NavigationDestination(
+                    icon: const Icon(Icons.whatshot_outlined),
+                    selectedIcon: const Icon(Icons.whatshot),
+                    label: context.l10n.stories,
                   ),
-                },
-              ),
-            );
-          },
-        ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.fast_rewind_outlined),
+                    selectedIcon: const Icon(Icons.fast_rewind),
+                    label: context.l10n.catchUp,
+                  ),
+                  NavigationDestination(
+                    icon: const Icon(Icons.favorite_outline_outlined),
+                    selectedIcon: const Icon(Icons.favorite),
+                    label: context.l10n.favorites,
+                  ),
+                  if (isLoggedIn)
+                    NavigationDestination(
+                      icon: const Icon(Icons.inbox_outlined),
+                      selectedIcon: const Icon(Icons.inbox),
+                      label: context.l10n.inbox,
+                    ),
+                ];
+                final floatingActionButton = isLoggedIn
+                    ? FloatingActionButton(
+                        onPressed: () =>
+                            context.push(AppRoute.submit.location()),
+                        tooltip: context.l10n.submit,
+                        child: const Icon(Icons.add_outlined),
+                      )
+                    : null;
+
+                return AdaptiveLayout(
+                  primaryNavigation: settingsState.useNavigationDrawer
+                      ? null
+                      : SlotLayout(
+                          config: <Breakpoint, SlotLayoutConfig>{
+                            Breakpoints.mediumAndUp: SlotLayout.from(
+                              key: const Key('primaryNavigationMediumAndUp'),
+                              builder: (context) => _buildPrimaryNavigation(
+                                context,
+                                destinations,
+                                leading: floatingActionButton,
+                              ),
+                            ),
+                          },
+                        ),
+                  bottomNavigation: settingsState.useNavigationDrawer
+                      ? null
+                      : SlotLayout(
+                          config: {
+                            Breakpoints.small: SlotLayout.from(
+                              key: const Key('bottomNavigationStandard'),
+                              builder: (context) =>
+                                  _buildBottomNavigation(context, destinations),
+                            ),
+                          },
+                        ),
+                  body: SlotLayout(
+                    config: {
+                      Breakpoints.standard: SlotLayout.from(
+                        key: const Key('bodyStandard'),
+                        builder: (context) => _buildBody(
+                          context,
+                          destinations,
+                          floatingActionButton: floatingActionButton,
+                          useNavigationDrawer:
+                              settingsState.useNavigationDrawer,
+                        ),
+                      ),
+                    },
+                  ),
+                );
+              },
+            ),
       ),
     );
   }
@@ -171,7 +175,8 @@ class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
 
     return Material(
       child: AdaptiveScaffold.standardNavigationRail(
-        width: 80 +
+        width:
+            80 +
             switch (directionality) {
               TextDirection.ltr => padding.left,
               TextDirection.rtl => padding.right,
@@ -232,13 +237,14 @@ class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
           // Process in-range updates as normal. Ignore at-edge updates, because
           // it appears to cause false positives on bounces back.
           ScrollUpdateNotification(
-            metrics: ScrollMetrics(outOfRange: false, atEdge: false)
+            metrics: ScrollMetrics(outOfRange: false, atEdge: false),
           ) ||
           // Also process out-of-range updates, but require that they are the
           // result of a drag. This enables showing and hiding the navigation
           // bar similar to when overscroll occurs.
-          ScrollUpdateNotification(dragDetails: DragUpdateDetails()) =>
-            notification.scrollDelta,
+          ScrollUpdateNotification(
+            dragDetails: DragUpdateDetails(),
+          ) => notification.scrollDelta,
           OverscrollNotification() => notification.overscroll,
           _ => null,
         };

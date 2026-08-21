@@ -50,14 +50,17 @@ class SliverStorySimilarBody extends StatelessWidget {
     return SliverPadding(
       padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
       sliver: DecoratedSliver(
-        decoration: Theme.of(context).elevationToBoxDecoration(1).copyWith(
+        decoration: Theme.of(context)
+            .elevationToBoxDecoration(1)
+            .copyWith(
               borderRadius: const BorderRadius.all(Radius.circular(12)),
             ),
         sliver: SliverMainAxisGroup(
           slivers: [
             SliverToBoxAdapter(
               child: Padding(
-                padding: AppSpacing.defaultShadowPadding +
+                padding:
+                    AppSpacing.defaultShadowPadding +
                     AppSpacing.defaultTilePadding,
                 child: Row(
                   children: [

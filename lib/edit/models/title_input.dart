@@ -8,8 +8,9 @@ extension TitleValidationErrorExtension on TitleValidationError {
   String label(BuildContext context) {
     return switch (this) {
       TitleValidationError.empty => context.l10n.emptyError,
-      TitleValidationError.tooLong =>
-        context.l10n.tooLongError(TitleInput.maxLength),
+      TitleValidationError.tooLong => context.l10n.tooLongError(
+        TitleInput.maxLength,
+      ),
     };
   }
 }
@@ -23,9 +24,8 @@ final class TitleInput extends FormzInput<String, TitleValidationError> {
 
   @override
   TitleValidationError? validator(String value) => switch (value) {
-        final title when title.isEmpty => TitleValidationError.empty,
-        final title when title.length > maxLength =>
-          TitleValidationError.tooLong,
-        _ => null,
-      };
+    final title when title.isEmpty => TitleValidationError.empty,
+    final title when title.length > maxLength => TitleValidationError.tooLong,
+    _ => null,
+  };
 }

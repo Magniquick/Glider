@@ -18,11 +18,8 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
 class EditPage extends StatefulWidget {
-  EditPage(
-    this._editCubitFactory,
-    this._settingsCubit, {
-    required this.id,
-  }) : super(key: ValueKey(id));
+  EditPage(this._editCubitFactory, this._settingsCubit, {required this.id})
+    : super(key: ValueKey(id));
 
   final EditCubitFactory _editCubitFactory;
   final SettingsCubit _settingsCubit;
@@ -61,9 +58,7 @@ class _EditPageState extends State<EditPage> {
             const _SliverEditAppBar(),
             SliverSafeArea(
               top: false,
-              sliver: SliverToBoxAdapter(
-                child: _EditBody(_editCubit),
-              ),
+              sliver: SliverToBoxAdapter(child: _EditBody(_editCubit)),
             ),
             const SliverPadding(
               padding: AppSpacing.floatingActionButtonPageBottomPadding,
@@ -76,10 +71,7 @@ class _EditPageState extends State<EditPage> {
           builder: (context, preview) => PreviewBottomPanel(
             visible: preview,
             onChanged: _editCubit.setPreview,
-            child: _EditPreview(
-              _editCubit,
-              widget._settingsCubit,
-            ),
+            child: _EditPreview(_editCubit, widget._settingsCubit),
           ),
         ),
         floatingActionButton: state.isValid
@@ -206,9 +198,7 @@ class _EditFormState extends State<_EditForm> {
                   previous.item?.url != current.item?.url,
               builder: (context, state) => TextFormField(
                 controller: _urlController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.link,
-                ),
+                decoration: InputDecoration(labelText: context.l10n.link),
                 enabled: false,
               ),
             ),
@@ -235,10 +225,7 @@ class _EditFormState extends State<_EditForm> {
 }
 
 class _EditPreview extends StatelessWidget {
-  const _EditPreview(
-    this._editCubit,
-    this._settingsCubit,
-  );
+  const _EditPreview(this._editCubit, this._settingsCubit);
 
   final EditCubit _editCubit;
   final SettingsCubit _settingsCubit;

@@ -37,71 +37,62 @@ class UsernameWidget extends StatelessWidget {
     const tapTargetSize = MaterialTapTargetSize.shrinkWrap;
     final buttonStyle = switch (style) {
       UsernameStyle.loggedInUser ||
-      UsernameStyle.storyUser =>
-        FilledButton.styleFrom(
-          padding: padding,
-          visualDensity: visualDensity,
-          tapTargetSize: tapTargetSize,
-        ),
+      UsernameStyle.storyUser => FilledButton.styleFrom(
+        padding: padding,
+        visualDensity: visualDensity,
+        tapTargetSize: tapTargetSize,
+      ),
       UsernameStyle.none => ElevatedButton.styleFrom(
-          padding: padding,
-          visualDensity: visualDensity,
-          tapTargetSize: tapTargetSize,
-        ),
+        padding: padding,
+        visualDensity: visualDensity,
+        tapTargetSize: tapTargetSize,
+      ),
     };
     final icon = AvatarWidget(username: username);
-    final label = Text(
-      username,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-    );
+    final label = Text(username, maxLines: 1, overflow: TextOverflow.ellipsis);
 
     return switch (style) {
       UsernameStyle.loggedInUser when showAvatar => FilledButton.icon(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          icon: icon,
-          label: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        icon: icon,
+        label: label,
+      ),
       UsernameStyle.loggedInUser => FilledButton(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          child: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        child: label,
+      ),
       UsernameStyle.storyUser when showAvatar => FilledButton.tonalIcon(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          icon: icon,
-          label: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        icon: icon,
+        label: label,
+      ),
       UsernameStyle.storyUser => FilledButton(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          child: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        child: label,
+      ),
       UsernameStyle.none when showAvatar => ElevatedButton.icon(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          icon: icon,
-          label: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        icon: icon,
+        label: label,
+      ),
       UsernameStyle.none => ElevatedButton(
-          onPressed: onPressed,
-          onLongPress: onLongPress,
-          style: buttonStyle,
-          child: label,
-        ),
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        style: buttonStyle,
+        child: label,
+      ),
     };
   }
 }
 
-enum UsernameStyle {
-  loggedInUser,
-  storyUser,
-  none,
-}
+enum UsernameStyle { loggedInUser, storyUser, none }

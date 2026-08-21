@@ -14,24 +14,20 @@ part 'story_item_search_state.dart';
 class StoryItemSearchBloc
     extends Bloc<StoryItemSearchEvent, StoryItemSearchState> {
   StoryItemSearchBloc(this._itemRepository, {required int id})
-      : itemId = id,
-        super(const StoryItemSearchState()) {
+    : itemId = id,
+      super(const StoryItemSearchState()) {
     on<LoadStoryItemSearchEvent>(
       (event, emit) async => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextStoryItemSearchEvent>(
-      (event, emit) async => _setText(event),
-    );
+    on<SetTextStoryItemSearchEvent>((event, emit) async => _setText(event));
   }
 
   final ItemRepository _itemRepository;
   final int itemId;
 
   Future<void> _load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
       final items = await _itemRepository.searchStoryItems(
@@ -56,9 +52,7 @@ class StoryItemSearchBloc
   }
 
   Future<void> _setText(SetTextStoryItemSearchEvent event) async {
-    safeEmit(
-      state.copyWith(searchText: () => event.text),
-    );
+    safeEmit(state.copyWith(searchText: () => event.text));
     add(const LoadStoryItemSearchEvent());
   }
 }

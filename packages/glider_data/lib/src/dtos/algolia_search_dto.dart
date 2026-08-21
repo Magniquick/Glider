@@ -4,9 +4,7 @@ class AlgoliaSearchDto {
   factory AlgoliaSearchDto.fromMap(Map<String, dynamic> json) =>
       AlgoliaSearchDto(
         hits: (json['hits'] as List<dynamic>)
-            .map(
-              (e) => AlgoliaSearchHitDto.fromMap(e as Map<String, dynamic>),
-            )
+            .map((e) => AlgoliaSearchHitDto.fromMap(e as Map<String, dynamic>))
             .toList(growable: false),
       );
 

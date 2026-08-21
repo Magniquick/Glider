@@ -21,19 +21,13 @@ class StoryItemSearchState with DataMixin<List<int>>, EquatableMixin {
     List<int>? Function()? data,
     String? Function()? searchText,
     Object? Function()? exception,
-  }) =>
-      StoryItemSearchState(
-        status: status != null ? status() : this.status,
-        data: data != null ? data() : this.data,
-        searchText: searchText != null ? searchText() : this.searchText,
-        exception: exception != null ? exception() : this.exception,
-      );
+  }) => StoryItemSearchState(
+    status: status != null ? status() : this.status,
+    data: data != null ? data() : this.data,
+    searchText: searchText != null ? searchText() : this.searchText,
+    exception: exception != null ? exception() : this.exception,
+  );
 
   @override
-  List<Object?> get props => [
-        status,
-        data,
-        searchText,
-        exception,
-      ];
+  List<Object?> get props => [status, data, searchText, exception];
 }

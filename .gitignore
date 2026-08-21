@@ -109,3 +109,6 @@ app.*.map.json
 !/dev/ci/**/Gemfile.lock
 !.vscode/extensions.json
 !.vscode/launch.json
+
+# Generated localizations
+lib/l10n/app_localizations*.dart

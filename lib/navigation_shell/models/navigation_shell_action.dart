@@ -10,7 +10,7 @@ enum NavigationShellAction implements MenuItem<void> {
   settings,
   account;
 
-  const NavigationShellAction();
+  NavigationShellAction();
 
   @override
   bool isVisible(void _, AuthState authState, SettingsState settingsState) {

@@ -63,23 +63,12 @@ extension ItemExtension on Item {
       };
 
   String? faviconUrl({required int size}) => url != null
-      ? Uri.https(
-          'icons.viter.nl',
-          'icon',
-          <String, String>{
-            'url': url!.host,
-            'size': '0..$size..500',
-            'formats': 'gif,ico,jpg,png',
-          },
-        ).toString()
+      ? Uri.https('icons.viter.nl', 'icon', <String, String>{
+          'url': url!.host,
+          'size': '0..$size..500',
+          'formats': 'gif,ico,jpg,png',
+        }).toString()
       : null;
 }
 
-enum _UsernameTag {
-  founder,
-  ceo,
-  moderator,
-  exModerator,
-  bot,
-  purrfect,
-}
+enum _UsernameTag { founder, ceo, moderator, exModerator, bot, purrfect }

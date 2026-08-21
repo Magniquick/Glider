@@ -60,9 +60,11 @@ class ItemLoadingTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    for (var i = 0;
-                        i < (storyLines >= 0 ? storyLines : 2) - 1;
-                        i++)
+                    for (
+                      var i = 0;
+                      i < (storyLines >= 0 ? storyLines : 2) - 1;
+                      i++
+                    )
                       LoadingTextBlock(
                         style: useLargeStoryStyle
                             ? textTheme.titleMedium
@@ -90,8 +92,8 @@ class ItemLoadingTile extends StatelessWidget {
 
   Widget _buildMetadata(BuildContext context) {
     final textTheme = Theme.of(context).textTheme;
-    final color =
-        Theme.of(context).colorScheme.outline.withOpacity(LoadingBlock.opacity);
+    final color = Theme.of(context).colorScheme.outline
+        .withValues(alpha: LoadingBlock.opacity);
     return Row(
       children: [
         if (type != ItemType.comment) ...[
@@ -132,10 +134,7 @@ class ItemLoadingTile extends StatelessWidget {
             ),
             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
           ),
-          icon: const LoadingBlock(
-            width: 14,
-            height: 14,
-          ),
+          icon: const LoadingBlock(width: 14, height: 14),
           label: LoadingTextBlock(
             width: 63,
             style: textTheme.bodySmall,
@@ -143,10 +142,7 @@ class ItemLoadingTile extends StatelessWidget {
           ),
         ),
         if (collapsedCount != null)
-          MetadataWidget(
-            icon: Icons.add_circle_outline_outlined,
-            color: color,
-          ),
+          MetadataWidget(icon: Icons.add_circle_outline_outlined, color: color),
         const Spacer(),
         MetadataWidget(
           label: LoadingTextBlock(
@@ -165,16 +161,9 @@ class ItemLoadingTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (style.showPrimary) const SizedBox(height: AppSpacing.m),
-        LoadingTextBlock(
-          style: textTheme.bodyMedium,
-        ),
-        LoadingTextBlock(
-          style: textTheme.bodyMedium,
-        ),
-        LoadingTextBlock(
-          width: 200,
-          style: textTheme.bodyMedium,
-        ),
+        LoadingTextBlock(style: textTheme.bodyMedium),
+        LoadingTextBlock(style: textTheme.bodyMedium),
+        LoadingTextBlock(width: 200, style: textTheme.bodyMedium),
       ],
     );
   }

@@ -8,9 +8,7 @@ class LoadingWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Padding(
       padding: AppSpacing.defaultTilePadding,
-      child: Center(
-        child: CircularProgressIndicator.adaptive(),
-      ),
+      child: Center(child: CircularProgressIndicator.adaptive()),
     );
   }
 }

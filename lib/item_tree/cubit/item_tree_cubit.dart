@@ -9,11 +9,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'item_tree_state.dart';
 
 class ItemTreeCubit extends HydratedCubit<ItemTreeState> {
-  ItemTreeCubit(
-    this._itemRepository, {
-    required int id,
-  })  : itemId = id,
-        super(ItemTreeState());
+  ItemTreeCubit(this._itemRepository, {required int id})
+    : itemId = id,
+      super(ItemTreeState());
 
   final ItemRepository _itemRepository;
 
@@ -23,9 +21,7 @@ class ItemTreeCubit extends HydratedCubit<ItemTreeState> {
   String get id => itemId.toString();
 
   Future<void> load() async {
-    safeEmit(
-      state.copyWith(status: () => Status.loading),
-    );
+    safeEmit(state.copyWith(status: () => Status.loading));
     final descendantsStream = _itemRepository.getItemDescendantsStream(itemId);
 
     if (state.data == null || state.data!.isEmpty) {
@@ -37,16 +33,13 @@ class ItemTreeCubit extends HydratedCubit<ItemTreeState> {
             exception: () => null,
           ),
         ),
-        // ignore: avoid_types_on_closure_parameters
         onError: (Object exception) => safeEmit(
           state.copyWith(
             status: () => Status.failure,
             exception: () => exception,
           ),
         ),
-        onDone: () => safeEmit(
-          state.copyWith(status: () => Status.success),
-        ),
+        onDone: () => safeEmit(state.copyWith(status: () => Status.success)),
       );
     } else {
       try {
