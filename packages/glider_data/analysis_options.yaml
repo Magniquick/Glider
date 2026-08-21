@@ -1,7 +1,16 @@
 include: package:leancode_lint/analysis_options.yaml
 
+plugins:
+  leancode_lint: any
+
 analyzer:
   errors:
     included_file_warning: ignore
-  plugins:
-    custom_lint
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
