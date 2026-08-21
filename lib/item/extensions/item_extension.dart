@@ -71,4 +71,11 @@ extension ItemExtension on Item {
       : null;
 }
 
-enum _UsernameTag { founder, ceo, moderator, exModerator, bot, purrfect }
+enum _UsernameTag() {
+  founder,
+  ceo,
+  moderator,
+  exModerator,
+  bot,
+  purrfect
+}

@@ -1,8 +1,6 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-class SecureStorageService {
-  const SecureStorageService(this._flutterSecureStorage);
-
+class const SecureStorageService(this._flutterSecureStorage) {
   final FlutterSecureStorage _flutterSecureStorage;
 
   static const String _userCookieKey = 'userCookie';

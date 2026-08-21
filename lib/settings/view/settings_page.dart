@@ -19,9 +19,8 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_color_utilities/material_color_utilities.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage(this._settingsCubit, {super.key});
-
+class const SettingsPage(this._settingsCubit, {super.key})
+    extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override
@@ -40,18 +39,14 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-class _SliverSettingsAppBar extends StatelessWidget {
-  const _SliverSettingsAppBar();
-
+class const _SliverSettingsAppBar() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.medium(title: Text(context.l10n.settings));
   }
 }
 
-class _SettingsBody extends StatelessWidget {
-  const _SettingsBody(this._settingsCubit);
-
+class const _SettingsBody(this._settingsCubit) extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   static const List<String> _fonts = [

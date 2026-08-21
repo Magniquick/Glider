@@ -26,10 +26,8 @@ import 'package:go_router/go_router.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-class AppRouter {
-  AppRouter._(this.config);
-
-  factory AppRouter.create(AppContainer appContainer) {
+class AppRouter._(this.config) {
+  factory create(AppContainer appContainer) {
     return AppRouter._(
       GoRouter(
         navigatorKey: rootNavigatorKey,

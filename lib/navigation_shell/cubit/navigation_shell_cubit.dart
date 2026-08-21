@@ -6,11 +6,11 @@ import 'package:glider_domain/glider_domain.dart';
 part 'navigation_shell_cubit_event.dart';
 part 'navigation_shell_state.dart';
 
-class NavigationShellCubit extends Cubit<NavigationShellState>
+class NavigationShellCubit(this._packageRepository)
+    extends Cubit<NavigationShellState>
     with
         BlocPresentationMixin<NavigationShellState, NavigationShellCubitEvent> {
-  NavigationShellCubit(this._packageRepository)
-    : super(const NavigationShellState());
+  this : super(const NavigationShellState());
 
   final PackageRepository _packageRepository;
 

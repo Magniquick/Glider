@@ -3,9 +3,11 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 
-class IndentedWidget extends StatelessWidget {
-  const IndentedWidget({super.key, required this.depth, required this.child});
-
+class const IndentedWidget({
+  super.key,
+  required this.depth,
+  required this.child,
+}) extends StatelessWidget {
   final int depth;
   final Widget child;
 

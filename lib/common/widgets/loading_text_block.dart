@@ -2,14 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:glider/common/extensions/text_style_extension.dart';
 import 'package:glider/common/widgets/loading_block.dart';
 
-class LoadingTextBlock extends StatelessWidget {
-  const LoadingTextBlock({
-    super.key,
-    this.width,
-    this.style,
-    this.hasLeading = true,
-  });
-
+class const LoadingTextBlock({
+  super.key,
+  this.width,
+  this.style,
+  this.hasLeading = true,
+}) extends StatelessWidget {
   final double? width;
   final TextStyle? style;
   final bool hasLeading;

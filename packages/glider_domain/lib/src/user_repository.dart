@@ -6,8 +6,8 @@ import 'package:glider_domain/src/entities/user.dart';
 import 'package:glider_domain/src/extensions/behavior_subject_map_extension.dart';
 import 'package:rxdart/subjects.dart';
 
-class UserRepository {
-  UserRepository(this._hackerNewsApiService) : _userStreamControllers = {};
+class UserRepository(this._hackerNewsApiService) {
+  this : _userStreamControllers = {};
 
   final HackerNewsApiService _hackerNewsApiService;
 

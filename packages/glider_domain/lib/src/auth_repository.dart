@@ -2,13 +2,11 @@ import 'package:glider_data/glider_data.dart';
 
 export 'package:glider_data/glider_data.dart' show LogInResult;
 
-class AuthRepository {
-  const AuthRepository(
-    this._hackerNewsWebsiteService,
-    this._secureStorageService,
-    this._sharedPreferencesService,
-  );
-
+class const AuthRepository(
+  this._hackerNewsWebsiteService,
+  this._secureStorageService,
+  this._sharedPreferencesService,
+) {
   final HackerNewsWebsiteService _hackerNewsWebsiteService;
   final SecureStorageService _secureStorageService;
   final SharedPreferencesService _sharedPreferencesService;

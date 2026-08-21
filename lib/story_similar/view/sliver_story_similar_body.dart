@@ -17,16 +17,14 @@ import 'package:glider/story_similar/cubit/story_similar_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class SliverStorySimilarBody extends StatelessWidget {
-  const SliverStorySimilarBody(
-    this._storySimilarCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-    this.storyUsername,
-  });
-
+class const SliverStorySimilarBody(
+  this._storySimilarCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+  this.storyUsername,
+}) extends StatelessWidget {
   final StorySimilarCubit _storySimilarCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

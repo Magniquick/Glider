@@ -6,7 +6,7 @@ import 'package:glider/item/cubit/item_cubit.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 
-enum ItemValue implements MenuItem<ItemState> {
+enum ItemValue() implements MenuItem<ItemState> {
   title,
   link,
   text,

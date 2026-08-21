@@ -22,7 +22,7 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 
 class ItemTile extends StatefulWidget {
-  ItemTile(
+  new(
     ItemCubit itemCubit,
     this._authCubit,
     this._settingsCubit, {
@@ -40,7 +40,7 @@ class ItemTile extends StatefulWidget {
        id = itemCubit.itemId,
        super(key: ValueKey(itemCubit.itemId));
 
-  ItemTile.create(
+  new create(
     ItemCubitFactory itemCubitFactory,
     this._authCubit,
     this._settingsCubit, {
@@ -77,7 +77,8 @@ class ItemTile extends StatefulWidget {
   State<ItemTile> createState() => _ItemTileState();
 }
 
-class _ItemTileState extends State<ItemTile>
+class _ItemTileState()
+    extends State<ItemTile>
     with AutomaticKeepAliveClientMixin {
   late final ItemCubit _itemCubit;
 

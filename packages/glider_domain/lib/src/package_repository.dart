@@ -2,9 +2,10 @@ import 'package:glider_data/glider_data.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pub_semver/pub_semver.dart';
 
-class PackageRepository {
-  const PackageRepository(this._sharedPreferencesService, this._packageInfo);
-
+class const PackageRepository(
+  this._sharedPreferencesService,
+  this._packageInfo,
+) {
   final SharedPreferencesService _sharedPreferencesService;
   final PackageInfo _packageInfo;
 

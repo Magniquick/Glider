@@ -7,14 +7,12 @@ import 'package:glider/item/models/item_action.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class ItemBottomSheet extends StatelessWidget {
-  const ItemBottomSheet(
-    this._itemCubit,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const ItemBottomSheet(
+  this._itemCubit,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatelessWidget {
   final ItemCubit _itemCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;

@@ -13,16 +13,14 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider/user/view/user_page.dart';
 import 'package:go_router/go_router.dart';
 
-class AuthPage extends StatefulWidget {
-  const AuthPage(
-    this._authCubit,
-    this._settingsCubit,
-    this._userCubitFactory,
-    this._itemCubitFactory,
-    this._userItemSearchBlocFactory, {
-    super.key,
-  });
-
+class const AuthPage(
+  this._authCubit,
+  this._settingsCubit,
+  this._userCubitFactory,
+  this._itemCubitFactory,
+  this._userItemSearchBlocFactory, {
+  super.key,
+}) extends StatefulWidget {
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
   final UserCubitFactory _userCubitFactory;
@@ -33,7 +31,7 @@ class AuthPage extends StatefulWidget {
   State<AuthPage> createState() => _AuthPageState();
 }
 
-class _AuthPageState extends State<AuthPage> {
+class _AuthPageState() extends State<AuthPage> {
   @override
   void initState() {
     super.initState();
@@ -88,9 +86,8 @@ class _AuthPageState extends State<AuthPage> {
   }
 }
 
-class _AuthBody extends StatefulWidget {
-  const _AuthBody(this._authCubit, this._settingsCubit);
-
+class const _AuthBody(this._authCubit, this._settingsCubit)
+    extends StatefulWidget {
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
 
@@ -98,7 +95,7 @@ class _AuthBody extends StatefulWidget {
   State<_AuthBody> createState() => _AuthBodyState();
 }
 
-class _AuthBodyState extends State<_AuthBody> {
+class _AuthBodyState() extends State<_AuthBody> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -204,9 +201,7 @@ class _AuthBodyState extends State<_AuthBody> {
   }
 }
 
-class _AuthLinks extends StatelessWidget {
-  const _AuthLinks(this._settingsCubit);
-
+class const _AuthLinks(this._settingsCubit) extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override

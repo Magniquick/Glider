@@ -1,7 +1,5 @@
 part of 'user_cubit.dart';
 
-sealed class UserCubitEvent;
+sealed class UserCubitEvent();
 
-final class UserActionFailedEvent implements UserCubitEvent {
-  const UserActionFailedEvent();
-}
+final class const UserActionFailedEvent() implements UserCubitEvent;

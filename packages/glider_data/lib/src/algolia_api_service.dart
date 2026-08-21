@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:glider_data/src/dtos/algolia_search_dto.dart';
 import 'package:http/http.dart' as http;
 
-class AlgoliaApiService {
-  const AlgoliaApiService(this._client);
-
+class const AlgoliaApiService(this._client) {
   final http.Client _client;
 
   static const authority = 'hn.algolia.com';

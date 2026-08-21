@@ -1,13 +1,11 @@
 part of 'story_item_search_bloc.dart';
 
-class StoryItemSearchState with DataMixin<List<int>>, EquatableMixin {
-  const StoryItemSearchState({
-    this.status = Status.initial,
-    this.data,
-    this.searchText,
-    this.exception,
-  });
-
+class const StoryItemSearchState({
+  this.status = Status.initial,
+  this.data,
+  this.searchText,
+  this.exception,
+}) with DataMixin<List<int>>, EquatableMixin {
   @override
   final Status status;
   @override

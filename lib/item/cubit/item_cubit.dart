@@ -15,16 +15,14 @@ import 'package:share_plus/share_plus.dart';
 part 'item_cubit_event.dart';
 part 'item_state.dart';
 
-class ItemCubit extends HydratedCubit<ItemState>
+class ItemCubit(
+  this._itemRepository,
+  this._itemInteractionRepository,
+  this._userInteractionRepository, {
+  required int id,
+}) extends HydratedCubit<ItemState>
     with BlocPresentationMixin<ItemState, ItemCubitEvent> {
-  ItemCubit(
-    this._itemRepository,
-    this._itemInteractionRepository,
-    this._userInteractionRepository, {
-    required int id,
-  }) : itemId = id,
-       _blockedSubscription = null,
-       super(const ItemState()) {
+  this : itemId = id, _blockedSubscription = null, super(const ItemState()) {
     safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
       (item) async {

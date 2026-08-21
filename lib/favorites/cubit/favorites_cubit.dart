@@ -9,9 +9,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'favorites_state.dart';
 
-class FavoritesCubit extends HydratedCubit<FavoritesState> {
-  FavoritesCubit(this._itemInteractionRepository)
-    : super(const FavoritesState()) {
+class FavoritesCubit(this._itemInteractionRepository)
+    extends HydratedCubit<FavoritesState> {
+  this : super(const FavoritesState()) {
     _favoriteIdsSubscription = _itemInteractionRepository.favoritedStream
         .listen(
           (itemIds) => safeEmit(

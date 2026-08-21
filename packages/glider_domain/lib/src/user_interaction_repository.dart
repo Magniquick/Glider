@@ -3,12 +3,12 @@ import 'dart:async';
 import 'package:glider_data/glider_data.dart';
 import 'package:rxdart/subjects.dart';
 
-class UserInteractionRepository {
-  UserInteractionRepository(
-    this._hackerNewsWebsiteService,
-    this._secureStorageService,
-    this._sharedPreferencesService,
-  ) {
+class UserInteractionRepository(
+  this._hackerNewsWebsiteService,
+  this._secureStorageService,
+  this._sharedPreferencesService,
+) {
+  this {
     unawaited(getBlockedUsernames());
   }
 

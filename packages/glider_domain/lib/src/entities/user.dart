@@ -2,16 +2,14 @@ import 'package:equatable/equatable.dart';
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/extensions/string_extension.dart';
 
-class User with EquatableMixin {
-  const User({
-    required this.username,
-    required this.createdDateTime,
-    required this.karma,
-    this.about,
-    this.submittedIds,
-  });
-
-  factory User.fromDto(UserDto dto) => User(
+class const User({
+  required this.username,
+  required this.createdDateTime,
+  required this.karma,
+  this.about,
+  this.submittedIds,
+}) with EquatableMixin {
+  factory fromDto(UserDto dto) => User(
     username: dto.id,
     createdDateTime: DateTime.fromMillisecondsSinceEpoch(dto.created * 1000),
     karma: dto.karma,
@@ -19,7 +17,7 @@ class User with EquatableMixin {
     submittedIds: dto.submitted ?? const [],
   );
 
-  factory User.fromMap(Map<String, dynamic> json) => User(
+  factory fromMap(Map<String, dynamic> json) => User(
     username: json['username'] as String,
     createdDateTime: DateTime.fromMillisecondsSinceEpoch(
       json['createdDateTime'] as int,

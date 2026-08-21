@@ -14,14 +14,14 @@ import 'package:share_plus/share_plus.dart';
 part 'user_cubit_event.dart';
 part 'user_state.dart';
 
-class UserCubit extends HydratedCubit<UserState>
+class UserCubit(
+  this._userRepository,
+  this._userInteractionRepository,
+  this._itemInteractionRepository, {
+  required this.username,
+}) extends HydratedCubit<UserState>
     with BlocPresentationMixin<UserState, UserCubitEvent> {
-  UserCubit(
-    this._userRepository,
-    this._userInteractionRepository,
-    this._itemInteractionRepository, {
-    required this.username,
-  }) : super(const UserState()) {
+  this : super(const UserState()) {
     _userSubscription = _userRepository
         .getUserStream(username)
         .listen(

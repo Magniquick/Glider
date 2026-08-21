@@ -12,15 +12,13 @@ import 'package:glider/stories_search/bloc/stories_search_bloc.dart';
 import 'package:glider/stories_search/view/sliver_stories_search_body.dart';
 import 'package:glider/stories_search/view/stories_search_range_view.dart';
 
-class CatchUpShellPage extends StatefulWidget {
-  const CatchUpShellPage(
-    this._storiesSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const CatchUpShellPage(
+  this._storiesSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatefulWidget {
   final StoriesSearchBloc _storiesSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -30,7 +28,7 @@ class CatchUpShellPage extends StatefulWidget {
   State<CatchUpShellPage> createState() => _CatchUpShellPageState();
 }
 
-class _CatchUpShellPageState extends State<CatchUpShellPage> {
+class _CatchUpShellPageState() extends State<CatchUpShellPage> {
   @override
   void initState() {
     super.initState();
@@ -71,13 +69,11 @@ class _CatchUpShellPageState extends State<CatchUpShellPage> {
   }
 }
 
-class _SliverCatchUpAppBar extends StatelessWidget {
-  const _SliverCatchUpAppBar(
-    this._storiesSearchBloc,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverCatchUpAppBar(
+  this._storiesSearchBloc,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final StoriesSearchBloc _storiesSearchBloc;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;

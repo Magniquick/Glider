@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 
-class MenuListTile<T> extends StatelessWidget {
-  const MenuListTile({
-    super.key,
-    this.title,
-    this.trailing,
-    this.enabled = true,
-    this.onChanged,
-    required this.values,
-    required this.selected,
-    required this.childBuilder,
-  });
-
+class const MenuListTile<T>({
+  super.key,
+  this.title,
+  this.trailing,
+  this.enabled = true,
+  this.onChanged,
+  required this.values,
+  required this.selected,
+  required this.childBuilder,
+}) extends StatelessWidget {
   final Widget? title;
   final Widget? trailing;
   final bool enabled;

@@ -2,26 +2,24 @@ import 'package:equatable/equatable.dart';
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/extensions/string_extension.dart';
 
-class Item with EquatableMixin {
-  Item({
-    required this.id,
-    this.isDeleted = false,
-    this.type,
-    this.username,
-    this.dateTime,
-    this.text,
-    this.isDead = false,
-    this.parentId,
-    this.pollId,
-    this.childIds,
-    this.url,
-    this.score,
-    this.title,
-    this.partIds,
-    this.descendantCount,
-  });
-
-  factory Item.fromDto(ItemDto dto) => Item(
+class Item({
+  required this.id,
+  this.isDeleted = false,
+  this.type,
+  this.username,
+  this.dateTime,
+  this.text,
+  this.isDead = false,
+  this.parentId,
+  this.pollId,
+  this.childIds,
+  this.url,
+  this.score,
+  this.title,
+  this.partIds,
+  this.descendantCount,
+}) with EquatableMixin {
+  factory fromDto(ItemDto dto) => Item(
     id: dto.id,
     isDeleted: dto.deleted ?? false,
     type: dto.type != null ? ItemType.tryParse(dto.type!) : null,
@@ -41,7 +39,7 @@ class Item with EquatableMixin {
     descendantCount: dto.descendants,
   );
 
-  factory Item.fromAlgoliaSearchHitDto(AlgoliaSearchHitDto dto) => Item(
+  factory fromAlgoliaSearchHitDto(AlgoliaSearchHitDto dto) => Item(
     id: int.parse(dto.objectId),
     username: dto.author,
     dateTime: dto.createdAtI != null
@@ -55,7 +53,7 @@ class Item with EquatableMixin {
     descendantCount: dto.numComments,
   );
 
-  factory Item.fromMap(Map<String, dynamic> json) => Item(
+  factory fromMap(Map<String, dynamic> json) => Item(
     id: json['id'] as int,
     isDeleted: json['isDeleted'] as bool? ?? false,
     type: json['type'] != null
@@ -173,7 +171,7 @@ class Item with EquatableMixin {
   ];
 }
 
-enum ItemType {
+enum ItemType() {
   job,
   story,
   comment,

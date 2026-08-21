@@ -2,10 +2,12 @@ part of 'inbox_cubit.dart';
 
 typedef IdWithParent = (int parentId, int id);
 
-class InboxState with DataMixin<List<IdWithParent>>, EquatableMixin {
-  const InboxState({this.status = Status.initial, this.data, this.exception});
-
-  factory InboxState.fromMap(Map<String, dynamic> json) => InboxState(
+class const InboxState({
+  this.status = Status.initial,
+  this.data,
+  this.exception,
+}) with DataMixin<List<IdWithParent>>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => InboxState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)
         ?.map((e) => e as Map<String, dynamic>)

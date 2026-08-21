@@ -1,13 +1,11 @@
 part of 'favorites_cubit.dart';
 
-class FavoritesState with DataMixin<List<int>>, EquatableMixin {
-  const FavoritesState({
-    this.status = Status.initial,
-    this.data,
-    this.exception,
-  });
-
-  factory FavoritesState.fromMap(Map<String, dynamic> json) => FavoritesState(
+class const FavoritesState({
+  this.status = Status.initial,
+  this.data,
+  this.exception,
+}) with DataMixin<List<int>>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => FavoritesState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)
         ?.map((e) => e as int)

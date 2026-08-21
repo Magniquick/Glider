@@ -1,4 +1,4 @@
-enum AppRoute {
+enum AppRoute({this.parent}) {
   stories,
   catchUp,
   favorites,
@@ -17,8 +17,6 @@ enum AppRoute {
   userValueDialog(parent: user),
   textSelectDialog,
   confirmDialog;
-
-  AppRoute({this.parent});
 
   final AppRoute? parent;
 

@@ -1,8 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class SharedPreferencesService {
-  const SharedPreferencesService(this._sharedPreferences);
-
+class const SharedPreferencesService(this._sharedPreferences) {
   final SharedPreferences _sharedPreferences;
 
   static const String _themeModeKey = 'theme_mode';

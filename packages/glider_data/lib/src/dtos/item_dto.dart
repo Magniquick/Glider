@@ -1,23 +1,21 @@
-class ItemDto {
-  const ItemDto({
-    required this.id,
-    this.deleted,
-    this.type,
-    this.by,
-    this.time,
-    this.text,
-    this.dead,
-    this.parent,
-    this.poll,
-    this.kids,
-    this.url,
-    this.score,
-    this.title,
-    this.parts,
-    this.descendants,
-  });
-
-  factory ItemDto.fromMap(Map<String, dynamic> json) => ItemDto(
+class const ItemDto({
+  required this.id,
+  this.deleted,
+  this.type,
+  this.by,
+  this.time,
+  this.text,
+  this.dead,
+  this.parent,
+  this.poll,
+  this.kids,
+  this.url,
+  this.score,
+  this.title,
+  this.parts,
+  this.descendants,
+}) {
+  factory fromMap(Map<String, dynamic> json) => ItemDto(
     id: json['id'] as int,
     deleted: json['deleted'] as bool?,
     type: json['type'] as String?,

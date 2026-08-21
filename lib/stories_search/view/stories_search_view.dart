@@ -9,15 +9,13 @@ import 'package:glider/stories_search/bloc/stories_search_bloc.dart';
 import 'package:glider/stories_search/view/sliver_stories_search_body.dart';
 import 'package:glider/stories_search/view/stories_search_range_view.dart';
 
-class StoriesSearchView extends StatelessWidget {
-  const StoriesSearchView(
-    this._storiesSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const StoriesSearchView(
+  this._storiesSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatelessWidget {
   final StoriesSearchBloc _storiesSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

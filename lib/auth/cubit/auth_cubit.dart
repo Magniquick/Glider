@@ -5,9 +5,9 @@ import 'package:glider_domain/glider_domain.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(this._authRepository, this._itemInteractionRepository)
-    : super(const AuthState());
+class AuthCubit(this._authRepository, this._itemInteractionRepository)
+    extends Cubit<AuthState> {
+  this : super(const AuthState());
 
   final AuthRepository _authRepository;
   final ItemInteractionRepository _itemInteractionRepository;

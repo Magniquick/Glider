@@ -8,18 +8,16 @@ import 'package:glider/common/widgets/metadata_widget.dart';
 import 'package:glider/item/models/item_style.dart';
 import 'package:glider_domain/glider_domain.dart';
 
-class ItemLoadingTile extends StatelessWidget {
-  const ItemLoadingTile({
-    super.key,
-    required this.type,
-    this.collapsedCount,
-    this.storyLines = 2,
-    this.useLargeStoryStyle = true,
-    this.showMetadata = true,
-    this.style = ItemStyle.full,
-    this.padding = AppSpacing.defaultTilePadding,
-  });
-
+class const ItemLoadingTile({
+  super.key,
+  required this.type,
+  this.collapsedCount,
+  this.storyLines = 2,
+  this.useLargeStoryStyle = true,
+  this.showMetadata = true,
+  this.style = ItemStyle.full,
+  this.padding = AppSpacing.defaultTilePadding,
+}) extends StatelessWidget {
   final ItemType type;
   final int? collapsedCount;
   final int storyLines;

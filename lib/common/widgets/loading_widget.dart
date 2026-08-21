@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 
-class LoadingWidget extends StatelessWidget {
-  const LoadingWidget({super.key});
-
+class const LoadingWidget({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Padding(

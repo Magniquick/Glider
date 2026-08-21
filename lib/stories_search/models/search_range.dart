@@ -2,7 +2,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter/material.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-enum SearchRange {
+enum SearchRange() {
   custom,
   pastDay,
   past3Days,

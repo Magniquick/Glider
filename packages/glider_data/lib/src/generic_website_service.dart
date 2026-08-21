@@ -2,9 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 
-class GenericWebsiteService {
-  const GenericWebsiteService(this._client);
-
+class const GenericWebsiteService(this._client) {
   final http.Client _client;
 
   Future<String?> getTitle(Uri url) async {

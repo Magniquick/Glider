@@ -6,11 +6,9 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-enum NavigationShellAction implements MenuItem<void> {
+enum NavigationShellAction() implements MenuItem<void> {
   settings,
   account;
-
-  NavigationShellAction();
 
   @override
   bool isVisible(void _, AuthState authState, SettingsState settingsState) {

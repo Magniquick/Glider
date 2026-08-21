@@ -6,9 +6,11 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider/stories/cubit/stories_cubit.dart';
 import 'package:glider/stories/models/story_type.dart';
 
-class StoriesTypeView extends StatelessWidget {
-  const StoriesTypeView(this._storiesCubit, this._settingsCubit, {super.key});
-
+class const StoriesTypeView(
+  this._storiesCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatelessWidget {
   final StoriesCubit _storiesCubit;
   final SettingsCubit _settingsCubit;
 

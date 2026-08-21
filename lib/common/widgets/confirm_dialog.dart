@@ -4,9 +4,8 @@ import 'package:go_router/go_router.dart';
 
 typedef ConfirmDialogExtra = ({String? title, String? text});
 
-class ConfirmDialog extends StatelessWidget {
-  const ConfirmDialog({super.key, this.title, this.text});
-
+class const ConfirmDialog({super.key, this.title, this.text})
+    extends StatelessWidget {
   final String? title;
   final String? text;
 

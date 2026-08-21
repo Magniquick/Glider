@@ -1,16 +1,14 @@
 part of 'submit_cubit.dart';
 
-class SubmitState with EquatableMixin {
-  const SubmitState({
-    this.title = const TitleInput.pure(''),
-    this.url = const UrlInput.pure(''),
-    this.text = const TextInput.pure(''),
-    this.isValid = false,
-    this.preview = true,
-    this.success = false,
-  });
-
-  factory SubmitState.fromMap(Map<String, dynamic> json) => SubmitState(
+class const SubmitState({
+  this.title = const TitleInput.pure(''),
+  this.url = const UrlInput.pure(''),
+  this.text = const TextInput.pure(''),
+  this.isValid = false,
+  this.preview = true,
+  this.success = false,
+}) with EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => SubmitState(
     title: TitleInput.pure(json['title'] as String? ?? ''),
     url: UrlInput.pure(
       json['url'] as String? ?? '',

@@ -18,14 +18,12 @@ import 'package:glider/submit/models/url_input.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class SubmitPage extends StatefulWidget {
-  const SubmitPage(
-    this._submitCubit,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const SubmitPage(
+  this._submitCubit,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatefulWidget {
   final SubmitCubit _submitCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -34,7 +32,7 @@ class SubmitPage extends StatefulWidget {
   State<SubmitPage> createState() => _SubmitPageState();
 }
 
-class _SubmitPageState extends State<SubmitPage> {
+class _SubmitPageState() extends State<SubmitPage> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<SubmitCubit, SubmitState>(
@@ -83,18 +81,14 @@ class _SubmitPageState extends State<SubmitPage> {
   }
 }
 
-class _SliverSubmitAppBar extends StatelessWidget {
-  const _SliverSubmitAppBar();
-
+class const _SliverSubmitAppBar() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.medium(title: Text(context.l10n.submit));
   }
 }
 
-class _SubmitBody extends StatelessWidget {
-  const _SubmitBody(this._submitCubit);
-
+class const _SubmitBody(this._submitCubit) extends StatelessWidget {
   final SubmitCubit _submitCubit;
 
   @override
@@ -120,16 +114,14 @@ class _SubmitBody extends StatelessWidget {
   }
 }
 
-class _SubmitForm extends StatefulWidget {
-  const _SubmitForm(this._submitCubit);
-
+class const _SubmitForm(this._submitCubit) extends StatefulWidget {
   final SubmitCubit _submitCubit;
 
   @override
   State<_SubmitForm> createState() => _SubmitFormState();
 }
 
-class _SubmitFormState extends State<_SubmitForm> {
+class _SubmitFormState() extends State<_SubmitForm> {
   late final TextEditingController _titleController;
   late final TextEditingController _urlController;
   late final TextEditingController _textController;
@@ -239,9 +231,11 @@ class _SubmitFormState extends State<_SubmitForm> {
   }
 }
 
-class _SubmitPreview extends StatelessWidget {
-  const _SubmitPreview(this._submitCubit, this._authCubit, this._settingsCubit);
-
+class const _SubmitPreview(
+  this._submitCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final SubmitCubit _submitCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;

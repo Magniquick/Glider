@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
-class NotificationCanceler<T extends Notification> extends StatelessWidget {
-  const NotificationCanceler({super.key, required this.child});
-
+class const NotificationCanceler<T extends Notification>({
+  super.key,
+  required this.child,
+}) extends StatelessWidget {
   final Widget child;
 
   @override

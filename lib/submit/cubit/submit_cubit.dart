@@ -9,9 +9,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'submit_state.dart';
 
-class SubmitCubit extends HydratedCubit<SubmitState> {
-  SubmitCubit(this._itemInteractionRepository, this._genericRepository)
-    : super(const SubmitState());
+class SubmitCubit(this._itemInteractionRepository, this._genericRepository)
+    extends HydratedCubit<SubmitState> {
+  this : super(const SubmitState());
 
   final ItemInteractionRepository _itemInteractionRepository;
   final WebsiteRepository _genericRepository;

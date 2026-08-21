@@ -20,15 +20,13 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class FavoritesShellPage extends StatefulWidget {
-  const FavoritesShellPage(
-    this._favoritesCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const FavoritesShellPage(
+  this._favoritesCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatefulWidget {
   final FavoritesCubit _favoritesCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -38,7 +36,7 @@ class FavoritesShellPage extends StatefulWidget {
   State<FavoritesShellPage> createState() => _FavoritesShellPageState();
 }
 
-class _FavoritesShellPageState extends State<FavoritesShellPage> {
+class _FavoritesShellPageState() extends State<FavoritesShellPage> {
   @override
   void initState() {
     super.initState();
@@ -75,13 +73,11 @@ class _FavoritesShellPageState extends State<FavoritesShellPage> {
   }
 }
 
-class _SliverFavoritesAppBar extends StatelessWidget {
-  const _SliverFavoritesAppBar(
-    this._favoritesCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverFavoritesAppBar(
+  this._favoritesCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final FavoritesCubit _favoritesCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -122,14 +118,12 @@ class _SliverFavoritesAppBar extends StatelessWidget {
   }
 }
 
-class _SliverFavoritesBody extends StatelessWidget {
-  const _SliverFavoritesBody(
-    this._favoritesCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverFavoritesBody(
+  this._favoritesCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final FavoritesCubit _favoritesCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

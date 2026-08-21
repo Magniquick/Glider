@@ -2,15 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-class FailureWidget extends StatelessWidget {
-  const FailureWidget({
-    super.key,
-    this.title,
-    this.exception,
-    this.onRetry,
-    this.compact = false,
-  });
-
+class const FailureWidget({
+  super.key,
+  this.title,
+  this.exception,
+  this.onRetry,
+  this.compact = false,
+}) extends StatelessWidget {
   final String? title;
   final Object? exception;
   final VoidCallback? onRetry;

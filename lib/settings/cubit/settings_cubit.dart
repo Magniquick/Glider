@@ -14,13 +14,13 @@ import 'package:share_plus/share_plus.dart';
 part 'settings_cubit_event.dart';
 part 'settings_state.dart';
 
-class SettingsCubit extends Cubit<SettingsState>
+class SettingsCubit(
+  this._settingsRepository,
+  this._packageRepository,
+  this._itemInteractionRepository,
+) extends Cubit<SettingsState>
     with BlocPresentationMixin<SettingsState, SettingsCubitEvent> {
-  SettingsCubit(
-    this._settingsRepository,
-    this._packageRepository,
-    this._itemInteractionRepository,
-  ) : super(const SettingsState()) {
+  this : super(const SettingsState()) {
     unawaited(_load());
   }
 

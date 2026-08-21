@@ -7,16 +7,14 @@ import 'package:flutter/rendering.dart';
 // scrolling noticably smoother on most affected pages compared to the default.
 const _cacheExtent = 2760.0;
 
-class RefreshableScrollView extends StatelessWidget {
-  const RefreshableScrollView({
-    super.key,
-    this.scrollController,
-    required this.slivers,
-    required this.onRefresh,
-    this.toolbarHeight,
-    this.edgeOffset,
-  });
-
+class const RefreshableScrollView({
+  super.key,
+  this.scrollController,
+  required this.slivers,
+  required this.onRefresh,
+  this.toolbarHeight,
+  this.edgeOffset,
+}) extends StatelessWidget {
   final ScrollController? scrollController;
   final List<Widget> slivers;
   final RefreshCallback onRefresh;

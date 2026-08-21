@@ -6,9 +6,8 @@ import 'package:glider/common/extensions/widget_list_extension.dart';
 import 'package:glider/stories_search/bloc/stories_search_bloc.dart';
 import 'package:glider/stories_search/models/search_range.dart';
 
-class StoriesSearchRangeView extends StatelessWidget {
-  const StoriesSearchRangeView(this._storiesSearchBloc, {super.key});
-
+class const StoriesSearchRangeView(this._storiesSearchBloc, {super.key})
+    extends StatelessWidget {
   final StoriesSearchBloc _storiesSearchBloc;
 
   @override

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:go_router/go_router.dart';
 
-class TextSelectDialog extends StatelessWidget {
-  const TextSelectDialog({super.key, required this.text});
-
+class const TextSelectDialog({super.key, required this.text})
+    extends StatelessWidget {
   final String text;
 
   @override

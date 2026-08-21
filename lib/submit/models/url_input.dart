@@ -2,7 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:formz/formz.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-enum UrlValidationError { empty, invalid }
+enum UrlValidationError() {
+  empty,
+  invalid
+}
 
 extension UrlValidationErrorExtension on UrlValidationError {
   String label(BuildContext context, {required String otherField}) {
@@ -14,9 +17,9 @@ extension UrlValidationErrorExtension on UrlValidationError {
 }
 
 final class UrlInput extends FormzInput<String, UrlValidationError> {
-  const UrlInput.pure(super.value, {this.text = ''}) : super.pure();
+  const new pure(super.value, {this.text = ''}) : super.pure();
 
-  const UrlInput.dirty(super.value, {required this.text}) : super.dirty();
+  const new dirty(super.value, {required this.text}) : super.dirty();
 
   final String text;
 

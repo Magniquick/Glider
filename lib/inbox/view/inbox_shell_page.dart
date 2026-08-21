@@ -21,15 +21,13 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class InboxShellPage extends StatefulWidget {
-  const InboxShellPage(
-    this._inboxCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const InboxShellPage(
+  this._inboxCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatefulWidget {
   final InboxCubit _inboxCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -39,7 +37,7 @@ class InboxShellPage extends StatefulWidget {
   State<InboxShellPage> createState() => _InboxShellPageState();
 }
 
-class _InboxShellPageState extends State<InboxShellPage> {
+class _InboxShellPageState() extends State<InboxShellPage> {
   @override
   void initState() {
     super.initState();
@@ -76,13 +74,11 @@ class _InboxShellPageState extends State<InboxShellPage> {
   }
 }
 
-class _SliverInboxAppBar extends StatelessWidget {
-  const _SliverInboxAppBar(
-    this._inboxCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverInboxAppBar(
+  this._inboxCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final InboxCubit _inboxCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -123,14 +119,12 @@ class _SliverInboxAppBar extends StatelessWidget {
   }
 }
 
-class _SliverInboxBody extends StatelessWidget {
-  const _SliverInboxBody(
-    this._inboxCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverInboxBody(
+  this._inboxCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final InboxCubit _inboxCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

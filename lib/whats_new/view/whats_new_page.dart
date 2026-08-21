@@ -6,9 +6,8 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class WhatsNewPage extends StatelessWidget {
-  const WhatsNewPage(this._settingsCubit, {super.key});
-
+class const WhatsNewPage(this._settingsCubit, {super.key})
+    extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override
@@ -35,18 +34,14 @@ class WhatsNewPage extends StatelessWidget {
   }
 }
 
-class _SliverWhatsNewAppBar extends StatelessWidget {
-  const _SliverWhatsNewAppBar();
-
+class const _SliverWhatsNewAppBar() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.medium(title: Text(context.l10n.whatsNew));
   }
 }
 
-class _WhatsNewBody extends StatelessWidget {
-  const _WhatsNewBody(this._settingsCubit);
-
+class const _WhatsNewBody(this._settingsCubit) extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override

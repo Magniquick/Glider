@@ -3,13 +3,13 @@ import 'package:glider/app/extensions/text_scaler_extension.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/item/widgets/avatar_widget.dart';
 
-class UsernameWidget extends StatelessWidget {
-  UsernameWidget({
-    required this.username,
-    this.showAvatar = true,
-    this.style = UsernameStyle.none,
-    this.onTap,
-  }) : super(key: ValueKey(username));
+class UsernameWidget({
+  required this.username,
+  this.showAvatar = true,
+  this.style = UsernameStyle.none,
+  this.onTap,
+}) extends StatelessWidget {
+  this : super(key: ValueKey(username));
 
   final String username;
   final bool showAvatar;
@@ -95,4 +95,8 @@ class UsernameWidget extends StatelessWidget {
   }
 }
 
-enum UsernameStyle { loggedInUser, storyUser, none }
+enum UsernameStyle() {
+  loggedInUser,
+  storyUser,
+  none
+}

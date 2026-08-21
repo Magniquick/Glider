@@ -2,7 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:formz/formz.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-enum TextValidationError { empty }
+enum TextValidationError() {
+  empty
+}
 
 extension TextValidationErrorExtension on TextValidationError {
   String label(BuildContext context) {
@@ -13,9 +15,9 @@ extension TextValidationErrorExtension on TextValidationError {
 }
 
 final class TextInput extends FormzInput<String, TextValidationError> {
-  const TextInput.pure(super.value) : super.pure();
+  const new pure(super.value) : super.pure();
 
-  const TextInput.dirty(super.value) : super.dirty();
+  const new dirty(super.value) : super.dirty();
 
   @override
   TextValidationError? validator(String value) => switch (value) {

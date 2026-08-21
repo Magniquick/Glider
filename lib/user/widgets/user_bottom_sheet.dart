@@ -6,14 +6,12 @@ import 'package:glider/user/cubit/user_cubit.dart';
 import 'package:glider/user/models/user_action.dart';
 import 'package:go_router/go_router.dart';
 
-class UserBottomSheet extends StatelessWidget {
-  const UserBottomSheet(
-    this._userCubit,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const UserBottomSheet(
+  this._userCubit,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatelessWidget {
   final UserCubit _userCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;

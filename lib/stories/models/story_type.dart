@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-enum StoryType {
+enum StoryType() {
   topStories,
   newStories,
   bestStories,

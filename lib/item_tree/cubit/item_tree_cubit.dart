@@ -8,10 +8,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'item_tree_state.dart';
 
-class ItemTreeCubit extends HydratedCubit<ItemTreeState> {
-  ItemTreeCubit(this._itemRepository, {required int id})
-    : itemId = id,
-      super(ItemTreeState());
+class ItemTreeCubit(this._itemRepository, {required int id})
+    extends HydratedCubit<ItemTreeState> {
+  this : itemId = id, super(ItemTreeState());
 
   final ItemRepository _itemRepository;
 

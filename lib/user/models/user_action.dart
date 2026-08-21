@@ -8,14 +8,13 @@ import 'package:glider/user/cubit/user_cubit.dart';
 import 'package:glider/user/models/user_value.dart';
 import 'package:go_router/go_router.dart';
 
-enum UserAction<T extends MenuItem<S>, S> implements MenuItem<UserState> {
+enum UserAction<T extends MenuItem<S>, S>({this.options})
+    implements MenuItem<UserState> {
   block,
   select,
   copy(options: UserValue.values),
   share(options: UserValue.values),
   logout;
-
-  UserAction({this.options});
 
   final List<T>? options;
 

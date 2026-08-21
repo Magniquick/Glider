@@ -14,7 +14,7 @@ extension SuperSliverListExtension on SuperSliverList {
   );
 }
 
-class AlwaysPrecalculateExtentPolicy extends ExtentPrecalculationPolicy {
+class AlwaysPrecalculateExtentPolicy() extends ExtentPrecalculationPolicy {
   @override
   bool shouldPrecalculateExtents(ExtentPrecalculationContext context) => true;
 }

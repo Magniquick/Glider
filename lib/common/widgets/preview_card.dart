@@ -5,9 +5,8 @@ import 'package:glider/common/extensions/widget_list_extension.dart';
 import 'package:glider/common/widgets/metadata_widget.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-class PreviewCard extends StatelessWidget {
-  const PreviewCard({super.key, required this.child});
-
+class const PreviewCard({super.key, required this.child})
+    extends StatelessWidget {
   final Widget child;
 
   @override

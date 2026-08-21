@@ -8,14 +8,14 @@ import 'package:glider/item/models/item_value.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class ItemValueDialog extends StatefulWidget {
-  ItemValueDialog(
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.id,
-    this.title,
-  }) : super(key: ValueKey(id));
+class ItemValueDialog(
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.id,
+  this.title,
+}) extends StatefulWidget {
+  this : super(key: ValueKey(id));
 
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -27,7 +27,7 @@ class ItemValueDialog extends StatefulWidget {
   State<ItemValueDialog> createState() => _ItemValueDialogState();
 }
 
-class _ItemValueDialogState extends State<ItemValueDialog> {
+class _ItemValueDialogState() extends State<ItemValueDialog> {
   late final ItemCubit _itemCubit;
 
   @override

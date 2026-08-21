@@ -8,9 +8,8 @@ import 'package:glider_domain/src/extensions/behavior_subject_map_extension.dart
 import 'package:rxdart/streams.dart';
 import 'package:rxdart/subjects.dart';
 
-class ItemRepository {
-  ItemRepository(this._algoliaApiService, this._hackerNewsApiService)
-    : _itemStreamControllers = {};
+class ItemRepository(this._algoliaApiService, this._hackerNewsApiService) {
+  this : _itemStreamControllers = {};
 
   final AlgoliaApiService _algoliaApiService;
   final HackerNewsApiService _hackerNewsApiService;

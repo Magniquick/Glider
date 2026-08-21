@@ -11,11 +11,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'story_item_search_event.dart';
 part 'story_item_search_state.dart';
 
-class StoryItemSearchBloc
+class StoryItemSearchBloc(this._itemRepository, {required int id})
     extends Bloc<StoryItemSearchEvent, StoryItemSearchState> {
-  StoryItemSearchBloc(this._itemRepository, {required int id})
-    : itemId = id,
-      super(const StoryItemSearchState()) {
+  this : itemId = id, super(const StoryItemSearchState()) {
     on<LoadStoryItemSearchEvent>(
       (event, emit) async => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),

@@ -18,13 +18,13 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class ReplyPage extends StatefulWidget {
-  ReplyPage(
-    this._replyCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.id,
-  }) : super(key: ValueKey(id));
+class ReplyPage(
+  this._replyCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.id,
+}) extends StatefulWidget {
+  this : super(key: ValueKey(id));
 
   final ReplyCubitFactory _replyCubitFactory;
   final AuthCubit _authCubit;
@@ -35,7 +35,7 @@ class ReplyPage extends StatefulWidget {
   State<ReplyPage> createState() => _ReplyPageState();
 }
 
-class _ReplyPageState extends State<ReplyPage> {
+class _ReplyPageState() extends State<ReplyPage> {
   late final ReplyCubit _replyCubit;
 
   @override
@@ -96,18 +96,14 @@ class _ReplyPageState extends State<ReplyPage> {
   }
 }
 
-class _SliverReplyAppBar extends StatelessWidget {
-  const _SliverReplyAppBar();
-
+class const _SliverReplyAppBar() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.medium(title: Text(context.l10n.reply));
   }
 }
 
-class _ReplyBody extends StatelessWidget {
-  const _ReplyBody(this._replyCubit);
-
+class const _ReplyBody(this._replyCubit) extends StatelessWidget {
   final ReplyCubit _replyCubit;
 
   @override
@@ -133,16 +129,14 @@ class _ReplyBody extends StatelessWidget {
   }
 }
 
-class _ReplyForm extends StatefulWidget {
-  const _ReplyForm(this._replyCubit);
-
+class const _ReplyForm(this._replyCubit) extends StatefulWidget {
   final ReplyCubit _replyCubit;
 
   @override
   State<_ReplyForm> createState() => _ReplyFormState();
 }
 
-class _ReplyFormState extends State<_ReplyForm> {
+class _ReplyFormState() extends State<_ReplyForm> {
   late final TextEditingController _textController;
 
   @override
@@ -189,9 +183,11 @@ class _ReplyFormState extends State<_ReplyForm> {
   }
 }
 
-class _ReplyPreview extends StatelessWidget {
-  const _ReplyPreview(this._replyCubit, this._authCubit, this._settingsCubit);
-
+class const _ReplyPreview(
+  this._replyCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final ReplyCubit _replyCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;

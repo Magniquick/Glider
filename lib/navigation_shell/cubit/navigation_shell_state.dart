@@ -1,8 +1,6 @@
 part of 'navigation_shell_cubit.dart';
 
-class NavigationShellState with EquatableMixin {
-  const NavigationShellState();
-
+class const NavigationShellState() with EquatableMixin {
   @override
   List<Object> get props => [];
 }

@@ -1,16 +1,13 @@
 part of 'stories_cubit.dart';
 
-class StoriesState
-    with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
-  StoriesState({
-    this.status = Status.initial,
-    this.data,
-    this.page = 1,
-    this.storyType = StoryType.topStories,
-    this.exception,
-  });
-
-  factory StoriesState.fromMap(Map<String, dynamic> json) => StoriesState(
+class StoriesState({
+  this.status = Status.initial,
+  this.data,
+  this.page = 1,
+  this.storyType = StoryType.topStories,
+  this.exception,
+}) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => StoriesState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)
         ?.map((e) => e as int)

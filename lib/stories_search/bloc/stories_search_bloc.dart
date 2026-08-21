@@ -15,9 +15,11 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'stories_search_event.dart';
 part 'stories_search_state.dart';
 
-class StoriesSearchBloc
-    extends HydratedBloc<StoriesSearchEvent, StoriesSearchState> {
-  StoriesSearchBloc(this._itemRepository, {this.searchType = SearchType.search})
+class StoriesSearchBloc(
+  this._itemRepository, {
+  this.searchType = SearchType.search,
+}) extends HydratedBloc<StoriesSearchEvent, StoriesSearchState> {
+  this
     : super(
         StoriesSearchState(
           searchRange: searchType == SearchType.catchUp

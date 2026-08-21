@@ -1,15 +1,13 @@
 part of 'item_tree_cubit.dart';
 
-class ItemTreeState with DataMixin<List<ItemDescendant>>, EquatableMixin {
-  ItemTreeState({
-    this.status = Status.initial,
-    this.data,
-    this.previousData,
-    this.collapsedIds = const {},
-    this.exception,
-  });
-
-  factory ItemTreeState.fromMap(Map<String, dynamic> json) => ItemTreeState(
+class ItemTreeState({
+  this.status = Status.initial,
+  this.data,
+  this.previousData,
+  this.collapsedIds = const {},
+  this.exception,
+}) with DataMixin<List<ItemDescendant>>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => ItemTreeState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)
         ?.map((e) => ItemDescendant.fromMap(e as Map<String, dynamic>))

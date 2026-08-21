@@ -29,15 +29,15 @@ import 'package:go_router/go_router.dart';
 
 const _toolbarHeight = 32.0;
 
-class UserPage extends StatefulWidget {
-  UserPage(
-    this._userCubitFactory,
-    this._itemCubitFactory,
-    this._userItemSearchBlocFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.username,
-  }) : super(key: ValueKey(username));
+class UserPage(
+  this._userCubitFactory,
+  this._itemCubitFactory,
+  this._userItemSearchBlocFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.username,
+}) extends StatefulWidget {
+  this : super(key: ValueKey(username));
 
   final UserCubitFactory _userCubitFactory;
   final ItemCubitFactory _itemCubitFactory;
@@ -50,7 +50,7 @@ class UserPage extends StatefulWidget {
   State<UserPage> createState() => _UserPageState();
 }
 
-class _UserPageState extends State<UserPage> {
+class _UserPageState() extends State<UserPage> {
   late final UserCubit _userCubit;
   late final UserItemSearchBloc _userItemSearchBloc;
   late final ScrollController _scrollController;
@@ -138,17 +138,15 @@ class _UserPageState extends State<UserPage> {
   }
 }
 
-class _SliverUserAppBar extends StatelessWidget {
-  const _SliverUserAppBar(
-    this._userCubit,
-    this._itemCubitFactory,
-    this._userItemSearchBloc,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.username,
-    required this.scrollController,
-  });
-
+class const _SliverUserAppBar(
+  this._userCubit,
+  this._itemCubitFactory,
+  this._userItemSearchBloc,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.username,
+  required this.scrollController,
+}) extends StatelessWidget {
   final UserCubit _userCubit;
   final ItemCubitFactory _itemCubitFactory;
   final UserItemSearchBloc _userItemSearchBloc;
@@ -190,14 +188,12 @@ class _SliverUserAppBar extends StatelessWidget {
   }
 }
 
-class _UserSearchAnchor extends StatefulWidget {
-  const _UserSearchAnchor(
-    this._userItemSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _UserSearchAnchor(
+  this._userItemSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatefulWidget {
   final UserItemSearchBloc _userItemSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -207,7 +203,7 @@ class _UserSearchAnchor extends StatefulWidget {
   State<_UserSearchAnchor> createState() => _UserSearchAnchorState();
 }
 
-class _UserSearchAnchorState extends State<_UserSearchAnchor> {
+class _UserSearchAnchorState() extends State<_UserSearchAnchor> {
   late final SearchController _searchController;
 
   @override
@@ -273,13 +269,11 @@ class _UserSearchAnchorState extends State<_UserSearchAnchor> {
   }
 }
 
-class _UserOverflowMenu extends StatelessWidget {
-  const _UserOverflowMenu(
-    this._userCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _UserOverflowMenu(
+  this._userCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final UserCubit _userCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -339,15 +333,13 @@ class _UserOverflowMenu extends StatelessWidget {
   }
 }
 
-class _SliverUserBody extends StatelessWidget {
-  const _SliverUserBody(
-    this._userCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    this.isLoggedInUser = false,
-  });
-
+class const _SliverUserBody(
+  this._userCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  this.isLoggedInUser = false,
+}) extends StatelessWidget {
   final UserCubit _userCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

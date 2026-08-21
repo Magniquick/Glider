@@ -10,19 +10,17 @@ import 'package:glider/user/models/user_style.dart';
 import 'package:glider/user/typedefs/user_typedefs.dart';
 import 'package:glider_domain/glider_domain.dart';
 
-class UserDataTile extends StatelessWidget {
-  const UserDataTile(
-    this.user, {
-    super.key,
-    this.parsedAbout,
-    this.blocked = false,
-    this.style = UserStyle.full,
-    this.padding = AppSpacing.defaultTilePadding,
-    required this.useInAppBrowser,
-    this.onTap,
-    this.onLongPress,
-  });
-
+class const UserDataTile(
+  this.user, {
+  super.key,
+  this.parsedAbout,
+  this.blocked = false,
+  this.style = UserStyle.full,
+  this.padding = AppSpacing.defaultTilePadding,
+  required this.useInAppBrowser,
+  this.onTap,
+  this.onLongPress,
+}) extends StatelessWidget {
   final User user;
   final ParsedData? parsedAbout;
   final bool blocked;

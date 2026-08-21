@@ -1,19 +1,17 @@
 part of 'item_cubit.dart';
 
-class ItemState with DataMixin<Item>, EquatableMixin {
-  const ItemState({
-    this.status = Status.initial,
-    this.data,
-    this.parsedText,
-    this.visited = false,
-    this.vote,
-    this.favorited = false,
-    this.flagged = false,
-    this.blocked = false,
-    this.exception,
-  });
-
-  factory ItemState.fromMap(Map<String, dynamic> json) => ItemState(
+class const ItemState({
+  this.status = Status.initial,
+  this.data,
+  this.parsedText,
+  this.visited = false,
+  this.vote,
+  this.favorited = false,
+  this.flagged = false,
+  this.blocked = false,
+  this.exception,
+}) with DataMixin<Item>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => ItemState(
     status: Status.values.byName(json['status'] as String),
     data: json['data'] != null
         ? Item.fromMap(json['data'] as Map<String, dynamic>)

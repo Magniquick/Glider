@@ -9,13 +9,12 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'reply_state.dart';
 
-class ReplyCubit extends HydratedCubit<ReplyState> {
-  ReplyCubit(
-    this._itemRepository,
-    this._itemInteractionRepository, {
-    required int id,
-  }) : itemId = id,
-       super(const ReplyState()) {
+class ReplyCubit(
+  this._itemRepository,
+  this._itemInteractionRepository, {
+  required int id,
+}) extends HydratedCubit<ReplyState> {
+  this : itemId = id, super(const ReplyState()) {
     _itemSubscription = _itemRepository
         .getItemStream(itemId)
         .listen((item) => safeEmit(state.copyWith(parentItem: () => item)));

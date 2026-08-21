@@ -3,8 +3,8 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
-class AvatarWidget extends StatelessWidget {
-  AvatarWidget({required this.username}) : super(key: ValueKey(username));
+class AvatarWidget({required this.username}) extends StatelessWidget {
+  this : super(key: ValueKey(username));
 
   final String username;
 
@@ -25,13 +25,11 @@ class AvatarWidget extends StatelessWidget {
 }
 
 // Algorithm based on https://news.ycombinator.com/item?id=30668207 by tomxor.
-class _AvatarPainter extends CustomPainter with EquatableMixin {
-  const _AvatarPainter({
-    required this.username,
-    required this.pixelSize,
-    required this.offset,
-  });
-
+class const _AvatarPainter({
+  required this.username,
+  required this.pixelSize,
+  required this.offset,
+}) extends CustomPainter with EquatableMixin {
   final String username;
   final double pixelSize;
   final Offset offset;

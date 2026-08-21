@@ -11,10 +11,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'user_item_search_event.dart';
 part 'user_item_search_state.dart';
 
-class UserItemSearchBloc
+class UserItemSearchBloc(this._itemRepository, {required this.username})
     extends Bloc<UserItemSearchEvent, UserItemSearchState> {
-  UserItemSearchBloc(this._itemRepository, {required this.username})
-    : super(const UserItemSearchState()) {
+  this : super(const UserItemSearchState()) {
     on<LoadUserItemSearchEvent>(
       (event, emit) async => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),

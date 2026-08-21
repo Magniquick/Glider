@@ -1,7 +1,5 @@
 part of 'settings_cubit.dart';
 
-sealed class SettingsCubitEvent;
+sealed class SettingsCubitEvent();
 
-final class SettingsActionFailedEvent implements SettingsCubitEvent {
-  const SettingsActionFailedEvent();
-}
+final class const SettingsActionFailedEvent() implements SettingsCubitEvent;

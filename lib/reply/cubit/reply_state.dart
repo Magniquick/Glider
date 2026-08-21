@@ -1,15 +1,13 @@
 part of 'reply_cubit.dart';
 
-class ReplyState with EquatableMixin {
-  const ReplyState({
-    this.parentItem,
-    this.text = const TextInput.pure(''),
-    this.isValid = false,
-    this.preview = true,
-    this.success = false,
-  });
-
-  factory ReplyState.fromMap(Map<String, dynamic> json) => ReplyState(
+class const ReplyState({
+  this.parentItem,
+  this.text = const TextInput.pure(''),
+  this.isValid = false,
+  this.preview = true,
+  this.success = false,
+}) with EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => ReplyState(
     parentItem: json['parentItem'] != null
         ? Item.fromMap(json['parentItem'] as Map<String, dynamic>)
         : null,

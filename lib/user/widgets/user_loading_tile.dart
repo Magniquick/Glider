@@ -6,13 +6,11 @@ import 'package:glider/common/widgets/loading_text_block.dart';
 import 'package:glider/common/widgets/metadata_widget.dart';
 import 'package:glider/user/models/user_style.dart';
 
-class UserLoadingTile extends StatelessWidget {
-  const UserLoadingTile({
-    super.key,
-    this.style = UserStyle.full,
-    this.padding = AppSpacing.defaultTilePadding,
-  });
-
+class const UserLoadingTile({
+  super.key,
+  this.style = UserStyle.full,
+  this.padding = AppSpacing.defaultTilePadding,
+}) extends StatelessWidget {
   final UserStyle style;
   final EdgeInsets padding;
 

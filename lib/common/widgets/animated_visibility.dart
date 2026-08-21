@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_animation.dart';
 
 class AnimatedVisibility extends StatelessWidget {
-  const AnimatedVisibility({
+  const new({
     super.key,
     required this.visible,
     this.padding = EdgeInsets.zero,
@@ -11,7 +11,7 @@ class AnimatedVisibility extends StatelessWidget {
   }) : _axis = Axis.horizontal,
        _replacement = const SizedBox.shrink();
 
-  const AnimatedVisibility.vertical({
+  const new vertical({
     super.key,
     required this.visible,
     this.padding = EdgeInsets.zero,

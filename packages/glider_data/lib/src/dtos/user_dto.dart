@@ -1,13 +1,11 @@
-class UserDto {
-  const UserDto({
-    required this.id,
-    required this.created,
-    required this.karma,
-    this.about,
-    this.submitted,
-  });
-
-  factory UserDto.fromMap(Map<String, dynamic> json) => UserDto(
+class const UserDto({
+  required this.id,
+  required this.created,
+  required this.karma,
+  this.about,
+  this.submitted,
+}) {
+  factory fromMap(Map<String, dynamic> json) => UserDto(
     id: json['id'] as String,
     created: json['created'] as int,
     karma: json['karma'] as int,

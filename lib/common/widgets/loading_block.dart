@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 
-class LoadingBlock extends StatelessWidget {
-  const LoadingBlock({super.key, this.width, this.height});
-
+class const LoadingBlock({super.key, this.width, this.height})
+    extends StatelessWidget {
   final double? width;
   final double? height;
 

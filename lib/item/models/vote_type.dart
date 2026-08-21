@@ -1,4 +1,7 @@
-enum VoteType { upvote, downvote }
+enum VoteType() {
+  upvote,
+  downvote
+}
 
 extension NullableVoteTypeExtension on VoteType? {
   bool get upvoted => this == VoteType.upvote;

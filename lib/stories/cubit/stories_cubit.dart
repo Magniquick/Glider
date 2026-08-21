@@ -11,8 +11,8 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'stories_state.dart';
 
-class StoriesCubit extends HydratedCubit<StoriesState> {
-  StoriesCubit(this._itemRepository) : super(StoriesState());
+class StoriesCubit(this._itemRepository) extends HydratedCubit<StoriesState> {
+  this : super(StoriesState());
 
   final ItemRepository _itemRepository;
 

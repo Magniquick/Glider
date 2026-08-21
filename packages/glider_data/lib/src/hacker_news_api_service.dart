@@ -5,9 +5,7 @@ import 'package:glider_data/src/dtos/item_dto.dart';
 import 'package:glider_data/src/dtos/user_dto.dart';
 import 'package:http/http.dart' as http;
 
-class HackerNewsApiService {
-  const HackerNewsApiService(this._client);
-
+class const HackerNewsApiService(this._client) {
   final http.Client _client;
 
   static const authority = 'hacker-news.firebaseio.com';

@@ -7,9 +7,8 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class FiltersDialog extends StatelessWidget {
-  const FiltersDialog(this._settingsCubit, {super.key});
-
+class const FiltersDialog(this._settingsCubit, {super.key})
+    extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override
@@ -27,16 +26,14 @@ class FiltersDialog extends StatelessWidget {
   }
 }
 
-class _FiltersBody extends StatefulWidget {
-  const _FiltersBody(this._settingsCubit);
-
+class const _FiltersBody(this._settingsCubit) extends StatefulWidget {
   final SettingsCubit _settingsCubit;
 
   @override
   State<_FiltersBody> createState() => _FiltersBodyState();
 }
 
-class _FiltersBodyState extends State<_FiltersBody> {
+class _FiltersBodyState() extends State<_FiltersBody> {
   late final TextEditingController _wordsController;
   late final TextEditingController _domainsController;
   late final FocusNode _wordsFocusNode;

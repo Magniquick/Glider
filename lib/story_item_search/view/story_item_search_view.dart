@@ -12,15 +12,13 @@ import 'package:glider/story_item_search/bloc/story_item_search_bloc.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class StoryItemSearchView extends StatelessWidget {
-  const StoryItemSearchView(
-    this._storyItemSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const StoryItemSearchView(
+  this._storyItemSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatelessWidget {
   final StoryItemSearchBloc _storyItemSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -47,14 +45,12 @@ class StoryItemSearchView extends StatelessWidget {
   }
 }
 
-class _SliverStoryItemSearchBody extends StatelessWidget {
-  const _SliverStoryItemSearchBody(
-    this._storyItemSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverStoryItemSearchBody(
+  this._storyItemSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final StoryItemSearchBloc _storyItemSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

@@ -15,15 +15,15 @@ import 'package:glider/user/widgets/user_bottom_sheet.dart';
 import 'package:glider/user/widgets/user_data_tile.dart';
 import 'package:glider/user/widgets/user_loading_tile.dart';
 
-class UserTile extends StatelessWidget {
-  UserTile(
-    this._userCubit,
-    this._authCubit,
-    this._settingsCubit, {
-    this.style = UserStyle.full,
-    this.padding = AppSpacing.defaultTilePadding,
-    this.onTap,
-  }) : super(key: ValueKey(_userCubit.username));
+class UserTile(
+  this._userCubit,
+  this._authCubit,
+  this._settingsCubit, {
+  this.style = UserStyle.full,
+  this.padding = AppSpacing.defaultTilePadding,
+  this.onTap,
+}) extends StatelessWidget {
+  this : super(key: ValueKey(_userCubit.username));
 
   final UserCubit _userCubit;
   final AuthCubit _authCubit;

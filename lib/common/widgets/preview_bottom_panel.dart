@@ -3,14 +3,12 @@ import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/common/widgets/animated_visibility.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-class PreviewBottomPanel extends StatelessWidget {
-  const PreviewBottomPanel({
-    super.key,
-    required this.visible,
-    this.onChanged,
-    required this.child,
-  });
-
+class const PreviewBottomPanel({
+  super.key,
+  required this.visible,
+  this.onChanged,
+  required this.child,
+}) extends StatelessWidget {
   final bool visible;
   final void Function(bool)? onChanged;
   final Widget child;

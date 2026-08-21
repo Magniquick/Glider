@@ -1,43 +1,37 @@
-class AlgoliaSearchDto {
-  const AlgoliaSearchDto({required this.hits});
-
-  factory AlgoliaSearchDto.fromMap(Map<String, dynamic> json) =>
-      AlgoliaSearchDto(
-        hits: (json['hits'] as List<dynamic>)
-            .map((e) => AlgoliaSearchHitDto.fromMap(e as Map<String, dynamic>))
-            .toList(growable: false),
-      );
+class const AlgoliaSearchDto({required this.hits}) {
+  factory fromMap(Map<String, dynamic> json) => AlgoliaSearchDto(
+    hits: (json['hits'] as List<dynamic>)
+        .map((e) => AlgoliaSearchHitDto.fromMap(e as Map<String, dynamic>))
+        .toList(growable: false),
+  );
 
   final List<AlgoliaSearchHitDto> hits;
 }
 
-class AlgoliaSearchHitDto {
-  const AlgoliaSearchHitDto({
-    required this.objectId,
-    this.title,
-    this.url,
-    this.author,
-    this.points,
-    this.storyText,
-    this.commentText,
-    this.numComments,
-    this.parentId,
-    this.createdAtI,
-  });
-
-  factory AlgoliaSearchHitDto.fromMap(Map<String, dynamic> json) =>
-      AlgoliaSearchHitDto(
-        objectId: json['objectID'] as String,
-        title: json['title'] as String?,
-        url: json['url'] as String?,
-        author: json['author'] as String?,
-        points: json['points'] as int?,
-        storyText: json['story_text'] as String?,
-        commentText: json['comment_text'] as String?,
-        numComments: json['num_comments'] as int?,
-        parentId: json['parent_id'] as int?,
-        createdAtI: json['created_at_i'] as int?,
-      );
+class const AlgoliaSearchHitDto({
+  required this.objectId,
+  this.title,
+  this.url,
+  this.author,
+  this.points,
+  this.storyText,
+  this.commentText,
+  this.numComments,
+  this.parentId,
+  this.createdAtI,
+}) {
+  factory fromMap(Map<String, dynamic> json) => AlgoliaSearchHitDto(
+    objectId: json['objectID'] as String,
+    title: json['title'] as String?,
+    url: json['url'] as String?,
+    author: json['author'] as String?,
+    points: json['points'] as int?,
+    storyText: json['story_text'] as String?,
+    commentText: json['comment_text'] as String?,
+    numComments: json['num_comments'] as int?,
+    parentId: json['parent_id'] as int?,
+    createdAtI: json['created_at_i'] as int?,
+  );
 
   final String objectId;
   final String? title;

@@ -9,10 +9,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'story_similar_state.dart';
 
-class StorySimilarCubit extends HydratedCubit<StorySimilarState> {
-  StorySimilarCubit(this._itemRepository, {required int id})
-    : itemId = id,
-      super(const StorySimilarState()) {
+class StorySimilarCubit(this._itemRepository, {required int id})
+    extends HydratedCubit<StorySimilarState> {
+  this : itemId = id, super(const StorySimilarState()) {
     safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
       (item) async {

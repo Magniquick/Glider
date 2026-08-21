@@ -1,19 +1,14 @@
 part of 'user_item_search_bloc.dart';
 
-sealed class UserItemSearchEvent with EquatableMixin {
-  const UserItemSearchEvent();
-}
+sealed class const UserItemSearchEvent() with EquatableMixin;
 
-final class LoadUserItemSearchEvent extends UserItemSearchEvent {
-  const LoadUserItemSearchEvent();
-
+final class const LoadUserItemSearchEvent() extends UserItemSearchEvent {
   @override
   List<Object?> get props => [];
 }
 
-final class SetTextUserItemSearchEvent extends UserItemSearchEvent {
-  const SetTextUserItemSearchEvent(this.text);
-
+final class const SetTextUserItemSearchEvent(this.text)
+    extends UserItemSearchEvent {
   final String? text;
 
   @override

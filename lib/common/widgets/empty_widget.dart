@@ -5,9 +5,7 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
 const _iconSize = 40.0;
 
-class EmptyWidget extends StatelessWidget {
-  const EmptyWidget({super.key});
-
+class const EmptyWidget({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(

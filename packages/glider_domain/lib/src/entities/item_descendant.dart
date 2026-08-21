@@ -1,13 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-class ItemDescendant with EquatableMixin {
-  ItemDescendant({
-    required this.id,
-    this.ancestorIds = const [],
-    this.isPart = false,
-  });
-
-  factory ItemDescendant.fromMap(Map<String, dynamic> json) => ItemDescendant(
+class ItemDescendant({
+  required this.id,
+  this.ancestorIds = const [],
+  this.isPart = false,
+}) with EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => ItemDescendant(
     id: json['id'] as int,
     ancestorIds:
         (json['ancestorIds'] as List<dynamic>?)

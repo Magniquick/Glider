@@ -8,14 +8,14 @@ import 'package:glider/user/cubit/user_cubit.dart';
 import 'package:glider/user/models/user_value.dart';
 import 'package:go_router/go_router.dart';
 
-class UserValueDialog extends StatefulWidget {
-  UserValueDialog(
-    this._userCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.username,
-    this.title,
-  }) : super(key: ValueKey(username));
+class UserValueDialog(
+  this._userCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.username,
+  this.title,
+}) extends StatefulWidget {
+  this : super(key: ValueKey(username));
 
   final UserCubitFactory _userCubitFactory;
   final AuthCubit _authCubit;
@@ -27,7 +27,7 @@ class UserValueDialog extends StatefulWidget {
   State<UserValueDialog> createState() => _UserValueDialogState();
 }
 
-class _UserValueDialogState extends State<UserValueDialog> {
+class _UserValueDialogState() extends State<UserValueDialog> {
   late final UserCubit _userCubit;
 
   @override

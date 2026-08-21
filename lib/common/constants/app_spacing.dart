@@ -1,6 +1,6 @@
 import 'package:flutter/painting.dart';
 
-abstract final class AppSpacing {
+abstract final class AppSpacing() {
   static const _baseUnit = 4.0;
 
   static const s = _baseUnit;

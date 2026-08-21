@@ -1,23 +1,20 @@
 part of 'story_similar_cubit.dart';
 
-class StorySimilarState with DataMixin<List<int>>, EquatableMixin {
-  const StorySimilarState({
-    this.status = Status.initial,
-    this.item,
-    this.data,
-    this.exception,
-  });
-
-  factory StorySimilarState.fromMap(Map<String, dynamic> json) =>
-      StorySimilarState(
-        status: Status.values.byName(json['status'] as String),
-        item: json['item'] != null
-            ? Item.fromMap(json['item'] as Map<String, dynamic>)
-            : null,
-        data: (json['data'] as List<dynamic>?)
-            ?.map((e) => e as int)
-            .toList(growable: false),
-      );
+class const StorySimilarState({
+  this.status = Status.initial,
+  this.item,
+  this.data,
+  this.exception,
+}) with DataMixin<List<int>>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => StorySimilarState(
+    status: Status.values.byName(json['status'] as String),
+    item: json['item'] != null
+        ? Item.fromMap(json['item'] as Map<String, dynamic>)
+        : null,
+    data: (json['data'] as List<dynamic>?)
+        ?.map((e) => e as int)
+        .toList(growable: false),
+  );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
     'status': status.name,

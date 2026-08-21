@@ -1,21 +1,19 @@
 part of 'auth_cubit.dart';
 
-enum AuthStatus {
+enum AuthStatus() {
   initial,
   inProgress,
   success,
   badCredentials,
   rejected,
-  failure,
+  failure
 }
 
-class AuthState with EquatableMixin {
-  const AuthState({
-    this.isLoggedIn = false,
-    this.username,
-    this.status = AuthStatus.initial,
-  });
-
+class const AuthState({
+  this.isLoggedIn = false,
+  this.username,
+  this.status = AuthStatus.initial,
+}) with EquatableMixin {
   final bool isLoggedIn;
   final String? username;
   final AuthStatus status;

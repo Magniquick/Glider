@@ -16,15 +16,13 @@ import 'package:go_router/go_router.dart';
 // Height based on `_NavigationBarDefaultsM3`.
 const _navigationBarHeight = 80.0;
 
-class NavigationShellScaffold extends StatefulWidget {
-  const NavigationShellScaffold(
-    this._navigationShellCubit,
-    this._authCubit,
-    this._settingsCubit,
-    this._navigationShell, {
-    super.key,
-  });
-
+class const NavigationShellScaffold(
+  this._navigationShellCubit,
+  this._authCubit,
+  this._settingsCubit,
+  this._navigationShell, {
+  super.key,
+}) extends StatefulWidget {
   final NavigationShellCubit _navigationShellCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -35,7 +33,7 @@ class NavigationShellScaffold extends StatefulWidget {
       _NavigationShellScaffoldState();
 }
 
-class _NavigationShellScaffoldState extends State<NavigationShellScaffold> {
+class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
   late final ValueNotifier<double> _currentNavigationBarHeightNotifier;
 
   int get _currentIndex => widget._navigationShell.currentIndex;

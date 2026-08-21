@@ -10,13 +10,12 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'edit_state.dart';
 
-class EditCubit extends HydratedCubit<EditState> {
-  EditCubit(
-    this._itemRepository,
-    this._itemInteractionRepository, {
-    required int id,
-  }) : itemId = id,
-       super(const EditState()) {
+class EditCubit(
+  this._itemRepository,
+  this._itemInteractionRepository, {
+  required int id,
+}) extends HydratedCubit<EditState> {
+  this : itemId = id, super(const EditState()) {
     _itemSubscription = _itemRepository
         .getItemStream(itemId)
         .listen(

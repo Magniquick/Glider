@@ -1,16 +1,14 @@
 part of 'edit_cubit.dart';
 
-class EditState with EquatableMixin {
-  const EditState({
-    this.item,
-    this.title,
-    this.text,
-    this.isValid = false,
-    this.preview = true,
-    this.success = false,
-  });
-
-  factory EditState.fromMap(Map<String, dynamic> json) => EditState(
+class const EditState({
+  this.item,
+  this.title,
+  this.text,
+  this.isValid = false,
+  this.preview = true,
+  this.success = false,
+}) with EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => EditState(
     item: json['item'] != null
         ? Item.fromMap(json['item'] as Map<String, dynamic>)
         : null,

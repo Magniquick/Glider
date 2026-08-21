@@ -1,34 +1,29 @@
 part of 'stories_search_bloc.dart';
 
-class StoriesSearchState
-    with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
-  StoriesSearchState({
-    this.status = Status.initial,
-    this.data,
-    this.page = 1,
-    this.searchText,
-    this.searchRange,
-    this.dateRange,
-    this.exception,
-  });
-
-  factory StoriesSearchState.fromMap(Map<String, dynamic> json) =>
-      StoriesSearchState(
-        searchRange: json['searchRange'] != null
-            ? SearchRange.values.byName(json['searchRange'] as String)
-            : null,
-        dateRange:
-            json['dateRangeStart'] != null && json['dateRangeEnd'] != null
-            ? DateTimeRange(
-                start: DateTime.fromMillisecondsSinceEpoch(
-                  json['dateRangeStart'] as int,
-                ),
-                end: DateTime.fromMillisecondsSinceEpoch(
-                  json['dateRangeEnd'] as int,
-                ),
-              )
-            : null,
-      );
+class StoriesSearchState({
+  this.status = Status.initial,
+  this.data,
+  this.page = 1,
+  this.searchText,
+  this.searchRange,
+  this.dateRange,
+  this.exception,
+}) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => StoriesSearchState(
+    searchRange: json['searchRange'] != null
+        ? SearchRange.values.byName(json['searchRange'] as String)
+        : null,
+    dateRange: json['dateRangeStart'] != null && json['dateRangeEnd'] != null
+        ? DateTimeRange(
+            start: DateTime.fromMillisecondsSinceEpoch(
+              json['dateRangeStart'] as int,
+            ),
+            end: DateTime.fromMillisecondsSinceEpoch(
+              json['dateRangeEnd'] as int,
+            ),
+          )
+        : null,
+  );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
     'status': status.name,

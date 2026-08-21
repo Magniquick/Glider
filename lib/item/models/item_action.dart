@@ -11,7 +11,8 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
+enum ItemAction<T extends MenuItem<S>, S>({this.options})
+    implements MenuItem<ItemState> {
   visit,
   upvote,
   downvote,
@@ -23,8 +24,6 @@ enum ItemAction<T extends MenuItem<S>, S> implements MenuItem<ItemState> {
   select,
   copy(options: ItemValue.values),
   share(options: ItemValue.values);
-
-  ItemAction({this.options});
 
   final List<T>? options;
 

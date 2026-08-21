@@ -17,9 +17,9 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class EditPage extends StatefulWidget {
-  EditPage(this._editCubitFactory, this._settingsCubit, {required this.id})
-    : super(key: ValueKey(id));
+class EditPage(this._editCubitFactory, this._settingsCubit, {required this.id})
+    extends StatefulWidget {
+  this : super(key: ValueKey(id));
 
   final EditCubitFactory _editCubitFactory;
   final SettingsCubit _settingsCubit;
@@ -29,7 +29,7 @@ class EditPage extends StatefulWidget {
   State<EditPage> createState() => _EditPageState();
 }
 
-class _EditPageState extends State<EditPage> {
+class _EditPageState() extends State<EditPage> {
   late final EditCubit _editCubit;
 
   @override
@@ -86,18 +86,14 @@ class _EditPageState extends State<EditPage> {
   }
 }
 
-class _SliverEditAppBar extends StatelessWidget {
-  const _SliverEditAppBar();
-
+class const _SliverEditAppBar() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar.medium(title: Text(context.l10n.edit));
   }
 }
 
-class _EditBody extends StatelessWidget {
-  const _EditBody(this._editCubit);
-
+class const _EditBody(this._editCubit) extends StatelessWidget {
   final EditCubit _editCubit;
 
   @override
@@ -109,16 +105,14 @@ class _EditBody extends StatelessWidget {
   }
 }
 
-class _EditForm extends StatefulWidget {
-  const _EditForm(this._editCubit);
-
+class const _EditForm(this._editCubit) extends StatefulWidget {
   final EditCubit _editCubit;
 
   @override
   State<_EditForm> createState() => _EditFormState();
 }
 
-class _EditFormState extends State<_EditForm> {
+class _EditFormState() extends State<_EditForm> {
   late final TextEditingController _titleController;
   late final TextEditingController _urlController;
   late final TextEditingController _textController;
@@ -224,9 +218,8 @@ class _EditFormState extends State<_EditForm> {
   }
 }
 
-class _EditPreview extends StatelessWidget {
-  const _EditPreview(this._editCubit, this._settingsCubit);
-
+class const _EditPreview(this._editCubit, this._settingsCubit)
+    extends StatelessWidget {
   final EditCubit _editCubit;
   final SettingsCubit _settingsCubit;
 

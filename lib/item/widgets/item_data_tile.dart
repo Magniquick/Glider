@@ -20,34 +20,32 @@ import 'package:relative_time/relative_time.dart';
 
 const _faviconRequestSize = 64;
 
-class ItemDataTile extends StatelessWidget {
-  const ItemDataTile(
-    this.item, {
-    super.key,
-    this.parsedText,
-    this.visited = false,
-    this.vote,
-    this.favorited = false,
-    this.flagged = false,
-    this.blocked = false,
-    this.filtered = false,
-    this.failed = false,
-    this.collapsedCount,
-    this.storyLines = 2,
-    this.useLargeStoryStyle = true,
-    this.showFavicons = true,
-    this.showMetadata = true,
-    this.showUserAvatars = true,
-    this.useInAppBrowser = false,
-    this.style = ItemStyle.full,
-    this.usernameStyle = UsernameStyle.none,
-    this.padding = AppSpacing.defaultTilePadding,
-    this.onTap,
-    this.onLongPress,
-    this.onTapFavorite,
-    this.onTapUpvote,
-  });
-
+class const ItemDataTile(
+  this.item, {
+  super.key,
+  this.parsedText,
+  this.visited = false,
+  this.vote,
+  this.favorited = false,
+  this.flagged = false,
+  this.blocked = false,
+  this.filtered = false,
+  this.failed = false,
+  this.collapsedCount,
+  this.storyLines = 2,
+  this.useLargeStoryStyle = true,
+  this.showFavicons = true,
+  this.showMetadata = true,
+  this.showUserAvatars = true,
+  this.useInAppBrowser = false,
+  this.style = ItemStyle.full,
+  this.usernameStyle = UsernameStyle.none,
+  this.padding = AppSpacing.defaultTilePadding,
+  this.onTap,
+  this.onLongPress,
+  this.onTapFavorite,
+  this.onTapUpvote,
+}) extends StatelessWidget {
   final Item item;
   final ParsedData? parsedText;
   final bool visited;
@@ -417,14 +415,12 @@ class ItemDataTile extends StatelessWidget {
   }
 }
 
-class _ItemTitle extends StatelessWidget {
-  const _ItemTitle(
-    this.item, {
-    required this.storyLines,
-    required this.useLargeStoryStyle,
-    required this.style,
-  });
-
+class const _ItemTitle(
+  this.item, {
+  required this.storyLines,
+  required this.useLargeStoryStyle,
+  required this.style,
+}) extends StatelessWidget {
   final Item item;
   final int storyLines;
   final bool useLargeStoryStyle;
@@ -526,13 +522,11 @@ class _ItemTitle extends StatelessWidget {
   }
 }
 
-class _ItemFavicon extends StatelessWidget {
-  const _ItemFavicon(
-    this.item, {
-    required this.storyLines,
-    required this.useLargeStoryStyle,
-  });
-
+class const _ItemFavicon(
+  this.item, {
+  required this.storyLines,
+  required this.useLargeStoryStyle,
+}) extends StatelessWidget {
   final Item item;
   final int storyLines;
   final bool useLargeStoryStyle;
@@ -557,13 +551,11 @@ class _ItemFavicon extends StatelessWidget {
   }
 }
 
-class _MetadataActionButton extends StatelessWidget {
-  const _MetadataActionButton({
-    this.padding = EdgeInsets.zero,
-    this.onTap,
-    required this.child,
-  });
-
+class const _MetadataActionButton({
+  this.padding = EdgeInsets.zero,
+  this.onTap,
+  required this.child,
+}) extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final VoidCallback? onTap;
   final Widget child;

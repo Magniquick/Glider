@@ -1,1 +1,4 @@
-enum SearchType { search, catchUp }
+enum SearchType() {
+  search,
+  catchUp
+}

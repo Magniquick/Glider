@@ -1,29 +1,27 @@
 part of 'settings_cubit.dart';
 
-class SettingsState with EquatableMixin {
-  const SettingsState({
-    this.themeMode = ThemeMode.system,
-    this.useDynamicTheme = true,
-    this.themeColor = const Color(0xff6750a4),
-    this.themeVariant = Variant.tonalSpot,
-    this.usePureBackground = false,
-    this.font = 'Noto Sans',
-    this.storyLines = 2,
-    this.useLargeStoryStyle = true,
-    this.showFavicons = true,
-    this.showStoryMetadata = true,
-    this.showUserAvatars = true,
-    this.useActionButtons = false,
-    this.showJobs = true,
-    this.useThreadNavigation = true,
-    this.enableDownvoting = false,
-    this.useInAppBrowser = false,
-    this.useNavigationDrawer = false,
-    this.wordFilters = const {},
-    this.domainFilters = const {},
-    this.appVersion,
-  });
-
+class const SettingsState({
+  this.themeMode = ThemeMode.system,
+  this.useDynamicTheme = true,
+  this.themeColor = const Color(0xff6750a4),
+  this.themeVariant = Variant.tonalSpot,
+  this.usePureBackground = false,
+  this.font = 'Noto Sans',
+  this.storyLines = 2,
+  this.useLargeStoryStyle = true,
+  this.showFavicons = true,
+  this.showStoryMetadata = true,
+  this.showUserAvatars = true,
+  this.useActionButtons = false,
+  this.showJobs = true,
+  this.useThreadNavigation = true,
+  this.enableDownvoting = false,
+  this.useInAppBrowser = false,
+  this.useNavigationDrawer = false,
+  this.wordFilters = const {},
+  this.domainFilters = const {},
+  this.appVersion,
+}) with EquatableMixin {
   final ThemeMode themeMode;
   final bool useDynamicTheme;
   final Color themeColor;

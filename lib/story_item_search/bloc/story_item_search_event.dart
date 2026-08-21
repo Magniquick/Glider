@@ -1,19 +1,14 @@
 part of 'story_item_search_bloc.dart';
 
-sealed class StoryItemSearchEvent with EquatableMixin {
-  const StoryItemSearchEvent();
-}
+sealed class const StoryItemSearchEvent() with EquatableMixin;
 
-final class LoadStoryItemSearchEvent extends StoryItemSearchEvent {
-  const LoadStoryItemSearchEvent();
-
+final class const LoadStoryItemSearchEvent() extends StoryItemSearchEvent {
   @override
   List<Object?> get props => [];
 }
 
-final class SetTextStoryItemSearchEvent extends StoryItemSearchEvent {
-  const SetTextStoryItemSearchEvent(this.text);
-
+final class const SetTextStoryItemSearchEvent(this.text)
+    extends StoryItemSearchEvent {
   final String? text;
 
   @override

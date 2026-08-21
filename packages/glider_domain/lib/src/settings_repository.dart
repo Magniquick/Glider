@@ -4,9 +4,7 @@ import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/entities/theme_mode.dart';
 import 'package:material_color_utilities/dynamiccolor/variant.dart';
 
-class SettingsRepository {
-  const SettingsRepository(this._sharedPreferencesService);
-
+class const SettingsRepository(this._sharedPreferencesService) {
   final SharedPreferencesService _sharedPreferencesService;
 
   Future<ThemeMode?> getThemeMode() async {

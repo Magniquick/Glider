@@ -1,13 +1,11 @@
 part of 'user_item_search_bloc.dart';
 
-class UserItemSearchState with DataMixin<List<int>>, EquatableMixin {
-  const UserItemSearchState({
-    this.status = Status.initial,
-    this.data,
-    this.searchText,
-    this.exception,
-  });
-
+class const UserItemSearchState({
+  this.status = Status.initial,
+  this.data,
+  this.searchText,
+  this.exception,
+}) with DataMixin<List<int>>, EquatableMixin {
   @override
   final Status status;
   @override

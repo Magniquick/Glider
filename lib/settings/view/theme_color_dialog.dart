@@ -14,9 +14,8 @@ final _colors = [
 
 const _iconSize = 40.0;
 
-class ThemeColorDialog extends StatelessWidget {
-  const ThemeColorDialog(this._settingsCubit, {super.key});
-
+class const ThemeColorDialog(this._settingsCubit, {super.key})
+    extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override
@@ -35,9 +34,7 @@ class ThemeColorDialog extends StatelessWidget {
   }
 }
 
-class _ThemeColorBody extends StatelessWidget {
-  const _ThemeColorBody(this._settingsCubit);
-
+class const _ThemeColorBody(this._settingsCubit) extends StatelessWidget {
   final SettingsCubit _settingsCubit;
 
   @override

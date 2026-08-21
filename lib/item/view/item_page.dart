@@ -32,16 +32,16 @@ import 'package:go_router/go_router.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
-class ItemPage extends StatefulWidget {
-  ItemPage(
-    this._itemCubitFactory,
-    this._itemTreeCubitFactory,
-    this._storySimilarCubitFactory,
-    this._storyItemSearchBlocFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    required this.id,
-  }) : super(key: ValueKey(id));
+class ItemPage(
+  this._itemCubitFactory,
+  this._itemTreeCubitFactory,
+  this._storySimilarCubitFactory,
+  this._storyItemSearchBlocFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  required this.id,
+}) extends StatefulWidget {
+  this : super(key: ValueKey(id));
 
   final ItemCubitFactory _itemCubitFactory;
   final ItemTreeCubitFactory _itemTreeCubitFactory;
@@ -55,7 +55,7 @@ class ItemPage extends StatefulWidget {
   State<ItemPage> createState() => _ItemPageState();
 }
 
-class _ItemPageState extends State<ItemPage> {
+class _ItemPageState() extends State<ItemPage> {
   late final ItemCubit _itemCubit;
   late final ItemTreeCubit _itemTreeCubit;
   late final StorySimilarCubit _storySimilarCubit;
@@ -207,19 +207,17 @@ class _ItemPageState extends State<ItemPage> {
       );
 }
 
-class _SliverItemAppBar extends StatefulWidget {
-  const _SliverItemAppBar(
-    this._itemCubit,
-    this._itemTreeCubit,
-    this._itemCubitFactory,
-    this._storyItemSearchBloc,
-    this._authCubit,
-    this._settingsCubit, {
-    this.bodyKey,
-    this.scrollController,
-    required this.toolbarHeight,
-  });
-
+class const _SliverItemAppBar(
+  this._itemCubit,
+  this._itemTreeCubit,
+  this._itemCubitFactory,
+  this._storyItemSearchBloc,
+  this._authCubit,
+  this._settingsCubit, {
+  this.bodyKey,
+  this.scrollController,
+  required this.toolbarHeight,
+}) extends StatefulWidget {
   final ItemCubit _itemCubit;
   final ItemTreeCubit _itemTreeCubit;
   final ItemCubitFactory _itemCubitFactory;
@@ -234,7 +232,7 @@ class _SliverItemAppBar extends StatefulWidget {
   State<_SliverItemAppBar> createState() => _SliverItemAppBarState();
 }
 
-class _SliverItemAppBarState extends State<_SliverItemAppBar> {
+class _SliverItemAppBarState() extends State<_SliverItemAppBar> {
   late final ValueNotifier<bool> _hasOverlapNotifier;
   RenderSliver? bodyRenderSliver;
 
@@ -371,14 +369,12 @@ class _SliverItemAppBarState extends State<_SliverItemAppBar> {
   }
 }
 
-class _ItemSearchAnchor extends StatefulWidget {
-  const _ItemSearchAnchor(
-    this._storyItemSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _ItemSearchAnchor(
+  this._storyItemSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatefulWidget {
   final StoryItemSearchBloc _storyItemSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -388,7 +384,7 @@ class _ItemSearchAnchor extends StatefulWidget {
   State<_ItemSearchAnchor> createState() => _ItemSearchAnchorState();
 }
 
-class _ItemSearchAnchorState extends State<_ItemSearchAnchor> {
+class _ItemSearchAnchorState() extends State<_ItemSearchAnchor> {
   late final SearchController _searchController;
 
   @override
@@ -455,13 +451,11 @@ class _ItemSearchAnchorState extends State<_ItemSearchAnchor> {
   }
 }
 
-class _ItemOverflowMenu extends StatelessWidget {
-  const _ItemOverflowMenu(
-    this._itemCubit,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _ItemOverflowMenu(
+  this._itemCubit,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final ItemCubit _itemCubit;
   final AuthCubit _authCubit;
   final SettingsCubit _settingsCubit;
@@ -521,18 +515,16 @@ class _ItemOverflowMenu extends StatelessWidget {
   }
 }
 
-class _SliverItemBody extends StatelessWidget {
-  const _SliverItemBody(
-    this._itemCubit,
-    this._itemTreeCubit,
-    this._storySimilarCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-    this.listController,
-  });
-
+class const _SliverItemBody(
+  this._itemCubit,
+  this._itemTreeCubit,
+  this._storySimilarCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+  this.listController,
+}) extends StatelessWidget {
   final ItemCubit _itemCubit;
   final ItemTreeCubit _itemTreeCubit;
   final StorySimilarCubit _storySimilarCubit;

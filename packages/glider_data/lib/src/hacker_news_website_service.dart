@@ -5,14 +5,16 @@ import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 
 /// Outcome of a [HackerNewsWebsiteService.logIn] attempt.
-enum LogInResult { success, badCredentials, rejected }
+enum LogInResult() {
+  success,
+  badCredentials,
+  rejected
+}
 
-class HackerNewsWebsiteService {
-  const HackerNewsWebsiteService(
-    this._client, {
-    this.userAgent = _defaultUserAgent,
-  });
-
+class const HackerNewsWebsiteService(
+  this._client, {
+  this.userAgent = _defaultUserAgent,
+}) {
   static const String authority = 'news.ycombinator.com';
 
   /// Hacker News refuses requests from embedded browsers on `/login` and

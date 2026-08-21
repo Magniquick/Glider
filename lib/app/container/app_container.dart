@@ -38,27 +38,25 @@ typedef UserCubitFactory = UserCubit Function(String);
 
 typedef UserItemSearchBlocFactory = UserItemSearchBloc Function(String);
 
-class AppContainer {
-  const AppContainer(
-    this.navigationShellCubit,
-    this.authCubit,
-    this.settingsCubit,
-    this.storiesCubit,
-    this.storiesSearchBloc,
-    this.catchUpBloc,
-    this.submitCubit,
-    this.itemCubitFactory,
-    this.itemTreeCubitFactory,
-    this.storySimilarCubitFactory,
-    this.storyItemSearchCubitFactory,
-    this.editCubitFactory,
-    this.replyCubitFactory,
-    this.favoritesCubit,
-    this.inboxCubit,
-    this.userCubitFactory,
-    this.userItemSearchBlocFactory,
-  );
-
+class const AppContainer(
+  this.navigationShellCubit,
+  this.authCubit,
+  this.settingsCubit,
+  this.storiesCubit,
+  this.storiesSearchBloc,
+  this.catchUpBloc,
+  this.submitCubit,
+  this.itemCubitFactory,
+  this.itemTreeCubitFactory,
+  this.storySimilarCubitFactory,
+  this.storyItemSearchCubitFactory,
+  this.editCubitFactory,
+  this.replyCubitFactory,
+  this.favoritesCubit,
+  this.inboxCubit,
+  this.userCubitFactory,
+  this.userItemSearchBlocFactory,
+) {
   static Future<AppContainer> create() async {
     final httpClient = http.Client();
     final packageInfo = await PackageInfo.fromPlatform();

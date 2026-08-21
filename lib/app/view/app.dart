@@ -11,14 +11,12 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:relative_time/relative_time.dart';
 
-class App extends StatelessWidget {
-  const App(
-    this._settingsCubit,
-    this._routerConfig,
-    this._deviceInfo, {
-    super.key,
-  });
-
+class const App(
+  this._settingsCubit,
+  this._routerConfig,
+  this._deviceInfo, {
+  super.key,
+}) extends StatelessWidget {
   final SettingsCubit _settingsCubit;
   final RouterConfig<Object> _routerConfig;
   final BaseDeviceInfo _deviceInfo;
@@ -149,9 +147,8 @@ class App extends StatelessWidget {
   }
 }
 
-class _AppScrollBehavior extends MaterialScrollBehavior {
-  const _AppScrollBehavior(this._deviceInfo);
-
+class const _AppScrollBehavior(this._deviceInfo)
+    extends MaterialScrollBehavior {
   final BaseDeviceInfo _deviceInfo;
 
   @override

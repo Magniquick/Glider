@@ -1,16 +1,14 @@
 part of 'user_cubit.dart';
 
-class UserState with DataMixin<User>, EquatableMixin {
-  const UserState({
-    this.status = Status.initial,
-    this.data,
-    this.parsedAbout,
-    this.blocked = false,
-    this.synchronizing = false,
-    this.exception,
-  });
-
-  factory UserState.fromMap(Map<String, dynamic> json) => UserState(
+class const UserState({
+  this.status = Status.initial,
+  this.data,
+  this.parsedAbout,
+  this.blocked = false,
+  this.synchronizing = false,
+  this.exception,
+}) with DataMixin<User>, EquatableMixin {
+  factory fromMap(Map<String, dynamic> json) => UserState(
     status: Status.values.byName(json['status'] as String),
     data: User.fromMap(json['data'] as Map<String, dynamic>),
     blocked: json['blocked'] as bool? ?? false,

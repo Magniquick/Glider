@@ -1,1 +1,5 @@
-enum ThemeMode { system, light, dark }
+enum ThemeMode() {
+  system,
+  light,
+  dark
+}

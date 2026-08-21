@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 typedef Animation = ({Duration duration, Curve easing});
 
-abstract final class AppAnimation {
+abstract final class AppAnimation() {
   static Animation get emphasized => (
     duration: disableAnimations ? Duration.zero : Durations.long2,
     // Emphasized easing is not yet defined in `Easing`.

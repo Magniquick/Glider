@@ -7,9 +7,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'inbox_state.dart';
 
-class InboxCubit extends HydratedCubit<InboxState> {
-  InboxCubit(this._itemRepository, this._authRepository)
-    : super(const InboxState());
+class InboxCubit(this._itemRepository, this._authRepository)
+    extends HydratedCubit<InboxState> {
+  this : super(const InboxState());
 
   final ItemRepository _itemRepository;
   final AuthRepository _authRepository;

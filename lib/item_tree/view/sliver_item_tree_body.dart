@@ -14,18 +14,16 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
-class SliverItemTreeBody extends StatelessWidget {
-  const SliverItemTreeBody(
-    this._itemTreeCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-    this.listController,
-    this.childCount,
-    this.storyUsername,
-  });
-
+class const SliverItemTreeBody(
+  this._itemTreeCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+  this.listController,
+  this.childCount,
+  this.storyUsername,
+}) extends StatelessWidget {
   final ItemTreeCubit _itemTreeCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;

@@ -10,13 +10,12 @@ import 'package:markdown/markdown.dart' as md;
 
 typedef ParsedData = List<md.Node>;
 
-class HackerNewsText extends StatelessWidget {
-  HackerNewsText(
-    String data, {
-    ParsedData? parsedData,
-    required this.useInAppBrowser,
-  }) : parsedData = parsedData ?? parse(data),
-       super(key: ValueKey(data));
+class HackerNewsText(
+  String data, {
+  ParsedData? parsedData,
+  required this.useInAppBrowser,
+}) extends StatelessWidget {
+  this : parsedData = parsedData ?? parse(data), super(key: ValueKey(data));
 
   final ParsedData parsedData;
   final bool useInAppBrowser;
@@ -98,14 +97,14 @@ class HackerNewsText extends StatelessWidget {
   }
 }
 
-class _HackerNewsMarkdownBody extends MarkdownBody {
-  const _HackerNewsMarkdownBody({
-    required this.parsedData,
-    super.styleSheet,
-    super.onTapLink,
-    super.builders,
-    super.fitContent,
-  }) : super(data: '');
+class const _HackerNewsMarkdownBody({
+  required this.parsedData,
+  super.styleSheet,
+  super.onTapLink,
+  super.builders,
+  super.fitContent,
+}) extends MarkdownBody {
+  this : super(data: '');
 
   final ParsedData parsedData;
 
@@ -113,7 +112,8 @@ class _HackerNewsMarkdownBody extends MarkdownBody {
   State<MarkdownWidget> createState() => _HackerNewsMarkdownBodyState();
 }
 
-class _HackerNewsMarkdownBodyState extends State<_HackerNewsMarkdownBody>
+class _HackerNewsMarkdownBodyState()
+    extends State<_HackerNewsMarkdownBody>
     implements MarkdownBuilderDelegate {
   late List<Widget> _children;
   final List<GestureRecognizer> _recognizers = <GestureRecognizer>[];
@@ -194,16 +194,14 @@ class _HackerNewsMarkdownBodyState extends State<_HackerNewsMarkdownBody>
 }
 
 // Emphasis only needs two spaces, as opposed to the Markdown default of four.
-class HackerNewsCodeBlockSyntax extends md.CodeBlockSyntax {
-  const HackerNewsCodeBlockSyntax();
-
+class const HackerNewsCodeBlockSyntax() extends md.CodeBlockSyntax {
   @override
   RegExp get pattern => RegExp(r'^(?:  | ?\t)(.*)$');
 }
 
 // Unlike default Markdown, double asterisks do not result in a strong tag.
-class HackerNewsEmphasisSyntax extends md.DelimiterSyntax {
-  HackerNewsEmphasisSyntax.asterisk()
+class HackerNewsEmphasisSyntax.asterisk() extends md.DelimiterSyntax {
+  this
     : super(
         r'\*+',
         requiresDelimiterRun: true,
@@ -217,9 +215,8 @@ class HackerNewsEmphasisSyntax extends md.DelimiterSyntax {
 
 // The use of asterisks for emphasis can be escaped with either a backslash
 // or another asterisk. Markdown already takes care of the former.
-class HackerNewsAsteriskEscapeSyntax extends md.InlineSyntax {
-  HackerNewsAsteriskEscapeSyntax()
-    : super(r'\*(\*)', startCharacter: '*'.codeUnits.single);
+class HackerNewsAsteriskEscapeSyntax() extends md.InlineSyntax {
+  this : super(r'\*(\*)', startCharacter: '*'.codeUnits.single);
 
   @override
   bool onMatch(md.InlineParser parser, Match match) {
@@ -229,9 +226,7 @@ class HackerNewsAsteriskEscapeSyntax extends md.InlineSyntax {
 }
 
 // Unlike the default implementation, wrap pre text rather than scrolling it.
-class _PreElementBuilder extends MarkdownElementBuilder {
-  _PreElementBuilder(this.styleSheet);
-
+class _PreElementBuilder(this.styleSheet) extends MarkdownElementBuilder {
   final MarkdownStyleSheet styleSheet;
 
   @override

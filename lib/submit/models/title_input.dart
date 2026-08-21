@@ -2,7 +2,10 @@ import 'package:flutter/widgets.dart';
 import 'package:formz/formz.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
-enum TitleValidationError { empty, tooLong }
+enum TitleValidationError() {
+  empty,
+  tooLong
+}
 
 extension TitleValidationErrorExtension on TitleValidationError {
   String label(BuildContext context) {
@@ -16,9 +19,9 @@ extension TitleValidationErrorExtension on TitleValidationError {
 }
 
 final class TitleInput extends FormzInput<String, TitleValidationError> {
-  const TitleInput.pure(super.value) : super.pure();
+  const new pure(super.value) : super.pure();
 
-  const TitleInput.dirty(super.value) : super.dirty();
+  const new dirty(super.value) : super.dirty();
 
   static const maxLength = 80;
 

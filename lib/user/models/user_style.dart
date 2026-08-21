@@ -1,9 +1,7 @@
-enum UserStyle {
+enum UserStyle({this.showPrimary = false, this.showSecondary = false}) {
   full(showPrimary: true, showSecondary: true),
   primary(showPrimary: true),
   secondary(showSecondary: true);
-
-  UserStyle({this.showPrimary = false, this.showSecondary = false});
 
   final bool showPrimary;
   final bool showSecondary;

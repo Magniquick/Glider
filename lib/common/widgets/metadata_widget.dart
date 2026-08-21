@@ -4,9 +4,8 @@ import 'package:glider/common/extensions/widget_list_extension.dart';
 
 const _iconSize = 16.0;
 
-class MetadataWidget extends StatelessWidget {
-  const MetadataWidget({super.key, this.icon, this.label, this.color});
-
+class const MetadataWidget({super.key, this.icon, this.label, this.color})
+    extends StatelessWidget {
   final IconData? icon;
   final Widget? label;
   final Color? color;

@@ -26,16 +26,14 @@ import 'package:glider/stories_search/view/stories_search_view.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-class StoriesShellPage extends StatefulWidget {
-  const StoriesShellPage(
-    this._storiesCubit,
-    this._storiesSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit, {
-    super.key,
-  });
-
+class const StoriesShellPage(
+  this._storiesCubit,
+  this._storiesSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit, {
+  super.key,
+}) extends StatefulWidget {
   final StoriesCubit _storiesCubit;
   final StoriesSearchBloc _storiesSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
@@ -46,7 +44,7 @@ class StoriesShellPage extends StatefulWidget {
   State<StoriesShellPage> createState() => _StoriesShellPageState();
 }
 
-class _StoriesShellPageState extends State<StoriesShellPage> {
+class _StoriesShellPageState() extends State<StoriesShellPage> {
   @override
   void initState() {
     super.initState();
@@ -85,15 +83,13 @@ class _StoriesShellPageState extends State<StoriesShellPage> {
   }
 }
 
-class _SliverStoriesAppBar extends StatefulWidget {
-  const _SliverStoriesAppBar(
-    this._storiesCubit,
-    this._storiesSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverStoriesAppBar(
+  this._storiesCubit,
+  this._storiesSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatefulWidget {
   final StoriesCubit _storiesCubit;
   final StoriesSearchBloc _storiesSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
@@ -104,7 +100,7 @@ class _SliverStoriesAppBar extends StatefulWidget {
   State<_SliverStoriesAppBar> createState() => _SliverStoriesAppBarState();
 }
 
-class _SliverStoriesAppBarState extends State<_SliverStoriesAppBar> {
+class _SliverStoriesAppBarState() extends State<_SliverStoriesAppBar> {
   @override
   Widget build(BuildContext context) {
     return SliverAppBar(
@@ -147,14 +143,12 @@ class _SliverStoriesAppBarState extends State<_SliverStoriesAppBar> {
   }
 }
 
-class _StoriesSearchAnchor extends StatefulWidget {
-  const _StoriesSearchAnchor(
-    this._storiesSearchBloc,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _StoriesSearchAnchor(
+  this._storiesSearchBloc,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatefulWidget {
   final StoriesSearchBloc _storiesSearchBloc;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
@@ -164,7 +158,7 @@ class _StoriesSearchAnchor extends StatefulWidget {
   State<_StoriesSearchAnchor> createState() => _StoriesSearchAnchorState();
 }
 
-class _StoriesSearchAnchorState extends State<_StoriesSearchAnchor> {
+class _StoriesSearchAnchorState() extends State<_StoriesSearchAnchor> {
   late final SearchController _searchController;
 
   @override
@@ -230,14 +224,12 @@ class _StoriesSearchAnchorState extends State<_StoriesSearchAnchor> {
   }
 }
 
-class _SliverStoriesBody extends StatelessWidget {
-  const _SliverStoriesBody(
-    this._storiesCubit,
-    this._itemCubitFactory,
-    this._authCubit,
-    this._settingsCubit,
-  );
-
+class const _SliverStoriesBody(
+  this._storiesCubit,
+  this._itemCubitFactory,
+  this._authCubit,
+  this._settingsCubit,
+) extends StatelessWidget {
   final StoriesCubit _storiesCubit;
   final ItemCubitFactory _itemCubitFactory;
   final AuthCubit _authCubit;
