@@ -1,24 +1,22 @@
-class const AlgoliaSearchDto({required this.hits}) {
+class const AlgoliaSearchDto({required final List<AlgoliaSearchHitDto> hits}) {
   factory fromMap(Map<String, dynamic> json) => AlgoliaSearchDto(
     hits: (json['hits'] as List<dynamic>)
         .map((e) => AlgoliaSearchHitDto.fromMap(e as Map<String, dynamic>))
         .toList(growable: false),
   );
-
-  final List<AlgoliaSearchHitDto> hits;
 }
 
 class const AlgoliaSearchHitDto({
-  required this.objectId,
-  this.title,
-  this.url,
-  this.author,
-  this.points,
-  this.storyText,
-  this.commentText,
-  this.numComments,
-  this.parentId,
-  this.createdAtI,
+  required final String objectId,
+  final String? title,
+  final String? url,
+  final String? author,
+  final int? points,
+  final String? storyText,
+  final String? commentText,
+  final int? numComments,
+  final int? parentId,
+  final int? createdAtI,
 }) {
   factory fromMap(Map<String, dynamic> json) => AlgoliaSearchHitDto(
     objectId: json['objectID'] as String,
@@ -32,15 +30,4 @@ class const AlgoliaSearchHitDto({
     parentId: json['parent_id'] as int?,
     createdAtI: json['created_at_i'] as int?,
   );
-
-  final String objectId;
-  final String? title;
-  final String? url;
-  final String? author;
-  final int? points;
-  final String? storyText;
-  final String? commentText;
-  final int? numComments;
-  final int? parentId;
-  final int? createdAtI;
 }

@@ -4,9 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:glider_data/src/dtos/algolia_search_dto.dart';
 import 'package:http/http.dart' as http;
 
-class const AlgoliaApiService(this._client) {
-  final http.Client _client;
-
+class const AlgoliaApiService(final http.Client _client) {
   static const authority = 'hn.algolia.com';
   static const _searchPath = '/api/v1/search';
   static const _searchByDatePath = '/api/v1/search_by_date';
@@ -41,7 +39,7 @@ class const AlgoliaApiService(this._client) {
     final response = await _client.get(
       Uri.https(authority, _searchPath, queryParameters),
     );
-    return compute((body) {
+    return await compute((body) {
       final map = jsonDecode(body) as Map<String, dynamic>;
       return AlgoliaSearchDto.fromMap(map);
     }, response.body);
@@ -59,7 +57,7 @@ class const AlgoliaApiService(this._client) {
     final response = await _client.get(
       Uri.https(authority, _searchPath, queryParameters),
     );
-    return compute((body) {
+    return await compute((body) {
       final map = jsonDecode(body) as Map<String, dynamic>;
       return AlgoliaSearchDto.fromMap(map);
     }, response.body);
@@ -83,7 +81,7 @@ class const AlgoliaApiService(this._client) {
     final response = await _client.get(
       Uri.https(authority, _searchPath, queryParameters),
     );
-    return compute((body) {
+    return await compute((body) {
       final map = jsonDecode(body) as Map<String, dynamic>;
       return AlgoliaSearchDto.fromMap(map);
     }, response.body);
@@ -104,7 +102,7 @@ class const AlgoliaApiService(this._client) {
     final response = await _client.get(
       Uri.https(authority, _searchPath, queryParameters),
     );
-    return compute((body) {
+    return await compute((body) {
       final map = jsonDecode(body) as Map<String, dynamic>;
       return AlgoliaSearchDto.fromMap(map);
     }, response.body);
@@ -121,7 +119,7 @@ class const AlgoliaApiService(this._client) {
     final response = await _client.get(
       Uri.https(authority, _searchByDatePath, queryParameters),
     );
-    return compute((body) {
+    return await compute((body) {
       final map = jsonDecode(body) as Map<String, dynamic>;
       return AlgoliaSearchDto.fromMap(map);
     }, response.body);

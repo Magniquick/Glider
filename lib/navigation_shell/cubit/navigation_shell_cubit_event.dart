@@ -1,5 +1,5 @@
 part of 'navigation_shell_cubit.dart';
 
-sealed class NavigationShellCubitEvent();
+sealed class NavigationShellPresentationEvent();
 
-final class ShowWhatsNewEvent() implements NavigationShellCubitEvent;
+final class ShowWhatsNewEvent() implements NavigationShellPresentationEvent;

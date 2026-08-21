@@ -1,13 +1,13 @@
 part of 'stories_search_bloc.dart';
 
 class StoriesSearchState({
-  this.status = Status.initial,
-  this.data,
-  this.page = 1,
-  this.searchText,
-  this.searchRange,
-  this.dateRange,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<int>? data,
+  @override final int page = 1,
+  final String? searchText,
+  final SearchRange? searchRange,
+  final DateTimeRange? dateRange,
+  @override final Object? exception,
 }) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => StoriesSearchState(
     searchRange: json['searchRange'] != null
@@ -35,22 +35,10 @@ class StoriesSearchState({
   };
 
   @override
-  final Status status;
-  @override
-  final List<int>? data;
-  @override
-  final int page;
-  final String? searchText;
-  final SearchRange? searchRange;
-  final DateTimeRange? dateRange;
-  @override
-  final Object? exception;
+  late final List<int>? loadedData = super.loadedData?.toList(growable: false);
 
   @override
-  late List<int>? loadedData = super.loadedData?.toList(growable: false);
-
-  @override
-  late List<int>? currentPageData = super.currentPageData?.toList(
+  late final List<int>? currentPageData = super.currentPageData?.toList(
     growable: false,
   );
 
@@ -72,6 +60,8 @@ class StoriesSearchState({
     exception: exception != null ? exception() : this.exception,
   );
 
+  // loadedData and currentPageData are memoised derivations of data and page,
+  // which are already compared below.
   @override
   List<Object?> get props => [
     status,

@@ -18,86 +18,78 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
 class const SliverStorySimilarBody(
-  this._storySimilarCubit,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final StorySimilarCubit _storySimilarCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
-  this.storyUsername,
+  final String? storyUsername,
 }) extends StatelessWidget {
-  final StorySimilarCubit _storySimilarCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final String? storyUsername;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<StorySimilarCubit, StorySimilarState>(
-      bloc: _storySimilarCubit,
-      builder: (context, state) => state.whenOrDefaultSlivers(
-        loading: SliverToBoxAdapter.new,
-        empty: SliverToBoxAdapter.new,
-        nonEmpty: () => _buildData(context, state),
-        failure: SliverToBoxAdapter.new,
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      BlocBuilder<StorySimilarCubit, StorySimilarState>(
+        bloc: _storySimilarCubit,
+        builder: (context, state) => state.whenOrDefaultSlivers(
+          loading: SliverToBoxAdapter.new,
+          empty: SliverToBoxAdapter.new,
+          nonEmpty: () => _buildData(context, state),
+          failure: SliverToBoxAdapter.new,
+        ),
+      );
 
-  Widget _buildData(BuildContext context, StorySimilarState state) {
-    return SliverPadding(
-      padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
-      sliver: DecoratedSliver(
-        decoration: Theme.of(context)
-            .elevationToBoxDecoration(1)
-            .copyWith(
-              borderRadius: const BorderRadius.all(Radius.circular(12)),
-            ),
-        sliver: SliverMainAxisGroup(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding:
-                    AppSpacing.defaultShadowPadding +
-                    AppSpacing.defaultTilePadding,
-                child: Row(
-                  children: [
-                    const MetadataWidget(icon: Icons.forum_outlined),
-                    Text(
-                      context.l10n.similarDiscussions,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                  ].spaced(width: AppSpacing.l),
+  Widget _buildData(BuildContext context, StorySimilarState state) =>
+      SliverPadding(
+        padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
+        sliver: DecoratedSliver(
+          decoration: Theme.of(context)
+              .elevationToBoxDecoration(1)
+              .copyWith(
+                borderRadius: const BorderRadius.all(Radius.circular(12)),
+              ),
+          sliver: SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding:
+                      AppSpacing.defaultShadowPadding +
+                      AppSpacing.defaultTilePadding,
+                  child: Row(
+                    children: [
+                      const MetadataWidget(icon: Icons.forum_outlined),
+                      Text(
+                        context.l10n.similarDiscussions,
+                        style: Theme.of(context).textTheme.titleSmall,
+                      ),
+                    ].spaced(width: AppSpacing.l),
+                  ),
                 ),
               ),
-            ),
-            SuperSliverListExtension.builder(
-              itemCount: state.data!.length,
-              itemBuilder: (context, index) {
-                final id = state.data![index];
-                return Padding(
-                  padding: AppSpacing.defaultShadowPadding,
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: ItemTile.create(
-                      _itemCubitFactory,
-                      _authCubit,
-                      _settingsCubit,
-                      id: id,
-                      storyUsername: storyUsername,
-                      loadingType: ItemType.story,
-                      style: ItemStyle.primary,
-                      onTap: (context, item) async => context.push(
-                        AppRoute.item.location(parameters: {'id': id}),
+              SuperSliverListExtension.builder(
+                itemCount: state.data!.length,
+                itemBuilder: (context, index) {
+                  final int id = state.data![index];
+                  return Padding(
+                    padding: AppSpacing.defaultShadowPadding,
+                    child: Material(
+                      type: MaterialType.transparency,
+                      child: ItemTile.create(
+                        _itemCubitFactory,
+                        _authCubit,
+                        _settingsCubit,
+                        id: id,
+                        storyUsername: storyUsername,
+                        loadingType: ItemType.story,
+                        style: ItemStyle.primary,
+                        onTap: (context, item) => context.push(
+                          AppRoute.item.location(parameters: {'id': id}),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

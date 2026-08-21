@@ -6,9 +6,10 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider/user/cubit/user_cubit.dart';
 import 'package:glider/user/models/user_value.dart';
+import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-enum UserAction<T extends MenuItem<S>, S>({this.options})
+enum UserAction<T extends MenuItem<S>, S>({final List<T>? options})
     implements MenuItem<UserState> {
   block,
   select,
@@ -16,15 +17,13 @@ enum UserAction<T extends MenuItem<S>, S>({this.options})
   share(options: UserValue.values),
   logout;
 
-  final List<T>? options;
-
   @override
   bool isVisible(
     UserState state,
     AuthState authState,
     SettingsState settingsState,
   ) {
-    final user = state.data;
+    final User? user = state.data;
     if (user == null) return false;
     return switch (this) {
       UserAction.block => user.username != authState.username,
@@ -35,28 +34,24 @@ enum UserAction<T extends MenuItem<S>, S>({this.options})
   }
 
   @override
-  String label(BuildContext context, UserState state) {
-    return switch (this) {
-      UserAction.block =>
-        state.blocked ? context.l10n.unblock : context.l10n.block,
-      UserAction.select => context.l10n.select,
-      UserAction.copy => context.l10n.copy,
-      UserAction.share => context.l10n.share,
-      UserAction.logout => context.l10n.logout,
-    };
-  }
+  String label(BuildContext context, UserState state) => switch (this) {
+    UserAction.block =>
+      state.blocked ? context.l10n.unblock : context.l10n.block,
+    UserAction.select => context.l10n.select,
+    UserAction.copy => context.l10n.copy,
+    UserAction.share => context.l10n.share,
+    UserAction.logout => context.l10n.logout,
+  };
 
   @override
-  IconData icon(UserState state) {
-    return switch (this) {
-      UserAction.block =>
-        state.blocked ? Icons.healing_outlined : Icons.block_outlined,
-      UserAction.select => Icons.select_all_outlined,
-      UserAction.copy => Icons.copy_outlined,
-      UserAction.share => Icons.adaptive.share_outlined,
-      UserAction.logout => Icons.logout_outlined,
-    };
-  }
+  IconData icon(UserState state) => switch (this) {
+    UserAction.block =>
+      state.blocked ? Icons.healing_outlined : Icons.block_outlined,
+    UserAction.select => Icons.select_all_outlined,
+    UserAction.copy => Icons.copy_outlined,
+    UserAction.share => Icons.adaptive.share_outlined,
+    UserAction.logout => Icons.logout_outlined,
+  };
 
   Future<void> execute(
     BuildContext context,
@@ -67,7 +62,7 @@ enum UserAction<T extends MenuItem<S>, S>({this.options})
     switch (this) {
       case UserAction.block:
         if (!userCubit.state.blocked) {
-          final confirm = await context.push<bool>(
+          final bool? confirm = await context.push<bool>(
             AppRoute.confirmDialog.location(),
           );
           if (confirm ?? false) await userCubit.block(true);
@@ -80,7 +75,7 @@ enum UserAction<T extends MenuItem<S>, S>({this.options})
           extra: userCubit.state.data!.about,
         );
       case UserAction.copy:
-        final valueAction =
+        final UserValue? valueAction =
             option as UserValue? ??
             await context.push(
               AppRoute.userValueDialog.location(
@@ -93,7 +88,7 @@ enum UserAction<T extends MenuItem<S>, S>({this.options})
           await userCubit.copy(valueAction.value(userCubit)!);
         }
       case UserAction.share:
-        final valueAction =
+        final UserValue? valueAction =
             option as UserValue? ??
             await context.push(
               AppRoute.userValueDialog.location(

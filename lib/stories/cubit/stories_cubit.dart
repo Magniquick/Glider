@@ -11,10 +11,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'stories_state.dart';
 
-class StoriesCubit(this._itemRepository) extends HydratedCubit<StoriesState> {
+class StoriesCubit(final ItemRepository _itemRepository)
+    extends HydratedCubit<StoriesState> {
   this : super(StoriesState());
-
-  final ItemRepository _itemRepository;
 
   @override
   String id = StoryType.topStories.name;
@@ -29,7 +28,7 @@ class StoriesCubit(this._itemRepository) extends HydratedCubit<StoriesState> {
     );
 
     try {
-      final itemIds = await switch (state.storyType) {
+      final List<int> itemIds = await switch (state.storyType) {
         StoryType.topStories => _itemRepository.getTopStoryIds,
         StoryType.newStories => _itemRepository.getNewStoryIds,
         StoryType.bestStories => _itemRepository.getBestStoryIds,
@@ -72,12 +71,10 @@ class StoriesCubit(this._itemRepository) extends HydratedCubit<StoriesState> {
     }
   }
 
-  Future<List<Item>> _loadCurrentPage() async {
-    return Future.wait<Item>([
-      if (state.currentPageData case final ids?)
-        for (final id in ids) _itemRepository.getItem(id),
-    ]);
-  }
+  Future<List<Item>> _loadCurrentPage() => Future.wait<Item>([
+    if (state.currentPageData case final ids?)
+      for (final id in ids) _itemRepository.getItem(id),
+  ]);
 
   Future<void> setStoryType(StoryType storyType) async {
     id = storyType.name;

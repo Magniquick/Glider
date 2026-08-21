@@ -10,19 +10,17 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'reply_state.dart';
 
 class ReplyCubit(
-  this._itemRepository,
-  this._itemInteractionRepository, {
+  final ItemRepository _itemRepository,
+  final ItemInteractionRepository _itemInteractionRepository, {
   required int id,
 }) extends HydratedCubit<ReplyState> {
-  this : itemId = id, super(const ReplyState()) {
+  this : super(const ReplyState()) {
     _itemSubscription = _itemRepository
         .getItemStream(itemId)
         .listen((item) => safeEmit(state.copyWith(parentItem: () => item)));
   }
 
-  final ItemRepository _itemRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
-  final int itemId;
+  final int itemId = id;
 
   late final StreamSubscription<Item> _itemSubscription;
 
@@ -44,7 +42,7 @@ class ReplyCubit(
   }
 
   void quoteParent() {
-    final quotedParent = state.parentItem!.text!.splitMapJoin(
+    final String quotedParent = state.parentItem!.text!.splitMapJoin(
       '\n',
       onNonMatch: (m) => '> $m'.trimRight(),
     );
@@ -58,7 +56,7 @@ class ReplyCubit(
   }
 
   Future<void> reply() async {
-    final success = await _itemInteractionRepository.reply(
+    final bool success = await _itemInteractionRepository.reply(
       itemId,
       text: state.text.value,
     );
@@ -78,6 +76,6 @@ class ReplyCubit(
   @override
   Future<void> close() async {
     await _itemSubscription.cancel();
-    return super.close();
+    return await super.close();
   }
 }

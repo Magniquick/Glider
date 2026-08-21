@@ -11,24 +11,23 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'user_item_search_event.dart';
 part 'user_item_search_state.dart';
 
-class UserItemSearchBloc(this._itemRepository, {required this.username})
-    extends Bloc<UserItemSearchEvent, UserItemSearchState> {
+class UserItemSearchBloc(
+  final ItemRepository _itemRepository, {
+  required final String username,
+}) extends Bloc<UserItemSearchEvent, UserItemSearchState> {
   this : super(const UserItemSearchState()) {
     on<LoadUserItemSearchEvent>(
-      (event, emit) async => _load(),
+      (event, emit) => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextUserItemSearchEvent>((event, emit) async => _setText(event));
+    on<SetTextUserItemSearchEvent>((event, emit) => _setText(event));
   }
-
-  final ItemRepository _itemRepository;
-  final String username;
 
   Future<void> _load() async {
     safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
-      final items = await _itemRepository.searchUserItems(
+      final List<Item> items = await _itemRepository.searchUserItems(
         username,
         text: state.searchText,
       );

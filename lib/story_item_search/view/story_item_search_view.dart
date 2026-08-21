@@ -13,74 +13,62 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
 class const StoryItemSearchView(
-  this._storyItemSearchBloc,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final StoryItemSearchBloc _storyItemSearchBloc,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
 }) extends StatelessWidget {
-  final StoryItemSearchBloc _storyItemSearchBloc;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return RefreshableScrollView(
-      onRefresh: () async =>
-          _storyItemSearchBloc.add(const LoadStoryItemSearchEvent()),
-      edgeOffset: 0,
-      slivers: [
-        SliverSafeArea(
-          top: false,
-          sliver: _SliverStoryItemSearchBody(
-            _storyItemSearchBloc,
-            _itemCubitFactory,
-            _authCubit,
-            _settingsCubit,
-          ),
+  Widget build(BuildContext context) => RefreshableScrollView(
+    onRefresh: () async =>
+        _storyItemSearchBloc.add(const LoadStoryItemSearchEvent()),
+    edgeOffset: 0,
+    slivers: [
+      SliverSafeArea(
+        top: false,
+        sliver: _SliverStoryItemSearchBody(
+          _storyItemSearchBloc,
+          _itemCubitFactory,
+          _authCubit,
+          _settingsCubit,
         ),
-      ],
-    );
-  }
+      ),
+    ],
+  );
 }
 
 class const _SliverStoryItemSearchBody(
-  this._storyItemSearchBloc,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit,
+  final StoryItemSearchBloc _storyItemSearchBloc,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final StoryItemSearchBloc _storyItemSearchBloc;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<StoryItemSearchBloc, StoryItemSearchState>(
-      bloc: _storyItemSearchBloc,
-      builder: (context, state) => state.whenOrDefaultSlivers(
-        nonEmpty: () => SuperSliverListExtension.builder(
-          itemCount: state.data!.length,
-          itemBuilder: (context, index) {
-            final id = state.data![index];
-            return ItemTile.create(
-              _itemCubitFactory,
-              _authCubit,
-              _settingsCubit,
-              id: id,
-              loadingType: _storyItemSearchBloc.itemId == id
-                  ? ItemType.story
-                  : ItemType.comment,
-              onTap: (context, item) async =>
-                  context.push(AppRoute.item.location(parameters: {'id': id})),
-            );
-          },
+  Widget build(BuildContext context) =>
+      BlocBuilder<StoryItemSearchBloc, StoryItemSearchState>(
+        bloc: _storyItemSearchBloc,
+        builder: (context, state) => state.whenOrDefaultSlivers(
+          nonEmpty: () => SuperSliverListExtension.builder(
+            itemCount: state.data!.length,
+            itemBuilder: (context, index) {
+              final int id = state.data![index];
+              return ItemTile.create(
+                _itemCubitFactory,
+                _authCubit,
+                _settingsCubit,
+                id: id,
+                loadingType: _storyItemSearchBloc.itemId == id
+                    ? ItemType.story
+                    : ItemType.comment,
+                onTap: (context, item) => context.push(
+                  AppRoute.item.location(parameters: {'id': id}),
+                ),
+              );
+            },
+          ),
+          onRetry: () =>
+              _storyItemSearchBloc.add(const LoadStoryItemSearchEvent()),
         ),
-        onRetry: () async =>
-            _storyItemSearchBloc.add(const LoadStoryItemSearchEvent()),
-      ),
-    );
-  }
+      );
 }

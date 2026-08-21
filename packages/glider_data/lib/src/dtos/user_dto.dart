@@ -1,9 +1,9 @@
 class const UserDto({
-  required this.id,
-  required this.created,
-  required this.karma,
-  this.about,
-  this.submitted,
+  required final String id,
+  required final int created,
+  required final int karma,
+  final String? about,
+  final List<int>? submitted,
 }) {
   factory fromMap(Map<String, dynamic> json) => UserDto(
     id: json['id'] as String,
@@ -14,10 +14,4 @@ class const UserDto({
         ?.map((e) => e as int)
         .toList(growable: false),
   );
-
-  final String id;
-  final int created;
-  final int karma;
-  final String? about;
-  final List<int>? submitted;
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glider/common/constants/app_animation.dart';
@@ -7,28 +8,23 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class const FiltersDialog(this._settingsCubit, {super.key})
+class const FiltersDialog(final SettingsCubit _settingsCubit, {super.key})
     extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(context.l10n.filters),
-      content: SingleChildScrollView(child: _FiltersBody(_settingsCubit)),
-      actions: [
-        TextButton(
-          onPressed: () => context.pop(),
-          child: Text(MaterialLocalizations.of(context).okButtonLabel),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.filters),
+    content: SingleChildScrollView(child: _FiltersBody(_settingsCubit)),
+    actions: [
+      TextButton(
+        onPressed: () => context.pop(),
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+    ],
+  );
 }
 
-class const _FiltersBody(this._settingsCubit) extends StatefulWidget {
-  final SettingsCubit _settingsCubit;
-
+class const _FiltersBody(final SettingsCubit _settingsCubit)
+    extends StatefulWidget {
   @override
   State<_FiltersBody> createState() => _FiltersBodyState();
 }
@@ -58,105 +54,103 @@ class _FiltersBodyState() extends State<_FiltersBody> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: widget._settingsCubit,
-      buildWhen: (previous, current) =>
-          previous.wordFilters != current.wordFilters ||
-          previous.domainFilters != current.domainFilters,
-      builder: (context, state) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            context.l10n.words,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _wordsController,
-                  focusNode: _wordsFocusNode,
-                  decoration: InputDecoration(hintText: context.l10n.wordsHint),
-                  keyboardType: TextInputType.text,
-                  onFieldSubmitted: (text) async => _addWordFilter(),
-                ),
-              ),
-              IconButton.filledTonal(
-                icon: const Icon(Icons.add),
-                onPressed: _addWordFilter,
-              ),
-            ].spaced(width: AppSpacing.m),
-          ),
-          AnimatedSize(
-            alignment: AlignmentDirectional.topStart,
-            duration: AppAnimation.emphasized.duration,
-            curve: AppAnimation.emphasized.easing,
-            child: SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: AppSpacing.m,
-                children: [
-                  for (final word in state.wordFilters)
-                    InputChip(
-                      label: Text(word),
-                      onDeleted: () => widget._settingsCubit.setWordFilter(
-                        word,
-                        filter: false,
-                      ),
-                    ),
-                ],
+  Widget build(
+    BuildContext context,
+  ) => BlocBuilder<SettingsCubit, SettingsState>(
+    bloc: widget._settingsCubit,
+    buildWhen: (previous, current) =>
+        !setEquals(previous.wordFilters, current.wordFilters) ||
+        !setEquals(previous.domainFilters, current.domainFilters),
+    builder: (context, state) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          context.l10n.words,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _wordsController,
+                focusNode: _wordsFocusNode,
+                decoration: InputDecoration(hintText: context.l10n.wordsHint),
+                keyboardType: TextInputType.text,
+                onFieldSubmitted: (text) => _addWordFilter(),
               ),
             ),
-          ),
-          Text(
-            context.l10n.domains,
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextFormField(
-                  controller: _domainsController,
-                  focusNode: _domainsFocusNode,
-                  decoration: InputDecoration(
-                    hintText: context.l10n.domainsHelp,
+            IconButton.filledTonal(
+              icon: const Icon(Icons.add),
+              onPressed: _addWordFilter,
+            ),
+          ].spaced(width: AppSpacing.m),
+        ),
+        AnimatedSize(
+          alignment: AlignmentDirectional.topStart,
+          duration: AppAnimation.emphasized.duration,
+          curve: AppAnimation.emphasized.easing,
+          child: SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              spacing: AppSpacing.m,
+              children: [
+                for (final word in state.wordFilters)
+                  InputChip(
+                    label: Text(word),
+                    onDeleted: () => widget._settingsCubit.setWordFilter(
+                      word,
+                      filter: false,
+                    ),
                   ),
-                  keyboardType: TextInputType.url,
-                  onFieldSubmitted: (text) async => _addDomainFilter(),
-                ),
-              ),
-              IconButton.filledTonal(
-                icon: const Icon(Icons.add),
-                onPressed: _addDomainFilter,
-              ),
-            ].spaced(width: AppSpacing.m),
-          ),
-          AnimatedSize(
-            alignment: AlignmentDirectional.topStart,
-            duration: AppAnimation.emphasized.duration,
-            curve: AppAnimation.emphasized.easing,
-            child: SizedBox(
-              width: double.infinity,
-              child: Wrap(
-                spacing: AppSpacing.m,
-                children: [
-                  for (final domain in state.domainFilters)
-                    InputChip(
-                      label: Text(domain),
-                      onDeleted: () => widget._settingsCubit.setDomainFilter(
-                        domain,
-                        filter: false,
-                      ),
-                    ),
-                ],
-              ),
+              ],
             ),
           ),
-        ].spaced(height: AppSpacing.l),
-      ),
-    );
-  }
+        ),
+        Text(
+          context.l10n.domains,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: TextFormField(
+                controller: _domainsController,
+                focusNode: _domainsFocusNode,
+                decoration: InputDecoration(hintText: context.l10n.domainsHelp),
+                keyboardType: TextInputType.url,
+                onFieldSubmitted: (text) => _addDomainFilter(),
+              ),
+            ),
+            IconButton.filledTonal(
+              icon: const Icon(Icons.add),
+              onPressed: _addDomainFilter,
+            ),
+          ].spaced(width: AppSpacing.m),
+        ),
+        AnimatedSize(
+          alignment: AlignmentDirectional.topStart,
+          duration: AppAnimation.emphasized.duration,
+          curve: AppAnimation.emphasized.easing,
+          child: SizedBox(
+            width: double.infinity,
+            child: Wrap(
+              spacing: AppSpacing.m,
+              children: [
+                for (final domain in state.domainFilters)
+                  InputChip(
+                    label: Text(domain),
+                    onDeleted: () => widget._settingsCubit.setDomainFilter(
+                      domain,
+                      filter: false,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ].spaced(height: AppSpacing.l),
+    ),
+  );
 
   Future<void> _addWordFilter() async {
     if (_wordsController.text.isNotEmpty) {

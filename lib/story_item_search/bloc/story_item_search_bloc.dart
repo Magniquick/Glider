@@ -11,24 +11,25 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'story_item_search_event.dart';
 part 'story_item_search_state.dart';
 
-class StoryItemSearchBloc(this._itemRepository, {required int id})
-    extends Bloc<StoryItemSearchEvent, StoryItemSearchState> {
-  this : itemId = id, super(const StoryItemSearchState()) {
+class StoryItemSearchBloc(
+  final ItemRepository _itemRepository, {
+  required int id,
+}) extends Bloc<StoryItemSearchEvent, StoryItemSearchState> {
+  this : super(const StoryItemSearchState()) {
     on<LoadStoryItemSearchEvent>(
-      (event, emit) async => _load(),
+      (event, emit) => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextStoryItemSearchEvent>((event, emit) async => _setText(event));
+    on<SetTextStoryItemSearchEvent>((event, emit) => _setText(event));
   }
 
-  final ItemRepository _itemRepository;
-  final int itemId;
+  final int itemId = id;
 
   Future<void> _load() async {
     safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
-      final items = await _itemRepository.searchStoryItems(
+      final List<Item> items = await _itemRepository.searchStoryItems(
         itemId,
         text: state.searchText,
       );

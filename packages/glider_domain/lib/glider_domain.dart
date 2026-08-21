@@ -3,6 +3,7 @@ export 'src/entities/item.dart';
 export 'src/entities/item_descendant.dart';
 export 'src/entities/theme_mode.dart';
 export 'src/entities/user.dart';
+export 'src/extensions/string_extension.dart';
 export 'src/item_interaction_repository.dart';
 export 'src/item_repository.dart';
 export 'src/package_repository.dart';

@@ -29,9 +29,9 @@ Future<void> bootstrap(
               (await getApplicationCacheDirectory()).path,
             ),
     );
-    final deviceInfo = await DeviceInfoPlugin().deviceInfo;
+    final BaseDeviceInfo deviceInfo = await DeviceInfoPlugin().deviceInfo;
 
-    final appContainer = await AppContainer.create();
+    final AppContainer appContainer = await AppContainer.create();
     unawaited(appContainer.authCubit.init());
     final appRouter = AppRouter.create(appContainer);
 

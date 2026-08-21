@@ -8,20 +8,18 @@ import 'package:glider/item/models/item_value.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
 class ItemValueDialog(
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
-  required this.id,
-  this.title,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
+  required final int id,
+  final String? title,
 }) extends StatefulWidget {
   this : super(key: ValueKey(id));
-
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final int id;
-  final String? title;
 
   @override
   State<ItemValueDialog> createState() => _ItemValueDialogState();
@@ -37,43 +35,41 @@ class _ItemValueDialogState() extends State<ItemValueDialog> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ItemCubit, ItemState>(
-      bloc: _itemCubit,
-      builder: (context, state) => BlocBuilder<AuthCubit, AuthState>(
-        bloc: widget._authCubit,
-        builder: (context, authState) =>
-            BlocBuilder<SettingsCubit, SettingsState>(
-              bloc: widget._settingsCubit,
-              builder: (context, settingsState) => AlertDialog(
-                title: widget.title != null ? Text(widget.title!) : null,
-                contentPadding: const EdgeInsets.all(AppSpacing.m),
-                content: SizedBox(
-                  width: 0,
-                  child: ListView(
-                    shrinkWrap: true,
-                    children: [
-                      for (final value in ItemValue.values)
-                        if (value.isVisible(state, authState, settingsState))
-                          ListTile(
-                            leading: Icon(value.icon(state)),
-                            title: Text(value.label(context, state)),
-                            onTap: () => context.pop(value),
-                          ),
-                    ],
+  Widget build(BuildContext context) => BlocBuilder<ItemCubit, ItemState>(
+    bloc: _itemCubit,
+    builder: (context, state) => BlocBuilder<AuthCubit, AuthState>(
+      bloc: widget._authCubit,
+      builder: (context, authState) =>
+          BlocBuilder<SettingsCubit, SettingsState>(
+            bloc: widget._settingsCubit,
+            builder: (context, settingsState) => AlertDialog(
+              title: widget.title != null ? Text(widget.title!) : null,
+              contentPadding: const EdgeInsets.all(AppSpacing.m),
+              content: SizedBox(
+                width: 0,
+                child: ListView(
+                  shrinkWrap: true,
+                  children: [
+                    for (final value in ItemValue.values)
+                      if (value.isVisible(state, authState, settingsState))
+                        ListTile(
+                          leading: Icon(value.icon(state)),
+                          title: Text(value.label(context, state)),
+                          onTap: () => context.pop(value),
+                        ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => context.pop(),
+                  child: Text(
+                    MaterialLocalizations.of(context).cancelButtonLabel,
                   ),
                 ),
-                actions: [
-                  TextButton(
-                    onPressed: () => context.pop(),
-                    child: Text(
-                      MaterialLocalizations.of(context).cancelButtonLabel,
-                    ),
-                  ),
-                ],
-              ),
+              ],
             ),
-      ),
-    );
-  }
+          ),
+    ),
+  );
 }

@@ -3,11 +3,11 @@ import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/extensions/string_extension.dart';
 
 class const User({
-  required this.username,
-  required this.createdDateTime,
-  required this.karma,
-  this.about,
-  this.submittedIds,
+  required final String username,
+  required final DateTime createdDateTime,
+  required final int karma,
+  final String? about,
+  final List<int>? submittedIds,
 }) with EquatableMixin {
   factory fromDto(UserDto dto) => User(
     username: dto.id,
@@ -36,12 +36,6 @@ class const User({
     'about': about,
     'submittedIds': submittedIds,
   };
-
-  final String username;
-  final DateTime createdDateTime;
-  final int karma;
-  final String? about;
-  final List<int>? submittedIds;
 
   @override
   List<Object?> get props => [

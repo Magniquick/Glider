@@ -1,4 +1,4 @@
-enum AppRoute({this.parent}) {
+enum AppRoute({final AppRoute? parent}) {
   stories,
   catchUp,
   favorites,
@@ -17,8 +17,6 @@ enum AppRoute({this.parent}) {
   userValueDialog(parent: user),
   textSelectDialog,
   confirmDialog;
-
-  final AppRoute? parent;
 
   String get path => [if (parent == null) '/', name].join();
 

@@ -11,29 +11,21 @@ import 'package:glider/user/typedefs/user_typedefs.dart';
 import 'package:glider_domain/glider_domain.dart';
 
 class const UserDataTile(
-  this.user, {
+  final User user, {
+  required final bool useInAppBrowser,
   super.key,
-  this.parsedAbout,
-  this.blocked = false,
-  this.style = UserStyle.full,
-  this.padding = AppSpacing.defaultTilePadding,
-  required this.useInAppBrowser,
-  this.onTap,
-  this.onLongPress,
+  final ParsedData? parsedAbout,
+  final bool blocked = false,
+  final UserStyle style = UserStyle.full,
+  final EdgeInsets padding = AppSpacing.defaultTilePadding,
+  final UserCallback? onTap,
+  final UserCallback? onLongPress,
 }) extends StatelessWidget {
-  final User user;
-  final ParsedData? parsedAbout;
-  final bool blocked;
-  final UserStyle style;
-  final EdgeInsets padding;
-  final bool useInAppBrowser;
-  final UserCallback? onTap;
-  final UserCallback? onLongPress;
-
   @override
   Widget build(BuildContext context) {
-    final hasPrimary = style.showPrimary;
-    final hasSecondary = style.showSecondary && user.about != null && !blocked;
+    final bool hasPrimary = style.showPrimary;
+    final bool hasSecondary =
+        style.showSecondary && user.about != null && !blocked;
 
     if (!hasPrimary && !hasSecondary) {
       return const SizedBox.shrink();
@@ -58,67 +50,63 @@ class const UserDataTile(
     );
   }
 
-  Widget _buildPrimary(BuildContext context) {
-    return Row(
-      children: [
-        Hero(
-          tag: 'user_tile_karma_${user.username}',
-          child: AnimatedSize(
-            alignment: AlignmentDirectional.centerStart,
-            duration: AppAnimation.standard.duration,
-            curve: AppAnimation.standard.easing,
-            child: MetadataWidget(
-              icon: Icons.arrow_upward_outlined,
-              label: Text(user.karma.toString()),
-            ),
-          ),
-        ),
-        Hero(
-          tag: 'user_tile_submitted_${user.username}',
-          child: AnimatedVisibility(
-            visible: user.submittedIds != null,
-            padding: MetadataWidget.horizontalPadding,
-            child: MetadataWidget(
-              icon: Icons.chat_bubble_outline_outlined,
-              label: user.submittedIds != null
-                  ? Text(user.submittedIds!.length.toString())
-                  : null,
-            ),
-          ),
-        ),
-        Hero(
-          tag: 'user_tile_blocked_${user.username}',
-          child: AnimatedVisibility(
-            visible: blocked,
-            padding: MetadataWidget.horizontalPadding,
-            child: MetadataWidget(
-              icon: Icons.block_outlined,
-              label: Text(context.l10n.blocked),
-            ),
-          ),
-        ),
-        const Spacer(),
-        Hero(
-          tag: 'user_tile_created_${user.username}',
+  Widget _buildPrimary(BuildContext context) => Row(
+    children: [
+      Hero(
+        tag: 'user_tile_karma_${user.username}',
+        child: AnimatedSize(
+          alignment: AlignmentDirectional.centerStart,
+          duration: AppAnimation.standard.duration,
+          curve: AppAnimation.standard.easing,
           child: MetadataWidget(
-            label: Tooltip(
-              message: user.createdDateTime.toString(),
-              child: Text(context.l10n.sinceDate(user.createdDateTime)),
-            ),
+            icon: Icons.arrow_upward_outlined,
+            label: Text(user.karma.toString()),
           ),
         ),
-      ].spaced(width: AppSpacing.m),
-    );
-  }
-
-  Widget _buildSecondary(BuildContext context) {
-    return Hero(
-      tag: 'user_tile_about_${user.username}',
-      child: HackerNewsText(
-        user.about!,
-        parsedData: parsedAbout,
-        useInAppBrowser: useInAppBrowser,
       ),
-    );
-  }
+      Hero(
+        tag: 'user_tile_submitted_${user.username}',
+        child: AnimatedVisibility(
+          visible: user.submittedIds != null,
+          padding: MetadataWidget.horizontalPadding,
+          child: MetadataWidget(
+            icon: Icons.chat_bubble_outline_outlined,
+            label: user.submittedIds != null
+                ? Text(user.submittedIds!.length.toString())
+                : null,
+          ),
+        ),
+      ),
+      Hero(
+        tag: 'user_tile_blocked_${user.username}',
+        child: AnimatedVisibility(
+          visible: blocked,
+          padding: MetadataWidget.horizontalPadding,
+          child: MetadataWidget(
+            icon: Icons.block_outlined,
+            label: Text(context.l10n.blocked),
+          ),
+        ),
+      ),
+      const Spacer(),
+      Hero(
+        tag: 'user_tile_created_${user.username}',
+        child: MetadataWidget(
+          label: Tooltip(
+            message: user.createdDateTime.toString(),
+            child: Text(context.l10n.sinceDate(user.createdDateTime)),
+          ),
+        ),
+      ),
+    ].spaced(width: AppSpacing.m),
+  );
+
+  Widget _buildSecondary(BuildContext context) => Hero(
+    tag: 'user_tile_about_${user.username}',
+    child: HackerNewsText(
+      user.about!,
+      parsedData: parsedAbout,
+      useInAppBrowser: useInAppBrowser,
+    ),
+  );
 }

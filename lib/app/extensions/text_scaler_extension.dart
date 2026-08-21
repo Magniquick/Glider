@@ -5,7 +5,7 @@ extension TextScalerExtension on TextScaler {
     required double? fontSize,
     required double fallbackFontSize,
   }) {
-    final defaultFontSize = fontSize ?? fallbackFontSize;
+    final double defaultFontSize = fontSize ?? fallbackFontSize;
     return scale(defaultFontSize) / fallbackFontSize;
   }
 }

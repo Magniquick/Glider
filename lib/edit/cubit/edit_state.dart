@@ -1,12 +1,12 @@
 part of 'edit_cubit.dart';
 
 class const EditState({
-  this.item,
-  this.title,
-  this.text,
-  this.isValid = false,
-  this.preview = true,
-  this.success = false,
+  final Item? item,
+  final TitleInput? title,
+  final TextInput? text,
+  final bool isValid = false,
+  final bool preview = true,
+  final bool success = false,
 }) with EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => EditState(
     item: json['item'] != null
@@ -25,13 +25,6 @@ class const EditState({
     'text': text?.value,
     'isValid': isValid,
   };
-
-  final Item? item;
-  final TitleInput? title;
-  final TextInput? text;
-  final bool isValid;
-  final bool preview;
-  final bool success;
 
   EditState copyWith({
     Item Function()? item,

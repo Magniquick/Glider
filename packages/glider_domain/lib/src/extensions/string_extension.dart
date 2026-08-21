@@ -28,14 +28,21 @@ String _decodeForDisplay(String url) {
 }
 
 /// Renders [url] as a Markdown link whose label is human-readable but whose
-/// destination is byte-for-byte what Hacker News supplied.
+/// destination preserves Hacker News' own encoding.
 String _linkMarkdown(String url) {
-  // `[` and `]` would otherwise terminate the label early.
+  // `[` and `]` would terminate the label early. Decoding can also reveal
+  // Markdown metacharacters that were hidden as escapes: `%2A` becomes `*`
+  // (emphasis) and `%60` becomes a backtick (code).
   final label = _decodeForDisplay(url)
-      .replaceAllMapped(RegExp(r'[\[\]\\]'), (match) => '\\${match[0]}');
+      .replaceAllMapped(RegExp(r'[\[\]\\*`]'), (match) => '\\${match[0]}');
   // An angle-bracket destination tolerates parentheses and spaces in the URL,
-  // which a bare destination does not. `<` and `>` must still be escaped.
-  final destination = url.replaceAll('<', '%3C').replaceAll('>', '%3E');
+  // which a bare destination does not. `<`, `>` and `\` must still be escaped:
+  // a trailing backslash would otherwise escape the closing `>` and break the
+  // link entirely. Those three bytes aside, the original encoding is preserved.
+  final destination = url
+      .replaceAll(r'\', '%5C')
+      .replaceAll('<', '%3C')
+      .replaceAll('>', '%3E');
   return '[$label](<$destination>)';
 }
 

@@ -20,13 +20,20 @@ analyzer:
     - linux/**
     - lib/l10n/app_localizations*.dart
 
-# Every stable lint rule in the Dart SDK is enabled. Six rules are omitted
-# because they directly contradict a rule that is enabled; see the linter's
-# own `incompatible` metadata.
+# Every stable lint rule in the Dart SDK is enabled, with two sets of
+# exceptions.
+#
+# Six rules are omitted because they directly contradict a rule that is
+# enabled; see the linter's own `incompatible` metadata.
+
 linter:
   rules:
+    # Omitted: `dart format` (which `melos run format-check` enforces) collapses
+    # a short control body back onto the `if` line, and this rule then demands
+    # it be split again. The two cannot both be satisfied, which is why the
+    # project disabled this rule originally.
+    always_put_control_body_on_new_line: false
     always_declare_return_types: true
-    always_put_control_body_on_new_line: true
     always_put_required_named_parameters_first: true
     always_use_package_imports: true
     annotate_overrides: true
@@ -98,7 +105,6 @@ linter:
     exhaustive_cases: true
     file_names: true
     flutter_style_todos: true
-    future_sync_value: true
     hash_and_equals: true
     implementation_imports: true
     implicit_call_tearoffs: true

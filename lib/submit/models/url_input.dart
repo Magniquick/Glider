@@ -8,12 +8,11 @@ enum UrlValidationError() {
 }
 
 extension UrlValidationErrorExtension on UrlValidationError {
-  String label(BuildContext context, {required String otherField}) {
-    return switch (this) {
-      UrlValidationError.empty => context.l10n.bothEmptyError(otherField),
-      UrlValidationError.invalid => context.l10n.invalidUrlError,
-    };
-  }
+  String label(BuildContext context, {required String otherField}) =>
+      switch (this) {
+        UrlValidationError.empty => context.l10n.bothEmptyError(otherField),
+        UrlValidationError.invalid => context.l10n.invalidUrlError,
+      };
 }
 
 final class UrlInput extends FormzInput<String, UrlValidationError> {

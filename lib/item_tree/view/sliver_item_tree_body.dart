@@ -15,90 +15,81 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 class const SliverItemTreeBody(
-  this._itemTreeCubit,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final ItemTreeCubit _itemTreeCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
-  this.listController,
-  this.childCount,
-  this.storyUsername,
+  final ListController? listController,
+  final int? childCount,
+  final String? storyUsername,
 }) extends StatelessWidget {
-  final ItemTreeCubit _itemTreeCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final ListController? listController;
-  final int? childCount;
-  final String? storyUsername;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<ItemTreeCubit, ItemTreeState>(
-      bloc: _itemTreeCubit,
-      listenWhen: (previous, current) =>
-          previous.newDescendantsCount != current.newDescendantsCount,
-      listener: (context, state) {
-        if (state.newDescendantsCount > 0) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                context.l10n.newDescendants(state.newDescendantsCount),
-              ),
-            ),
-          );
-        }
-      },
-      builder: (context, state) => state.whenOrDefaultSlivers(
-        loading: () => SuperSliverListExtension.builder(
-          itemCount: childCount ?? 0,
-          itemBuilder: (context, index) => const IndentedWidget(
-            depth: 1,
-            child: ItemLoadingTile(type: ItemType.comment),
-          ),
-        ),
-        nonEmpty: () => SuperSliverListExtension.builder(
-          listController: listController,
-          itemCount: state.viewableData!.length,
-          itemBuilder: (context, index) {
-            final descendant = state.viewableData![index];
-            return IndentedWidget(
-              depth: descendant.isPart ? 0 : descendant.depth,
-              child: ItemTile.create(
-                _itemCubitFactory,
-                _authCubit,
-                _settingsCubit,
-                id: descendant.id,
-                storyUsername: storyUsername,
-                loadingType: ItemType.comment,
-                collapsedCount: state.collapsedIds.contains(descendant.id)
-                    ? state.getDescendants(descendant)?.length
-                    : null,
-                showVisited: false,
-                highlight:
-                    !(state.previousData
-                            ?.map((e) => e.id)
-                            .contains(descendant.id) ??
-                        true),
-                onTap: (context, item) async {
-                  if (!item.isDeleted) {
-                    _itemTreeCubit.toggleCollapsed(item.id);
-                  }
-
-                  await Scrollable.ensureVisible(
-                    context,
-                    duration: AppAnimation.standard.duration,
-                    curve: AppAnimation.standard.easing,
-                    alignmentPolicy:
-                        ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-                  );
-                },
+  Widget build(BuildContext context) =>
+      BlocConsumer<ItemTreeCubit, ItemTreeState>(
+        bloc: _itemTreeCubit,
+        listenWhen: (previous, current) =>
+            previous.newDescendantsCount != current.newDescendantsCount,
+        listener: (context, state) {
+          if (state.newDescendantsCount > 0) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  context.l10n.newDescendants(state.newDescendantsCount),
+                ),
               ),
             );
-          },
+          }
+        },
+        builder: (context, state) => state.whenOrDefaultSlivers(
+          loading: () => SuperSliverListExtension.builder(
+            itemCount: childCount ?? 0,
+            itemBuilder: (context, index) => const IndentedWidget(
+              depth: 1,
+              child: ItemLoadingTile(type: ItemType.comment),
+            ),
+          ),
+          nonEmpty: () => SuperSliverListExtension.builder(
+            listController: listController,
+            itemCount: state.viewableData!.length,
+            itemBuilder: (context, index) {
+              final ItemDescendant descendant = state.viewableData![index];
+              return IndentedWidget(
+                depth: descendant.isPart ? 0 : descendant.depth,
+                child: ItemTile.create(
+                  _itemCubitFactory,
+                  _authCubit,
+                  _settingsCubit,
+                  id: descendant.id,
+                  storyUsername: storyUsername,
+                  loadingType: ItemType.comment,
+                  collapsedCount: state.collapsedIds.contains(descendant.id)
+                      ? state.getDescendants(descendant)?.length
+                      : null,
+                  showVisited: false,
+                  highlight:
+                      !(state.previousData
+                              ?.map((e) => e.id)
+                              .contains(descendant.id) ??
+                          true),
+                  onTap: (context, item) async {
+                    if (!item.isDeleted) {
+                      _itemTreeCubit.toggleCollapsed(item.id);
+                    }
+
+                    await Scrollable.ensureVisible(
+                      context,
+                      duration: AppAnimation.standard.duration,
+                      curve: AppAnimation.standard.easing,
+                      alignmentPolicy:
+                          ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+                    );
+                  },
+                ),
+              );
+            },
+          ),
+          onRetry: _itemTreeCubit.load,
         ),
-        onRetry: () async => _itemTreeCubit.load(),
-      ),
-    );
-  }
+      );
 }

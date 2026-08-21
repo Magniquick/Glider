@@ -11,7 +11,7 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
-enum ItemAction<T extends MenuItem<S>, S>({this.options})
+enum ItemAction<T extends MenuItem<S>, S>({final List<T>? options})
     implements MenuItem<ItemState> {
   visit,
   upvote,
@@ -25,15 +25,13 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
   copy(options: ItemValue.values),
   share(options: ItemValue.values);
 
-  final List<T>? options;
-
   @override
   bool isVisible(
     ItemState state,
     AuthState authState,
     SettingsState settingsState,
   ) {
-    final item = state.data;
+    final Item? item = state.data;
     if (item == null) return false;
     return switch (this) {
       ItemAction.visit => true,
@@ -75,53 +73,46 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
   }
 
   @override
-  String label(BuildContext context, ItemState state) {
-    return switch (this) {
-      ItemAction.visit =>
-        state.visited ? context.l10n.unvisit : context.l10n.visit,
-      ItemAction.upvote =>
-        state.vote.upvoted ? context.l10n.unvote : context.l10n.upvote,
-      ItemAction.downvote =>
-        state.vote.downvoted ? context.l10n.unvote : context.l10n.downvote,
-      ItemAction.favorite =>
-        state.favorited ? context.l10n.unfavorite : context.l10n.favorite,
-      ItemAction.flag =>
-        state.flagged ? context.l10n.unflag : context.l10n.flag,
-      ItemAction.edit => context.l10n.edit,
-      ItemAction.delete => context.l10n.delete,
-      ItemAction.reply => context.l10n.reply,
-      ItemAction.select => context.l10n.select,
-      ItemAction.copy => context.l10n.copy,
-      ItemAction.share => context.l10n.share,
-    };
-  }
+  String label(BuildContext context, ItemState state) => switch (this) {
+    ItemAction.visit =>
+      state.visited ? context.l10n.unvisit : context.l10n.visit,
+    ItemAction.upvote =>
+      state.vote.upvoted ? context.l10n.unvote : context.l10n.upvote,
+    ItemAction.downvote =>
+      state.vote.downvoted ? context.l10n.unvote : context.l10n.downvote,
+    ItemAction.favorite =>
+      state.favorited ? context.l10n.unfavorite : context.l10n.favorite,
+    ItemAction.flag => state.flagged ? context.l10n.unflag : context.l10n.flag,
+    ItemAction.edit => context.l10n.edit,
+    ItemAction.delete => context.l10n.delete,
+    ItemAction.reply => context.l10n.reply,
+    ItemAction.select => context.l10n.select,
+    ItemAction.copy => context.l10n.copy,
+    ItemAction.share => context.l10n.share,
+  };
 
   @override
-  IconData icon(ItemState state) {
-    return switch (this) {
-      ItemAction.upvote =>
-        state.vote.upvoted ? Icons.undo_outlined : Icons.arrow_upward_outlined,
-      ItemAction.downvote =>
-        state.vote.downvoted
-            ? Icons.undo_outlined
-            : Icons.arrow_downward_outlined,
-      ItemAction.favorite =>
-        state.favorited
-            ? Icons.heart_broken_outlined
-            : Icons.favorite_outline_outlined,
-      ItemAction.flag => state.flagged ? Icons.flag : Icons.flag_outlined,
-      ItemAction.visit =>
-        state.visited
-            ? Icons.visibility_off_outlined
-            : Icons.visibility_outlined,
-      ItemAction.edit => Icons.edit_outlined,
-      ItemAction.delete => Icons.delete_outline_outlined,
-      ItemAction.reply => Icons.reply_outlined,
-      ItemAction.select => Icons.select_all_outlined,
-      ItemAction.copy => Icons.copy_outlined,
-      ItemAction.share => Icons.adaptive.share_outlined,
-    };
-  }
+  IconData icon(ItemState state) => switch (this) {
+    ItemAction.upvote =>
+      state.vote.upvoted ? Icons.undo_outlined : Icons.arrow_upward_outlined,
+    ItemAction.downvote =>
+      state.vote.downvoted
+          ? Icons.undo_outlined
+          : Icons.arrow_downward_outlined,
+    ItemAction.favorite =>
+      state.favorited
+          ? Icons.heart_broken_outlined
+          : Icons.favorite_outline_outlined,
+    ItemAction.flag => state.flagged ? Icons.flag : Icons.flag_outlined,
+    ItemAction.visit =>
+      state.visited ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+    ItemAction.edit => Icons.edit_outlined,
+    ItemAction.delete => Icons.delete_outline_outlined,
+    ItemAction.reply => Icons.reply_outlined,
+    ItemAction.select => Icons.select_all_outlined,
+    ItemAction.copy => Icons.copy_outlined,
+    ItemAction.share => Icons.adaptive.share_outlined,
+  };
 
   Future<void> execute(
     BuildContext context,
@@ -129,7 +120,7 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
     AuthCubit authCubit, {
     T? option,
   }) async {
-    final id = itemCubit.id;
+    final String id = itemCubit.id;
     switch (this) {
       case ItemAction.visit:
         await itemCubit.visit(!itemCubit.state.visited);
@@ -141,7 +132,7 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
         await itemCubit.favorite(!itemCubit.state.favorited);
       case ItemAction.flag:
         if (!itemCubit.state.flagged) {
-          final confirm = await context.push<bool>(
+          final bool? confirm = await context.push<bool>(
             AppRoute.confirmDialog.location(),
           );
           if (confirm ?? false) await itemCubit.flag(true);
@@ -151,7 +142,7 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
       case ItemAction.edit:
         await context.push(AppRoute.edit.location(parameters: {'id': id}));
       case ItemAction.delete:
-        final confirm = await context.push<bool>(
+        final bool? confirm = await context.push<bool>(
           AppRoute.confirmDialog.location(),
         );
         if (confirm ?? false) await itemCubit.delete();
@@ -163,7 +154,7 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
           extra: itemCubit.state.data!.text,
         );
       case ItemAction.copy:
-        final valueAction =
+        final ItemValue? valueAction =
             option as ItemValue? ??
             await context.push(
               AppRoute.itemValueDialog.location(parameters: {'id': id}),
@@ -174,7 +165,7 @@ enum ItemAction<T extends MenuItem<S>, S>({this.options})
           await itemCubit.copy(valueAction.value(itemCubit)!);
         }
       case ItemAction.share:
-        final valueAction =
+        final ItemValue? valueAction =
             option as ItemValue? ??
             await context.push(
               AppRoute.itemValueDialog.location(parameters: {'id': id}),

@@ -15,12 +15,12 @@ part 'user_cubit_event.dart';
 part 'user_state.dart';
 
 class UserCubit(
-  this._userRepository,
-  this._userInteractionRepository,
-  this._itemInteractionRepository, {
-  required this.username,
+  final UserRepository _userRepository,
+  final UserInteractionRepository _userInteractionRepository,
+  final ItemInteractionRepository _itemInteractionRepository, {
+  required final String username,
 }) extends HydratedCubit<UserState>
-    with BlocPresentationMixin<UserState, UserCubitEvent> {
+    with BlocPresentationMixin<UserState, UserPresentationEvent> {
   this : super(const UserState()) {
     _userSubscription = _userRepository
         .getUserStream(username)
@@ -50,11 +50,6 @@ class UserCubit(
         );
   }
 
-  final UserRepository _userRepository;
-  final UserInteractionRepository _userInteractionRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
-  final String username;
-
   late final StreamSubscription<User> _userSubscription;
   late final StreamSubscription<bool> _synchronizingSubscription;
 
@@ -67,9 +62,9 @@ class UserCubit(
   }
 
   Future<void> block(bool block) async {
-    final blocked = state.blocked;
+    final bool blocked = state.blocked;
     safeEmit(state.copyWith(blocked: () => block));
-    final success = await _userInteractionRepository.block(
+    final bool success = await _userInteractionRepository.block(
       username,
       block: block,
     );
@@ -81,7 +76,7 @@ class UserCubit(
   }
 
   Future<void> synchronize() async {
-    final success = await _userInteractionRepository.synchronize();
+    final bool success = await _userInteractionRepository.synchronize();
 
     if (!success) {
       emitPresentation(const UserActionFailedEvent());
@@ -111,6 +106,6 @@ class UserCubit(
   Future<void> close() async {
     await _userSubscription.cancel();
     await _synchronizingSubscription.cancel();
-    return super.close();
+    return await super.close();
   }
 }

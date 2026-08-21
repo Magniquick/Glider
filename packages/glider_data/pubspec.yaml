@@ -1,14 +1,15 @@
 name: glider_data
 version: 0.1.0+1
 publish_to: none
+resolution: workspace
 
 environment:
   sdk: ">=3.13.0 <4.0.0"
 
 dependencies:
+  collection: any
   flutter:
     sdk: flutter
-  collection: any
   flutter_secure_storage: ^11.0.0
   html: ^0.15.6
   http: ^1.6.0

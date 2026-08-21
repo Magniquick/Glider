@@ -19,7 +19,7 @@ extension VariantExtension on Variant {
     Brightness brightness, {
     double contrastLevel = 0,
   }) {
-    final sourceColorHct = Hct.fromInt(color.toARGB32());
+    final Hct sourceColorHct = Hct.fromInt(color.toARGB32());
     final isDark = brightness == Brightness.dark;
     return switch (this) {
       Variant.monochrome => SchemeMonochrome(

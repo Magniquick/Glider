@@ -1,14 +1,13 @@
 {
   "@@locale": "en",
   "appName": "Glider",
-  "empty": "\"It's quiet... too quiet'\"",
+  "empty": "\"It's quiet... too quiet\"",
   "failure": "Something went wrong",
   "confirm": "Are you sure?",
   "retry": "Retry",
   "search": "Search",
-  "clear": "Clear",
   "whatsNew": "What's new",
-  "whatsNewDescription": "> “It’s important to remember that when you start from scratch there is *absolutely no reason* to believe that you are going to do a better job than you did the first time.” — *Joel Spolsky*\n\nWelcome to the new Glider for Hacker News!\n\nDefying rationality, this update is the result of a *Thing You Should Never Do* [0]: rewriting the code from scratch. Accompanying this change is a UI overhaul, based on the Material 3 design system.\n\nLogin and registration is now deferred to the Hacker News website for increased security and reliability. This unfortunately necessitates logging in again, once.\n\nOverall, most users should feel at home quickly, although not every feature survived the metamorphosis, for varying reasons. Please provide feature requests and bug reports through the issue tracker [1].\n---\n[0]: https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/\n\n[1]: https://github.com/Mosc/Glider/issues",
+  "whatsNewDescription": "> “It’s important to remember that when you start from scratch there is *absolutely no reason* to believe that you are going to do a better job than you did the first time.” — *Joel Spolsky*\n\nWelcome to the new Glider for Hacker News!\n\nDefying rationality, this update is the result of a *Thing You Should Never Do* [0]: rewriting the code from scratch. Accompanying this change is a UI overhaul, based on the Material 3 design system.\n\nLogging in now happens in the app, because Hacker News blocks embedded browsers. This unfortunately necessitates logging in again, once.\n\nOverall, most users should feel at home quickly, although not every feature survived the metamorphosis, for varying reasons. Please provide feature requests and bug reports through the issue tracker [1].\n---\n[0]: https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/\n\n[1]: https://github.com/Mosc/Glider/issues",
   "explore": "Explore",
   "settings": "Settings",
   "theme": "Theme",
@@ -124,14 +123,6 @@
   "invalidUrlError": "This field requires a valid URL address.",
   "blocked": "[blocked]",
   "deleted": "[deleted]",
-  "fromYear": "from {year}",
-  "@fromYear": {
-    "placeholders": {
-      "year": {
-        "type": "String"
-      }
-    }
-  },
   "sinceDate": "since {date}",
   "@sinceDate": {
     "placeholders": {
@@ -142,7 +133,6 @@
     }
   },
   "loadParent": "Load parent",
-  "goToParent": "Go to parent",
   "previousRootChild": "Previous top-level comment",
   "nextRootChild": "Next top-level comment",
   "similarDiscussions": "Similar discussions",
@@ -205,5 +195,13 @@
   "loginFailedError": "Could not reach Hacker News. Check your connection and try again.",
   "@loginFailedError": {
     "description": "Shown when the login request could not be completed."
+  },
+  "loginChallengeError": "Hacker News asked for extra verification. Please log in once on news.ycombinator.com, then try again.",
+  "@loginChallengeError": {
+    "description": "Shown when Hacker News serves a captcha or validation challenge during login."
+  },
+  "filtered": "[filtered]",
+  "@filtered": {
+    "description": "Placeholder shown in place of an item hidden by the user’s filters."
   }
 }

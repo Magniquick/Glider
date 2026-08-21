@@ -11,27 +11,22 @@ enum NavigationShellAction() implements MenuItem<void> {
   account;
 
   @override
-  bool isVisible(void _, AuthState authState, SettingsState settingsState) {
-    return switch (this) {
-      NavigationShellAction.settings || NavigationShellAction.account => true,
-    };
-  }
+  bool isVisible(void _, AuthState authState, SettingsState settingsState) =>
+      switch (this) {
+        NavigationShellAction.settings || NavigationShellAction.account => true,
+      };
 
   @override
-  String label(BuildContext context, void _) {
-    return switch (this) {
-      NavigationShellAction.settings => context.l10n.settings,
-      NavigationShellAction.account => context.l10n.account,
-    };
-  }
+  String label(BuildContext context, void _) => switch (this) {
+    NavigationShellAction.settings => context.l10n.settings,
+    NavigationShellAction.account => context.l10n.account,
+  };
 
   @override
-  IconData icon(void _) {
-    return switch (this) {
-      NavigationShellAction.settings => Icons.settings_outlined,
-      NavigationShellAction.account => Icons.account_circle_outlined,
-    };
-  }
+  IconData icon(void _) => switch (this) {
+    NavigationShellAction.settings => Icons.settings_outlined,
+    NavigationShellAction.account => Icons.account_circle_outlined,
+  };
 
   Future<void> execute(BuildContext context) async {
     switch (this) {

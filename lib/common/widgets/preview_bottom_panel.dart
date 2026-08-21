@@ -4,62 +4,54 @@ import 'package:glider/common/widgets/animated_visibility.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 
 class const PreviewBottomPanel({
+  required final bool visible,
+  required final Widget child,
   super.key,
-  required this.visible,
-  this.onChanged,
-  required this.child,
+  final void Function(bool)? onChanged,
 }) extends StatelessWidget {
-  final bool visible;
-  final void Function(bool)? onChanged;
-  final Widget child;
-
   @override
-  Widget build(BuildContext context) {
-    return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            // Use a third of the available height for the preview (if visible).
-            // The layout builder helps exclude any keyboard's view insets.
-            child: LayoutBuilder(
-              builder: (context, constraints) => ConstrainedBox(
-                constraints: BoxConstraints(
-                  maxHeight: constraints.maxHeight / 3,
-                ),
-                child: AnimatedVisibility.vertical(
-                  visible: visible,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Divider(height: 1),
-                      Flexible(child: child),
-                    ],
-                  ),
+  Widget build(BuildContext context) => SafeArea(
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Flexible(
+          // Use a third of the available height for the preview (if visible).
+          // The layout builder helps exclude any keyboard's view insets.
+          child: LayoutBuilder(
+            builder: (context, constraints) => ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: constraints.maxHeight / 3),
+              child: AnimatedVisibility.vertical(
+                visible: visible,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Divider(height: 1),
+                    Flexible(child: child),
+                  ],
                 ),
               ),
             ),
           ),
-          ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.viewInsetsOf(context).bottom,
-            ),
-            // Alignment may seem unnecesary because it is hidden behind a
-            // keyboard when relevant, but keyboards may be translucent.
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: SwitchListTile.adaptive(
-                value: visible,
-                onChanged: onChanged,
-                title: Text(context.l10n.preview),
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xl,
-                ),
+        ),
+        ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.viewInsetsOf(context).bottom,
+          ),
+          // Alignment may seem unnecesary because it is hidden behind a
+          // keyboard when relevant, but keyboards may be translucent.
+          child: Align(
+            alignment: Alignment.topCenter,
+            child: SwitchListTile.adaptive(
+              value: visible,
+              onChanged: onChanged,
+              title: Text(context.l10n.preview),
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.xl,
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }

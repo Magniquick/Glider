@@ -1,10 +1,10 @@
 part of 'story_similar_cubit.dart';
 
 class const StorySimilarState({
-  this.status = Status.initial,
-  this.item,
-  this.data,
-  this.exception,
+  @override final Status status = Status.initial,
+  final Item? item,
+  @override final List<int>? data,
+  @override final Object? exception,
 }) with DataMixin<List<int>>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => StorySimilarState(
     status: Status.values.byName(json['status'] as String),
@@ -21,14 +21,6 @@ class const StorySimilarState({
     'item': item?.toMap(),
     'data': data,
   };
-
-  @override
-  final Status status;
-  final Item? item;
-  @override
-  final List<int>? data;
-  @override
-  final Object? exception;
 
   StorySimilarState copyWith({
     Status Function()? status,

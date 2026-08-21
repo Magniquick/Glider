@@ -7,19 +7,18 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'inbox_state.dart';
 
-class InboxCubit(this._itemRepository, this._authRepository)
-    extends HydratedCubit<InboxState> {
+class InboxCubit(
+  final ItemRepository _itemRepository,
+  final AuthRepository _authRepository,
+) extends HydratedCubit<InboxState> {
   this : super(const InboxState());
-
-  final ItemRepository _itemRepository;
-  final AuthRepository _authRepository;
 
   Future<void> load() async {
     safeEmit(state.copyWith(status: () => Status.loading));
 
     try {
-      final (username, _) = await _authRepository.getUserAuth();
-      final items = await _itemRepository.getUserReplies(username!);
+      final (String? username, _) = await _authRepository.getUserAuth();
+      final List<Item> items = await _itemRepository.getUserReplies(username!);
       safeEmit(
         state.copyWith(
           status: () => Status.success,

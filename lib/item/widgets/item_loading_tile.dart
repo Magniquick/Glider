@@ -9,46 +9,36 @@ import 'package:glider/item/models/item_style.dart';
 import 'package:glider_domain/glider_domain.dart';
 
 class const ItemLoadingTile({
+  required final ItemType type,
   super.key,
-  required this.type,
-  this.collapsedCount,
-  this.storyLines = 2,
-  this.useLargeStoryStyle = true,
-  this.showMetadata = true,
-  this.style = ItemStyle.full,
-  this.padding = AppSpacing.defaultTilePadding,
+  final int? collapsedCount,
+  final int storyLines = 2,
+  final bool useLargeStoryStyle = true,
+  final bool showMetadata = true,
+  final ItemStyle style = ItemStyle.full,
+  final EdgeInsetsGeometry padding = AppSpacing.defaultTilePadding,
 }) extends StatelessWidget {
-  final ItemType type;
-  final int? collapsedCount;
-  final int storyLines;
-  final bool useLargeStoryStyle;
-  final bool showMetadata;
-  final ItemStyle style;
-  final EdgeInsetsGeometry padding;
-
   int get _faviconSize =>
       useLargeStoryStyle ? (storyLines >= 0 ? storyLines : 2) * 24 : 20;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (style.showPrimary && (type != ItemType.comment || showMetadata))
-            _buildPrimary(context),
-          if (style.showSecondary &&
-              type == ItemType.comment &&
-              collapsedCount == null)
-            _buildSecondary(context),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: padding,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (style.showPrimary && (type != ItemType.comment || showMetadata))
+          _buildPrimary(context),
+        if (style.showSecondary &&
+            type == ItemType.comment &&
+            collapsedCount == null)
+          _buildSecondary(context),
+      ],
+    ),
+  );
 
   Widget _buildPrimary(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       children: [
         if (type != ItemType.comment)
@@ -89,8 +79,8 @@ class const ItemLoadingTile({
   }
 
   Widget _buildMetadata(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final color = Theme.of(context).colorScheme.outline
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final Color color = Theme.of(context).colorScheme.outline
         .withValues(alpha: LoadingBlock.opacity);
     return Row(
       children: [
@@ -154,7 +144,7 @@ class const ItemLoadingTile({
   }
 
   Widget _buildSecondary(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

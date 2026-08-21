@@ -10,45 +10,39 @@ import 'package:glider/stories_search/view/sliver_stories_search_body.dart';
 import 'package:glider/stories_search/view/stories_search_range_view.dart';
 
 class const StoriesSearchView(
-  this._storiesSearchBloc,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final StoriesSearchBloc _storiesSearchBloc,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
 }) extends StatelessWidget {
-  final StoriesSearchBloc _storiesSearchBloc;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return NotificationCanceler<ScrollNotification>(
-      child: RefreshableScrollView(
-        onRefresh: () async =>
-            _storiesSearchBloc.add(const LoadStoriesSearchEvent()),
-        edgeOffset: 0,
-        slivers: [
-          SliverPadding(
-            padding: const EdgeInsets.only(top: AppSpacing.m),
-            sliver: SliverToBoxAdapter(
-              child: StoriesSearchRangeView(_storiesSearchBloc),
+  Widget build(BuildContext context) =>
+      NotificationCanceler<ScrollNotification>(
+        child: RefreshableScrollView(
+          onRefresh: () async =>
+              _storiesSearchBloc.add(const LoadStoriesSearchEvent()),
+          edgeOffset: 0,
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.only(top: AppSpacing.m),
+              sliver: SliverToBoxAdapter(
+                child: StoriesSearchRangeView(_storiesSearchBloc),
+              ),
             ),
-          ),
-          SliverSafeArea(
-            top: false,
-            sliver: SliverStoriesSearchBody(
-              _storiesSearchBloc,
-              _itemCubitFactory,
-              _authCubit,
-              _settingsCubit,
+            SliverSafeArea(
+              top: false,
+              sliver: SliverStoriesSearchBody(
+                _storiesSearchBloc,
+                _itemCubitFactory,
+                _authCubit,
+                _settingsCubit,
+              ),
             ),
-          ),
-          const SliverPadding(
-            padding: AppSpacing.floatingActionButtonPageBottomPadding,
-          ),
-        ],
-      ),
-    );
-  }
+            const SliverPadding(
+              padding: AppSpacing.floatingActionButtonPageBottomPadding,
+            ),
+          ],
+        ),
+      );
 }

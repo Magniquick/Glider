@@ -6,18 +6,15 @@ enum AuthStatus() {
   success,
   badCredentials,
   rejected,
+  challengeRequired,
   failure
 }
 
 class const AuthState({
-  this.isLoggedIn = false,
-  this.username,
-  this.status = AuthStatus.initial,
+  final bool isLoggedIn = false,
+  final String? username,
+  final AuthStatus status = AuthStatus.initial,
 }) with EquatableMixin {
-  final bool isLoggedIn;
-  final String? username;
-  final AuthStatus status;
-
   AuthState copyWith({
     bool Function()? isLoggedIn,
     String? Function()? username,

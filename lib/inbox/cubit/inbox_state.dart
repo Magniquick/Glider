@@ -3,9 +3,9 @@ part of 'inbox_cubit.dart';
 typedef IdWithParent = (int parentId, int id);
 
 class const InboxState({
-  this.status = Status.initial,
-  this.data,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<IdWithParent>? data,
+  @override final Object? exception,
 }) with DataMixin<List<IdWithParent>>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => InboxState(
     status: Status.values.byName(json['status'] as String),
@@ -21,13 +21,6 @@ class const InboxState({
         ?.map((e) => <String, dynamic>{'parentId': e.$1, 'id': e.$2})
         .toList(growable: false),
   };
-
-  @override
-  final Status status;
-  @override
-  final List<IdWithParent>? data;
-  @override
-  final Object? exception;
 
   InboxState copyWith({
     Status Function()? status,

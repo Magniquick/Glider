@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -32,24 +33,20 @@ import 'package:go_router/go_router.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
 class ItemPage(
-  this._itemCubitFactory,
-  this._itemTreeCubitFactory,
-  this._storySimilarCubitFactory,
-  this._storyItemSearchBlocFactory,
-  this._authCubit,
-  this._settingsCubit, {
-  required this.id,
+  final ItemCubitFactory _itemCubitFactory,
+  final ItemTreeCubitFactory _itemTreeCubitFactory,
+  final StorySimilarCubitFactory _storySimilarCubitFactory,
+  final StoryItemSearchBlocFactory _storyItemSearchBlocFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
+  required final int id,
 }) extends StatefulWidget {
   this : super(key: ValueKey(id));
-
-  final ItemCubitFactory _itemCubitFactory;
-  final ItemTreeCubitFactory _itemTreeCubitFactory;
-  final StorySimilarCubitFactory _storySimilarCubitFactory;
-  final StoryItemSearchBlocFactory _storyItemSearchBlocFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final int id;
 
   @override
   State<ItemPage> createState() => _ItemPageState();
@@ -96,88 +93,88 @@ class _ItemPageState() extends State<ItemPage> {
       44;
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: widget._settingsCubit,
-      buildWhen: (previous, current) =>
-          previous.storyLines != current.storyLines ||
-          previous.useLargeStoryStyle != current.useLargeStoryStyle ||
-          previous.useThreadNavigation != current.useThreadNavigation,
-      builder: (context, settingsState) => Scaffold(
-        body: RefreshableScrollView(
-          scrollController: _scrollController,
-          onRefresh: () async => unawaited(_itemTreeCubit.load()),
-          toolbarHeight: _getToolbarHeight(
-            storyLines: settingsState.storyLines,
-            useLargeStoryStyle: settingsState.useLargeStoryStyle,
-          ),
-          slivers: [
-            _SliverItemAppBar(
-              _itemCubit,
-              _itemTreeCubit,
-              widget._itemCubitFactory,
-              _storyItemSearchBloc,
-              widget._authCubit,
-              widget._settingsCubit,
-              bodyKey: _bodyKey,
-              scrollController: _scrollController,
-              toolbarHeight: _getToolbarHeight(
-                storyLines: settingsState.storyLines,
-                useLargeStoryStyle: settingsState.useLargeStoryStyle,
-              ),
+  Widget build(BuildContext context) =>
+      BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: widget._settingsCubit,
+        buildWhen: (previous, current) =>
+            previous.storyLines != current.storyLines ||
+            previous.useLargeStoryStyle != current.useLargeStoryStyle ||
+            previous.useThreadNavigation != current.useThreadNavigation,
+        builder: (context, settingsState) => Scaffold(
+          body: RefreshableScrollView(
+            scrollController: _scrollController,
+            onRefresh: () async => unawaited(_itemTreeCubit.load()),
+            toolbarHeight: _getToolbarHeight(
+              storyLines: settingsState.storyLines,
+              useLargeStoryStyle: settingsState.useLargeStoryStyle,
             ),
-            SliverSafeArea(
-              top: false,
-              sliver: _SliverItemBody(
+            slivers: [
+              _SliverItemAppBar(
                 _itemCubit,
                 _itemTreeCubit,
-                _storySimilarCubit,
                 widget._itemCubitFactory,
+                _storyItemSearchBloc,
                 widget._authCubit,
                 widget._settingsCubit,
-                key: _bodyKey,
-                listController: _listController,
+                bodyKey: _bodyKey,
+                scrollController: _scrollController,
+                toolbarHeight: _getToolbarHeight(
+                  storyLines: settingsState.storyLines,
+                  useLargeStoryStyle: settingsState.useLargeStoryStyle,
+                ),
               ),
-            ),
-          ],
-        ),
-        floatingActionButton: settingsState.useThreadNavigation
-            ? Theme(
-                data: Theme.of(context).copyWith(
-                  floatingActionButtonTheme: Theme.of(context)
-                      .floatingActionButtonTheme
-                      .copyWith(
-                        foregroundColor: Theme.of(context)
-                            .colorScheme
-                            .onSecondaryContainer,
-                        backgroundColor: Theme.of(context)
-                            .colorScheme
-                            .secondaryContainer,
+              SliverSafeArea(
+                top: false,
+                sliver: _SliverItemBody(
+                  _itemCubit,
+                  _itemTreeCubit,
+                  _storySimilarCubit,
+                  widget._itemCubitFactory,
+                  widget._authCubit,
+                  widget._settingsCubit,
+                  key: _bodyKey,
+                  listController: _listController,
+                ),
+              ),
+            ],
+          ),
+          floatingActionButton: settingsState.useThreadNavigation
+              ? Theme(
+                  data: Theme.of(context).copyWith(
+                    floatingActionButtonTheme: Theme.of(context)
+                        .floatingActionButtonTheme
+                        .copyWith(
+                          foregroundColor: Theme.of(context)
+                              .colorScheme
+                              .onSecondaryContainer,
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .secondaryContainer,
+                        ),
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        onPressed: _onPreviousPressed,
+                        tooltip: context.l10n.previousRootChild,
+                        child: const Icon(Icons.keyboard_arrow_up_outlined),
                       ),
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    FloatingActionButton.small(
-                      heroTag: null,
-                      onPressed: _onPreviousPressed,
-                      tooltip: context.l10n.previousRootChild,
-                      child: const Icon(Icons.keyboard_arrow_up_outlined),
-                    ),
-                    FloatingActionButton.small(
-                      heroTag: null,
-                      onPressed: _onNextPressed,
-                      tooltip: context.l10n.nextRootChild,
-                      child: const Icon(Icons.keyboard_arrow_down_outlined),
-                    ),
-                  ].spaced(height: AppSpacing.xl),
-                ),
-              )
-            : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
-      ),
-    );
-  }
+                      FloatingActionButton.small(
+                        heroTag: null,
+                        onPressed: _onNextPressed,
+                        tooltip: context.l10n.nextRootChild,
+                        child: const Icon(Icons.keyboard_arrow_down_outlined),
+                      ),
+                    ].spaced(height: AppSpacing.xl),
+                  ),
+                )
+              : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.miniEndFloat,
+        ),
+      );
 
   Future<void> _onPreviousPressed() async {
     if (_listController.unobstructedVisibleRange case final visibleRange?) {
@@ -208,26 +205,16 @@ class _ItemPageState() extends State<ItemPage> {
 }
 
 class const _SliverItemAppBar(
-  this._itemCubit,
-  this._itemTreeCubit,
-  this._itemCubitFactory,
-  this._storyItemSearchBloc,
-  this._authCubit,
-  this._settingsCubit, {
-  this.bodyKey,
-  this.scrollController,
-  required this.toolbarHeight,
+  final ItemCubit _itemCubit,
+  final ItemTreeCubit _itemTreeCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final StoryItemSearchBloc _storyItemSearchBloc,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
+  required final double toolbarHeight,
+  final GlobalKey? bodyKey,
+  final ScrollController? scrollController,
 }) extends StatefulWidget {
-  final ItemCubit _itemCubit;
-  final ItemTreeCubit _itemTreeCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final StoryItemSearchBloc _storyItemSearchBloc;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final GlobalKey? bodyKey;
-  final ScrollController? scrollController;
-  final double toolbarHeight;
-
   @override
   State<_SliverItemAppBar> createState() => _SliverItemAppBarState();
 }
@@ -288,98 +275,98 @@ class _SliverItemAppBarState() extends State<_SliverItemAppBar> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ItemCubit, ItemState>(
-      bloc: widget._itemCubit,
-      builder: (context, state) => SliverAppBar(
-        flexibleSpace: AppBarProgressIndicator(widget._itemTreeCubit),
-        bottom: PreferredSize(
-          preferredSize: Size.fromHeight(widget.toolbarHeight),
-          child: Column(
-            children: [
-              if (state.data?.parentId case final parentId?)
-                Padding(
-                  padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: Hero(
-                      tag: 'load_parent',
-                      child: OutlinedButton.icon(
-                        onPressed: () async => context.push(
-                          AppRoute.item.location(
-                            parameters: {'id': parentId.toString()},
-                          ),
+  Widget build(BuildContext context) => BlocBuilder<ItemCubit, ItemState>(
+    bloc: widget._itemCubit,
+    builder: (context, state) => SliverAppBar(
+      flexibleSpace: AppBarProgressIndicator(widget._itemTreeCubit),
+      bottom: PreferredSize(
+        preferredSize: Size.fromHeight(widget.toolbarHeight),
+        child: Column(
+          children: [
+            if (state.data?.parentId case final parentId?)
+              Padding(
+                padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Hero(
+                    tag: 'load_parent',
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push(
+                        AppRoute.item.location(
+                          parameters: {'id': parentId.toString()},
                         ),
-                        style: OutlinedButton.styleFrom(
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        icon: const Icon(Icons.arrow_upward_outlined),
-                        label: Text(context.l10n.loadParent),
                       ),
+                      style: OutlinedButton.styleFrom(
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      icon: const Icon(Icons.arrow_upward_outlined),
+                      label: Text(context.l10n.loadParent),
                     ),
                   ),
                 ),
-              BlocBuilder<SettingsCubit, SettingsState>(
-                bloc: widget._settingsCubit,
-                buildWhen: (previous, current) =>
-                    previous.useLargeStoryStyle != current.useLargeStoryStyle ||
-                    previous.useActionButtons != current.useActionButtons,
-                builder: (context, settingsState) => ValueListenableBuilder(
-                  valueListenable: _hasOverlapNotifier,
-                  builder: (context, hasOverlap, child) => ItemTile(
-                    widget._itemCubit,
-                    widget._authCubit,
-                    widget._settingsCubit,
-                    storyUsername: state.data?.storyUsername,
-                    loadingType: ItemType.story,
-                    showVisited: false,
-                    // It's redundant to show a URL host in the title when view is
-                    // scrolled, because the full URL should be visible below it.
-                    style: hasOverlap ? ItemStyle.overview : ItemStyle.primary,
-                    onTap: (context, item) async =>
-                        widget.scrollController?.animateTo(
-                          0,
-                          duration: AppAnimation.emphasized.duration,
-                          curve: AppAnimation.emphasized.easing,
-                        ),
+              ),
+            BlocBuilder<SettingsCubit, SettingsState>(
+              bloc: widget._settingsCubit,
+              buildWhen: (previous, current) =>
+                  previous.useLargeStoryStyle != current.useLargeStoryStyle ||
+                  previous.useActionButtons != current.useActionButtons,
+              builder: (context, settingsState) => ValueListenableBuilder(
+                valueListenable: _hasOverlapNotifier,
+                builder: (context, hasOverlap, child) => ItemTile(
+                  widget._itemCubit,
+                  widget._authCubit,
+                  widget._settingsCubit,
+                  storyUsername: state.data?.storyUsername,
+                  loadingType: ItemType.story,
+                  showVisited: false,
+                  // It's redundant to show a URL host in the title when view is
+                  // scrolled, because the full URL should be visible below it.
+                  style: hasOverlap ? ItemStyle.overview : ItemStyle.primary,
+                  onTap: (context, item) => widget.scrollController?.animateTo(
+                    0,
+                    duration: AppAnimation.emphasized.duration,
+                    curve: AppAnimation.emphasized.easing,
                   ),
                 ),
               ),
-            ],
-          ),
-        ),
-        actions: [
-          if (state.data?.parentId == null)
-            _ItemSearchAnchor(
-              widget._storyItemSearchBloc,
-              widget._itemCubitFactory,
-              widget._authCubit,
-              widget._settingsCubit,
             ),
-          _ItemOverflowMenu(
-            widget._itemCubit,
+          ],
+        ),
+      ),
+      actions: [
+        if (state.data?.parentId == null)
+          _ItemSearchAnchor(
+            widget._storyItemSearchBloc,
+            widget._itemCubitFactory,
             widget._authCubit,
             widget._settingsCubit,
           ),
-        ],
-        floating: true,
-        stretch: true,
-      ),
+        _ItemOverflowMenu(
+          widget._itemCubit,
+          widget._authCubit,
+          widget._settingsCubit,
+        ),
+      ],
+      floating: true,
+      stretch: true,
+    ),
+  );
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties.add(
+      DiagnosticsProperty<RenderSliver?>('bodyRenderSliver', bodyRenderSliver),
     );
   }
 }
 
 class const _ItemSearchAnchor(
-  this._storyItemSearchBloc,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit,
+  final StoryItemSearchBloc _storyItemSearchBloc,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatefulWidget {
-  final StoryItemSearchBloc _storyItemSearchBloc;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
   State<_ItemSearchAnchor> createState() => _ItemSearchAnchorState();
 }
@@ -393,7 +380,7 @@ class _ItemSearchAnchorState() extends State<_ItemSearchAnchor> {
     _searchController = SearchController()
       ..text = widget._storyItemSearchBloc.state.searchText ?? ''
       ..addListener(
-        () async => widget._storyItemSearchBloc.add(
+        () => widget._storyItemSearchBloc.add(
           SetTextStoryItemSearchEvent(_searchController.text),
         ),
       );
@@ -406,187 +393,167 @@ class _ItemSearchAnchorState() extends State<_ItemSearchAnchor> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return SearchAnchor(
-      searchController: _searchController,
-      builder: (context, controller) => IconButton(
-        onPressed: () async {
-          controller.openView();
-          widget._storyItemSearchBloc.add(const LoadStoryItemSearchEvent());
-        },
-        tooltip: context.l10n.search,
-        icon: const Icon(Icons.search_outlined),
+  Widget build(BuildContext context) => SearchAnchor(
+    searchController: _searchController,
+    builder: (context, controller) => IconButton(
+      onPressed: () {
+        controller.openView();
+        widget._storyItemSearchBloc.add(const LoadStoryItemSearchEvent());
+      },
+      tooltip: context.l10n.search,
+      icon: const Icon(Icons.search_outlined),
+    ),
+    viewLeading: IconButton(
+      onPressed: context.pop,
+      style: IconButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
       ),
-      viewLeading: IconButton(
-        onPressed: context.pop,
-        style: IconButton.styleFrom(
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      icon: const BackButtonIcon(),
+    ),
+    viewTrailing: [
+      BlocSelector<StoryItemSearchBloc, StoryItemSearchState, Status>(
+        bloc: widget._storyItemSearchBloc,
+        selector: (state) => state.status,
+        builder: (context, searchStatus) => AnimatedOpacity(
+          opacity: searchStatus == Status.loading ? 1 : 0,
+          duration: AppAnimation.standard.duration,
+          curve: AppAnimation.standard.easing,
+          child: const CircularProgressIndicator.adaptive(),
         ),
-        icon: const BackButtonIcon(),
       ),
-      viewTrailing: [
-        BlocSelector<StoryItemSearchBloc, StoryItemSearchState, Status>(
-          bloc: widget._storyItemSearchBloc,
-          selector: (state) => state.status,
-          builder: (context, searchStatus) => AnimatedOpacity(
-            opacity: searchStatus == Status.loading ? 1 : 0,
-            duration: AppAnimation.standard.duration,
-            curve: AppAnimation.standard.easing,
-            child: const CircularProgressIndicator.adaptive(),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.close),
-          onPressed: _searchController.clear,
-        ),
-      ],
-      viewBuilder: (suggestions) => StoryItemSearchView(
-        widget._storyItemSearchBloc,
-        widget._itemCubitFactory,
-        widget._authCubit,
-        widget._settingsCubit,
+      IconButton(
+        icon: const Icon(Icons.close),
+        onPressed: _searchController.clear,
       ),
-      suggestionsBuilder: (context, controller) => [],
-    );
-  }
+    ],
+    viewBuilder: (suggestions) => StoryItemSearchView(
+      widget._storyItemSearchBloc,
+      widget._itemCubitFactory,
+      widget._authCubit,
+      widget._settingsCubit,
+    ),
+    suggestionsBuilder: (context, controller) => [],
+  );
 }
 
 class const _ItemOverflowMenu(
-  this._itemCubit,
-  this._authCubit,
-  this._settingsCubit,
+  final ItemCubit _itemCubit,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final ItemCubit _itemCubit;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ItemCubit, ItemState>(
-      bloc: _itemCubit,
-      builder: (context, state) => BlocBuilder<AuthCubit, AuthState>(
-        bloc: _authCubit,
-        builder: (context, authState) =>
-            BlocBuilder<SettingsCubit, SettingsState>(
-              bloc: _settingsCubit,
-              builder: (context, settingsState) => MenuAnchor(
-                menuChildren: [
-                  for (final action in ItemAction.values)
-                    if (action.isVisible(state, authState, settingsState))
-                      if (action.options case final options?)
-                        SubmenuButton(
-                          menuChildren: [
-                            for (final option in options)
-                              if (option.isVisible(
-                                state,
-                                authState,
-                                settingsState,
-                              ))
-                                MenuItemButton(
-                                  onPressed: () async => action.execute(
-                                    context,
-                                    _itemCubit,
-                                    _authCubit,
-                                    option: option,
-                                  ),
-                                  child: Text(option.label(context, state)),
+  Widget build(BuildContext context) => BlocBuilder<ItemCubit, ItemState>(
+    bloc: _itemCubit,
+    builder: (context, state) => BlocBuilder<AuthCubit, AuthState>(
+      bloc: _authCubit,
+      builder: (context, authState) =>
+          BlocBuilder<SettingsCubit, SettingsState>(
+            bloc: _settingsCubit,
+            builder: (context, settingsState) => MenuAnchor(
+              menuChildren: [
+                for (final action in ItemAction.values)
+                  if (action.isVisible(state, authState, settingsState))
+                    if (action.options case final options?)
+                      SubmenuButton(
+                        menuChildren: [
+                          for (final option in options)
+                            if (option.isVisible(
+                              state,
+                              authState,
+                              settingsState,
+                            ))
+                              MenuItemButton(
+                                onPressed: () => action.execute(
+                                  context,
+                                  _itemCubit,
+                                  _authCubit,
+                                  option: option,
                                 ),
-                          ],
-                          child: Text(action.label(context, state)),
-                        )
-                      else
-                        MenuItemButton(
-                          onPressed: () async =>
-                              action.execute(context, _itemCubit, _authCubit),
-                          child: Text(action.label(context, state)),
-                        ),
-                ],
-                builder: (context, controller, child) => IconButton(
-                  icon: Icon(Icons.adaptive.more_outlined),
-                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                  onPressed: () => controller.isOpen
-                      ? controller.close()
-                      : controller.open(),
-                ),
+                                child: Text(option.label(context, state)),
+                              ),
+                        ],
+                        child: Text(action.label(context, state)),
+                      )
+                    else
+                      MenuItemButton(
+                        onPressed: () =>
+                            action.execute(context, _itemCubit, _authCubit),
+                        child: Text(action.label(context, state)),
+                      ),
+              ],
+              builder: (context, controller, child) => IconButton(
+                icon: Icon(Icons.adaptive.more_outlined),
+                tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                onPressed: () =>
+                    controller.isOpen ? controller.close() : controller.open(),
               ),
             ),
-      ),
-    );
-  }
+          ),
+    ),
+  );
 }
 
 class const _SliverItemBody(
-  this._itemCubit,
-  this._itemTreeCubit,
-  this._storySimilarCubit,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final ItemCubit _itemCubit,
+  final ItemTreeCubit _itemTreeCubit,
+  final StorySimilarCubit _storySimilarCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
-  this.listController,
+  final ListController? listController,
 }) extends StatelessWidget {
-  final ItemCubit _itemCubit;
-  final ItemTreeCubit _itemTreeCubit;
-  final StorySimilarCubit _storySimilarCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final ListController? listController;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ItemCubit, ItemState>(
-      bloc: _itemCubit,
-      builder: (context, state) => state.whenOrDefaultSlivers(
-        loading: () => SliverToBoxAdapter(
-          child: ItemLoadingTile(
-            type: ItemType.story,
-            style: ItemStyle.secondary,
-            padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
-          ),
+  Widget build(BuildContext context) => BlocBuilder<ItemCubit, ItemState>(
+    bloc: _itemCubit,
+    builder: (context, state) => state.whenOrDefaultSlivers(
+      loading: () => SliverToBoxAdapter(
+        child: ItemLoadingTile(
+          type: ItemType.story,
+          style: ItemStyle.secondary,
+          padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
         ),
-        success: () => SliverMainAxisGroup(
-          slivers: [
-            SliverToBoxAdapter(
-              child: ItemTile(
-                _itemCubit,
-                _authCubit,
-                _settingsCubit,
-                loadingType: state.data!.type ?? ItemType.story,
-                showVisited: false,
-                style: ItemStyle.secondary,
-                padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
-              ),
-            ),
-            if (state.data!.type == ItemType.story)
-              SliverAnimatedPaintExtent(
-                duration: AppAnimation.emphasized.duration,
-                curve: AppAnimation.emphasized.easing,
-                child: SliverStorySimilarBody(
-                  _storySimilarCubit,
-                  _itemCubitFactory,
-                  _authCubit,
-                  _settingsCubit,
-                  storyUsername: state.data?.storyUsername,
-                ),
-              ),
-            SliverItemTreeBody(
-              _itemTreeCubit,
-              _itemCubitFactory,
+      ),
+      success: () => SliverMainAxisGroup(
+        slivers: [
+          SliverToBoxAdapter(
+            child: ItemTile(
+              _itemCubit,
               _authCubit,
               _settingsCubit,
-              listController: listController,
-              childCount: state.data?.childIds?.length,
-              storyUsername: state.data?.storyUsername,
+              loadingType: state.data!.type ?? ItemType.story,
+              showVisited: false,
+              style: ItemStyle.secondary,
+              padding: AppSpacing.defaultTilePadding.copyWith(top: 0),
             ),
-            const SliverPadding(
-              padding:
-                  AppSpacing.twoSmallFloatingActionButtonsPageBottomPadding,
+          ),
+          if (state.data!.type == ItemType.story)
+            SliverAnimatedPaintExtent(
+              duration: AppAnimation.emphasized.duration,
+              curve: AppAnimation.emphasized.easing,
+              child: SliverStorySimilarBody(
+                _storySimilarCubit,
+                _itemCubitFactory,
+                _authCubit,
+                _settingsCubit,
+                storyUsername: state.data?.storyUsername,
+              ),
             ),
-          ],
-        ),
-        onRetry: () async => _itemCubit.load(),
+          SliverItemTreeBody(
+            _itemTreeCubit,
+            _itemCubitFactory,
+            _authCubit,
+            _settingsCubit,
+            listController: listController,
+            childCount: state.data?.childIds?.length,
+            storyUsername: state.data?.storyUsername,
+          ),
+          const SliverPadding(
+            padding: AppSpacing.twoSmallFloatingActionButtonsPageBottomPadding,
+          ),
+        ],
       ),
-    );
-  }
+      onRetry: _itemCubit.load,
+    ),
+  );
 }

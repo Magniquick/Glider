@@ -7,10 +7,8 @@ final class const LoadUserItemSearchEvent() extends UserItemSearchEvent {
   List<Object?> get props => [];
 }
 
-final class const SetTextUserItemSearchEvent(this.text)
+final class const SetTextUserItemSearchEvent(final String? text)
     extends UserItemSearchEvent {
-  final String? text;
-
   @override
   List<Object?> get props => [text];
 }

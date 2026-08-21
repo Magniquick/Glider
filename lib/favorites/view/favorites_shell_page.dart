@@ -21,17 +21,12 @@ import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
 class const FavoritesShellPage(
-  this._favoritesCubit,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final FavoritesCubit _favoritesCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
 }) extends StatefulWidget {
-  final FavoritesCubit _favoritesCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
   State<FavoritesShellPage> createState() => _FavoritesShellPageState();
 }
@@ -44,125 +39,111 @@ class _FavoritesShellPageState() extends State<FavoritesShellPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: RefreshableScrollView(
-        onRefresh: () async => unawaited(widget._favoritesCubit.load()),
-        slivers: [
-          _SliverFavoritesAppBar(
+  Widget build(BuildContext context) => Material(
+    type: MaterialType.transparency,
+    child: RefreshableScrollView(
+      onRefresh: () async => unawaited(widget._favoritesCubit.load()),
+      slivers: [
+        _SliverFavoritesAppBar(
+          widget._favoritesCubit,
+          widget._authCubit,
+          widget._settingsCubit,
+        ),
+        SliverSafeArea(
+          top: false,
+          sliver: _SliverFavoritesBody(
             widget._favoritesCubit,
+            widget._itemCubitFactory,
             widget._authCubit,
             widget._settingsCubit,
           ),
-          SliverSafeArea(
-            top: false,
-            sliver: _SliverFavoritesBody(
-              widget._favoritesCubit,
-              widget._itemCubitFactory,
-              widget._authCubit,
-              widget._settingsCubit,
-            ),
-          ),
-          const SliverPadding(
-            padding: AppSpacing.floatingActionButtonPageBottomPadding,
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        const SliverPadding(
+          padding: AppSpacing.floatingActionButtonPageBottomPadding,
+        ),
+      ],
+    ),
+  );
 }
 
 class const _SliverFavoritesAppBar(
-  this._favoritesCubit,
-  this._authCubit,
-  this._settingsCubit,
+  final FavoritesCubit _favoritesCubit,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final FavoritesCubit _favoritesCubit;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return SliverAppBar(
-      title: Text(context.l10n.favorites),
-      flexibleSpace: AppBarProgressIndicator(_favoritesCubit),
-      actions: [
-        BlocBuilder<AuthCubit, AuthState>(
-          bloc: _authCubit,
-          builder: (context, authState) =>
-              BlocBuilder<SettingsCubit, SettingsState>(
-                bloc: _settingsCubit,
-                builder: (context, settingsState) => MenuAnchor(
-                  menuChildren: [
-                    for (final action in NavigationShellAction.values)
-                      if (action.isVisible(null, authState, settingsState))
-                        MenuItemButton(
-                          onPressed: () async => action.execute(context),
-                          child: Text(action.label(context, null)),
-                        ),
-                  ],
-                  builder: (context, controller, child) => IconButton(
-                    icon: Icon(Icons.adaptive.more_outlined),
-                    tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                    onPressed: () => controller.isOpen
-                        ? controller.close()
-                        : controller.open(),
-                  ),
+  Widget build(BuildContext context) => SliverAppBar(
+    title: Text(context.l10n.favorites),
+    flexibleSpace: AppBarProgressIndicator(_favoritesCubit),
+    actions: [
+      BlocBuilder<AuthCubit, AuthState>(
+        bloc: _authCubit,
+        builder: (context, authState) =>
+            BlocBuilder<SettingsCubit, SettingsState>(
+              bloc: _settingsCubit,
+              builder: (context, settingsState) => MenuAnchor(
+                menuChildren: [
+                  for (final action in NavigationShellAction.values)
+                    if (action.isVisible(null, authState, settingsState))
+                      MenuItemButton(
+                        onPressed: () => action.execute(context),
+                        child: Text(action.label(context, null)),
+                      ),
+                ],
+                builder: (context, controller, child) => IconButton(
+                  icon: Icon(Icons.adaptive.more_outlined),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () => controller.isOpen
+                      ? controller.close()
+                      : controller.open(),
                 ),
               ),
-        ),
-      ],
-      floating: true,
-    );
-  }
+            ),
+      ),
+    ],
+    floating: true,
+  );
 }
 
 class const _SliverFavoritesBody(
-  this._favoritesCubit,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit,
+  final FavoritesCubit _favoritesCubit,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final FavoritesCubit _favoritesCubit;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<FavoritesCubit, FavoritesState>(
-      bloc: _favoritesCubit,
-      builder: (context, state) => BlocBuilder<SettingsCubit, SettingsState>(
-        bloc: _settingsCubit,
-        builder: (context, settingsState) => state.whenOrDefaultSlivers(
-          loading: () => SuperSliverListExtension.builder(
-            itemCount: PaginatedListMixin.pageSize,
-            itemBuilder: (context, index) => ItemLoadingTile(
-              type: ItemType.story,
-              storyLines: settingsState.storyLines,
-              useLargeStoryStyle: settingsState.useLargeStoryStyle,
+  Widget build(BuildContext context) =>
+      BlocBuilder<FavoritesCubit, FavoritesState>(
+        bloc: _favoritesCubit,
+        builder: (context, state) => BlocBuilder<SettingsCubit, SettingsState>(
+          bloc: _settingsCubit,
+          builder: (context, settingsState) => state.whenOrDefaultSlivers(
+            loading: () => SuperSliverListExtension.builder(
+              itemCount: PaginatedListMixin.pageSize,
+              itemBuilder: (context, index) => ItemLoadingTile(
+                type: ItemType.story,
+                storyLines: settingsState.storyLines,
+                useLargeStoryStyle: settingsState.useLargeStoryStyle,
+              ),
             ),
+            nonEmpty: () => SuperSliverListExtension.builder(
+              itemCount: state.data!.length,
+              itemBuilder: (context, index) {
+                final int id = state.data![index];
+                return ItemTile.create(
+                  _itemCubitFactory,
+                  _authCubit,
+                  _settingsCubit,
+                  id: id,
+                  loadingType: ItemType.story,
+                  onTap: (context, item) => context.push(
+                    AppRoute.item.location(parameters: {'id': id}),
+                  ),
+                );
+              },
+            ),
+            onRetry: _favoritesCubit.load,
           ),
-          nonEmpty: () => SuperSliverListExtension.builder(
-            itemCount: state.data!.length,
-            itemBuilder: (context, index) {
-              final id = state.data![index];
-              return ItemTile.create(
-                _itemCubitFactory,
-                _authCubit,
-                _settingsCubit,
-                id: id,
-                loadingType: ItemType.story,
-                onTap: (context, item) async => context.push(
-                  AppRoute.item.location(parameters: {'id': id}),
-                ),
-              );
-            },
-          ),
-          onRetry: () async => _favoritesCubit.load(),
         ),
-      ),
-    );
-  }
+      );
 }

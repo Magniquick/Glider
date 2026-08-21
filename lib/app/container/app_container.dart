@@ -39,28 +39,29 @@ typedef UserCubitFactory = UserCubit Function(String);
 typedef UserItemSearchBlocFactory = UserItemSearchBloc Function(String);
 
 class const AppContainer(
-  this.navigationShellCubit,
-  this.authCubit,
-  this.settingsCubit,
-  this.storiesCubit,
-  this.storiesSearchBloc,
-  this.catchUpBloc,
-  this.submitCubit,
-  this.itemCubitFactory,
-  this.itemTreeCubitFactory,
-  this.storySimilarCubitFactory,
-  this.storyItemSearchCubitFactory,
-  this.editCubitFactory,
-  this.replyCubitFactory,
-  this.favoritesCubit,
-  this.inboxCubit,
-  this.userCubitFactory,
-  this.userItemSearchBlocFactory,
+  final NavigationShellCubit navigationShellCubit,
+  final AuthCubit authCubit,
+  final SettingsCubit settingsCubit,
+  final StoriesCubit storiesCubit,
+  final StoriesSearchBloc storiesSearchBloc,
+  final StoriesSearchBloc catchUpBloc,
+  final SubmitCubit submitCubit,
+  final ItemCubitFactory itemCubitFactory,
+  final ItemTreeCubitFactory itemTreeCubitFactory,
+  final StorySimilarCubitFactory storySimilarCubitFactory,
+  final StoryItemSearchBlocFactory storyItemSearchCubitFactory,
+  final EditCubitFactory editCubitFactory,
+  final ReplyCubitFactory replyCubitFactory,
+  final FavoritesCubit favoritesCubit,
+  final InboxCubit inboxCubit,
+  final UserCubitFactory userCubitFactory,
+  final UserItemSearchBlocFactory userItemSearchBlocFactory,
 ) {
   static Future<AppContainer> create() async {
     final httpClient = http.Client();
-    final packageInfo = await PackageInfo.fromPlatform();
-    final sharedPreferencesFactory = await SharedPreferences.getInstance();
+    final PackageInfo packageInfo = await PackageInfo.fromPlatform();
+    final SharedPreferences sharedPreferencesFactory =
+        await SharedPreferences.getInstance();
     const flutterSecureStorage = FlutterSecureStorage(
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
     );
@@ -136,22 +137,4 @@ class const AppContainer(
       (username) => UserItemSearchBloc(itemRepository, username: username),
     );
   }
-
-  final NavigationShellCubit navigationShellCubit;
-  final AuthCubit authCubit;
-  final SettingsCubit settingsCubit;
-  final StoriesCubit storiesCubit;
-  final StoriesSearchBloc storiesSearchBloc;
-  final StoriesSearchBloc catchUpBloc;
-  final SubmitCubit submitCubit;
-  final ItemCubitFactory itemCubitFactory;
-  final ItemTreeCubitFactory itemTreeCubitFactory;
-  final StorySimilarCubitFactory storySimilarCubitFactory;
-  final StoryItemSearchBlocFactory storyItemSearchCubitFactory;
-  final EditCubitFactory editCubitFactory;
-  final ReplyCubitFactory replyCubitFactory;
-  final FavoritesCubit favoritesCubit;
-  final InboxCubit inboxCubit;
-  final UserCubitFactory userCubitFactory;
-  final UserItemSearchBlocFactory userItemSearchBlocFactory;
 }

@@ -10,16 +10,18 @@ import 'package:markdown/markdown.dart' as md;
 
 typedef ParsedData = List<md.Node>;
 
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
 class HackerNewsText(
   String data, {
+  required final bool useInAppBrowser,
   ParsedData? parsedData,
-  required this.useInAppBrowser,
 }) extends StatelessWidget {
-  this : parsedData = parsedData ?? parse(data), super(key: ValueKey(data));
+  this : super(key: ValueKey(data));
 
-  final ParsedData parsedData;
-  final bool useInAppBrowser;
-
+  final ParsedData parsedData = parsedData ?? parse(data);
   static final _extensionSet = md.ExtensionSet(
     const [
       HackerNewsCodeBlockSyntax(),
@@ -50,7 +52,7 @@ class HackerNewsText(
       withDefaultBlockSyntaxes: false,
       withDefaultInlineSyntaxes: false,
     );
-    final lines = const LineSplitter().convert(data);
+    final List<String> lines = const LineSplitter().convert(data);
     return document.parseLines(lines);
   }
 
@@ -98,15 +100,13 @@ class HackerNewsText(
 }
 
 class const _HackerNewsMarkdownBody({
-  required this.parsedData,
+  required final ParsedData parsedData,
   super.styleSheet,
   super.onTapLink,
   super.builders,
   super.fitContent,
 }) extends MarkdownBody {
   this : super(data: '');
-
-  final ParsedData parsedData;
 
   @override
   State<MarkdownWidget> createState() => _HackerNewsMarkdownBodyState();
@@ -142,9 +142,12 @@ class _HackerNewsMarkdownBodyState()
 
   void _parseMarkdown() {
     _disposeRecognizers();
-    final fallbackStyleSheet = MarkdownStyleSheet.fromTheme(Theme.of(context))
-        .copyWith(textScaler: MediaQuery.textScalerOf(context));
-    final styleSheet = fallbackStyleSheet.merge(widget.styleSheet);
+    final MarkdownStyleSheet fallbackStyleSheet = MarkdownStyleSheet.fromTheme(
+      Theme.of(context),
+    ).copyWith(textScaler: MediaQuery.textScalerOf(context));
+    final MarkdownStyleSheet styleSheet = fallbackStyleSheet.merge(
+      widget.styleSheet,
+    );
     final builder = MarkdownBuilder(
       delegate: this,
       selectable: widget.selectable,
@@ -166,7 +169,7 @@ class _HackerNewsMarkdownBodyState()
   void _disposeRecognizers() {
     if (_recognizers.isEmpty) return;
 
-    for (final recognizer in _recognizers) {
+    for (final GestureRecognizer recognizer in _recognizers) {
       recognizer.dispose();
     }
 
@@ -182,12 +185,10 @@ class _HackerNewsMarkdownBodyState()
   }
 
   @override
-  TextSpan formatText(MarkdownStyleSheet styleSheet, String code) {
-    return TextSpan(
-      text: code.replaceAll(RegExp(r'\n$'), ''),
-      style: styleSheet.code,
-    );
-  }
+  TextSpan formatText(MarkdownStyleSheet styleSheet, String code) => TextSpan(
+    text: code.replaceAll(RegExp(r'\n$'), ''),
+    style: styleSheet.code,
+  );
 
   @override
   Widget build(BuildContext context) => widget.build(context, _children);
@@ -226,17 +227,14 @@ class HackerNewsAsteriskEscapeSyntax() extends md.InlineSyntax {
 }
 
 // Unlike the default implementation, wrap pre text rather than scrolling it.
-class _PreElementBuilder(this.styleSheet) extends MarkdownElementBuilder {
-  final MarkdownStyleSheet styleSheet;
-
+class _PreElementBuilder(final MarkdownStyleSheet styleSheet)
+    extends MarkdownElementBuilder {
   @override
-  Widget? visitText(md.Text text, TextStyle? preferredStyle) {
-    return Padding(
-      padding: styleSheet.codeblockPadding ?? EdgeInsets.zero,
-      child: Text(
-        text.text.replaceAll(RegExp(r'\n$'), ''),
-        style: styleSheet.code,
-      ),
-    );
-  }
+  Widget? visitText(md.Text text, TextStyle? preferredStyle) => Padding(
+    padding: styleSheet.codeblockPadding ?? EdgeInsets.zero,
+    child: Text(
+      text.text.replaceAll(RegExp(r'\n$'), ''),
+      style: styleSheet.code,
+    ),
+  );
 }

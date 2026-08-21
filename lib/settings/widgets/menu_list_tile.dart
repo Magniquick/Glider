@@ -1,46 +1,35 @@
 import 'package:flutter/material.dart';
 
 class const MenuListTile<T>({
+  required final Iterable<T> values,
+  required final bool Function(T) selected,
+  required final Widget Function(T) childBuilder,
   super.key,
-  this.title,
-  this.trailing,
-  this.enabled = true,
-  this.onChanged,
-  required this.values,
-  required this.selected,
-  required this.childBuilder,
+  final Widget? title,
+  final Widget? trailing,
+  final bool enabled = true,
+  final void Function(T)? onChanged,
 }) extends StatelessWidget {
-  final Widget? title;
-  final Widget? trailing;
-  final bool enabled;
-  final void Function(T)? onChanged;
-  final Iterable<T> values;
-  final bool Function(T) selected;
-  final Widget Function(T) childBuilder;
-
   @override
-  Widget build(BuildContext context) {
-    return MenuAnchor(
-      style: Theme.of(context).menuTheme.style
-          ?.copyWith(alignment: AlignmentDirectional.bottomEnd),
-      menuChildren: [
-        for (final value in values)
-          MenuItemButton(
-            onPressed: () => onChanged?.call(value),
-            leadingIcon: Visibility.maintain(
-              visible: selected(value),
-              child: const Icon(Icons.check_outlined),
-            ),
-            child: childBuilder(value),
+  Widget build(BuildContext context) => MenuAnchor(
+    style: Theme.of(context).menuTheme.style
+        ?.copyWith(alignment: AlignmentDirectional.bottomEnd),
+    menuChildren: [
+      for (final value in values)
+        MenuItemButton(
+          onPressed: () => onChanged?.call(value),
+          leadingIcon: Visibility.maintain(
+            visible: selected(value),
+            child: const Icon(Icons.check_outlined),
           ),
-      ],
-      builder: (context, controller, child) => ListTile(
-        title: title,
-        trailing: trailing,
-        enabled: enabled,
-        onTap: () async =>
-            controller.isOpen ? controller.close() : controller.open(),
-      ),
-    );
-  }
+          child: childBuilder(value),
+        ),
+    ],
+    builder: (context, controller, child) => ListTile(
+      title: title,
+      trailing: trailing,
+      enabled: enabled,
+      onTap: () => controller.isOpen ? controller.close() : controller.open(),
+    ),
+  );
 }

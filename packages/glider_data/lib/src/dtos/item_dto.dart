@@ -1,19 +1,19 @@
 class const ItemDto({
-  required this.id,
-  this.deleted,
-  this.type,
-  this.by,
-  this.time,
-  this.text,
-  this.dead,
-  this.parent,
-  this.poll,
-  this.kids,
-  this.url,
-  this.score,
-  this.title,
-  this.parts,
-  this.descendants,
+  required final int id,
+  final bool? deleted,
+  final String? type,
+  final String? by,
+  final int? time,
+  final String? text,
+  final bool? dead,
+  final int? parent,
+  final int? poll,
+  final List<int>? kids,
+  final String? url,
+  final int? score,
+  final String? title,
+  final List<int>? parts,
+  final int? descendants,
 }) {
   factory fromMap(Map<String, dynamic> json) => ItemDto(
     id: json['id'] as int,
@@ -36,20 +36,4 @@ class const ItemDto({
         .toList(growable: false),
     descendants: json['descendants'] as int?,
   );
-
-  final int id;
-  final bool? deleted;
-  final String? type;
-  final String? by;
-  final int? time;
-  final String? text;
-  final bool? dead;
-  final int? parent;
-  final int? poll;
-  final List<int>? kids;
-  final String? url;
-  final int? score;
-  final String? title;
-  final List<int>? parts;
-  final int? descendants;
 }

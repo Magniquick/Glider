@@ -3,25 +3,24 @@ import 'package:glider/app/extensions/text_scaler_extension.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/item/widgets/avatar_widget.dart';
 
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
 class UsernameWidget({
-  required this.username,
-  this.showAvatar = true,
-  this.style = UsernameStyle.none,
-  this.onTap,
+  required final String username,
+  final bool showAvatar = true,
+  final UsernameStyle style = UsernameStyle.none,
+  final VoidCallback? onTap,
 }) extends StatelessWidget {
   this : super(key: ValueKey(username));
-
-  final String username;
-  final bool showAvatar;
-  final UsernameStyle style;
-  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     void onPressed() => onTap?.call();
     void onLongPress() {}
 
-    final padding = ButtonStyleButton.scaledPadding(
+    final EdgeInsetsGeometry padding = ButtonStyleButton.scaledPadding(
       const EdgeInsets.symmetric(horizontal: AppSpacing.l),
       const EdgeInsets.symmetric(horizontal: AppSpacing.m),
       const EdgeInsets.symmetric(horizontal: AppSpacing.s),
@@ -34,8 +33,9 @@ class UsernameWidget({
       horizontal: VisualDensity.minimumDensity,
       vertical: VisualDensity.minimumDensity,
     );
-    const tapTargetSize = MaterialTapTargetSize.shrinkWrap;
-    final buttonStyle = switch (style) {
+    const MaterialTapTargetSize tapTargetSize =
+        MaterialTapTargetSize.shrinkWrap;
+    final ButtonStyle buttonStyle = switch (style) {
       UsernameStyle.loggedInUser ||
       UsernameStyle.storyUser => FilledButton.styleFrom(
         padding: padding,

@@ -7,26 +7,21 @@ final class const LoadStoriesSearchEvent() extends StoriesSearchEvent {
   List<Object?> get props => [];
 }
 
-final class const SetTextStoriesSearchEvent(this.text)
+final class const SetTextStoriesSearchEvent(final String? text)
     extends StoriesSearchEvent {
-  final String? text;
-
   @override
   List<Object?> get props => [text];
 }
 
-final class const SetSearchRangeStoriesSearchEvent(this.searchRange)
-    extends StoriesSearchEvent {
-  final SearchRange? searchRange;
-
+final class const SetSearchRangeStoriesSearchEvent(
+  final SearchRange? searchRange,
+) extends StoriesSearchEvent {
   @override
   List<Object?> get props => [searchRange];
 }
 
-final class const SetDateRangeStoriesSearchEvent(this.dateRange)
+final class const SetDateRangeStoriesSearchEvent(final DateTimeRange? dateRange)
     extends StoriesSearchEvent {
-  final DateTimeRange? dateRange;
-
   @override
   List<Object?> get props => [dateRange];
 }

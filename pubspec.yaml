@@ -3,6 +3,10 @@ description: An opinionated Hacker News client.
 version: 2.8.0+49
 publish_to: none
 
+workspace:
+  - packages/glider_data
+  - packages/glider_domain
+
 environment:
   sdk: ">=3.13.0 <4.0.0"
 
@@ -46,16 +50,80 @@ dependencies:
   url_launcher: ^6.3.2
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.14.4
+  flutter_test:
+    sdk: flutter
+  melos: ^8.3.0
   leancode_lint: ^27.0.0
 
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    # google_fonts only uses a bundled file instead of fetching over the network
+    # if it is declared as an asset under a Google-Fonts filename. Noto Sans is
+    # the default font, so bundling it means a fresh install renders without
+    # contacting fonts.gstatic.com. Fonts the user picks are still fetched.
+    - assets/google_fonts/
   fonts:
-    - family: NotoSans
-      fonts:
-        - asset: assets/fonts/NotoSans-Regular.ttf
     - family: NotoSansMono
       fonts:
         - asset: assets/fonts/NotoSansMono-Regular.ttf
+
+melos:
+  ide:
+    intellij:
+      enabled: false
+
+  scripts:
+    lint:
+      run: |
+        melos run analyze
+        melos run format-check
+      description: Run all static analysis checks.
+
+    analyze:
+      # Run once from the workspace root: pub workspaces exclude the root
+      # package from melos' package list, so a per-package `exec` would skip
+      # the app itself. `dart analyze .` covers the root and both packages.
+      #
+      # Fatal on errors only. Three `missing_equatable_props` reports are false
+      # positives -- the members they name are memoised derivations of fields
+      # already in `props`, so listing them would force an O(n) recomputation
+      # on every state comparison without changing any outcome. leancode_lint
+      # runs as an analysis-server plugin, and plugin diagnostics honour
+      # neither `// ignore:` comments nor `analyzer: errors:`, so those three
+      # cannot be silenced individually.
+      run: dart analyze . --no-fatal-warnings
+      description: Analyze the whole workspace.
+
+    format:
+      run: dart format .
+      description: Format the whole workspace.
+
+    format-check:
+      run: dart format . --set-exit-if-changed
+      description: Check formatting across the whole workspace.
+
+    test:
+      # Pub workspaces exclude the root package from melos' package list, so the
+      # app's own tests need running separately from the members'.
+      run: |
+        melos run test:app
+        melos run test:packages
+      description: Run every test in the workspace.
+
+    test:app:
+      run: flutter test
+      description: Run the app's tests.
+
+    test:packages:
+      exec:
+        command: flutter test
+        concurrency: 1
+      packageFilters:
+        dirExists: test
+      description: Run tests in every package that has them.
+
+    outdated:
+      run: flutter pub outdated
+      description: Report outdated dependencies.

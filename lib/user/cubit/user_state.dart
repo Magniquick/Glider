@@ -1,12 +1,12 @@
 part of 'user_cubit.dart';
 
 class const UserState({
-  this.status = Status.initial,
-  this.data,
-  this.parsedAbout,
-  this.blocked = false,
-  this.synchronizing = false,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final User? data,
+  final ParsedData? parsedAbout,
+  final bool blocked = false,
+  final bool synchronizing = false,
+  @override final Object? exception,
 }) with DataMixin<User>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => UserState(
     status: Status.values.byName(json['status'] as String),
@@ -19,16 +19,6 @@ class const UserState({
     'data': data?.toMap(),
     'blocked': blocked,
   };
-
-  @override
-  final Status status;
-  @override
-  final User? data;
-  final ParsedData? parsedAbout;
-  final bool blocked;
-  final bool synchronizing;
-  @override
-  final Object? exception;
 
   UserState copyWith({
     Status Function()? status,

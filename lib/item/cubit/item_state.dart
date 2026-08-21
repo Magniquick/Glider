@@ -1,15 +1,15 @@
 part of 'item_cubit.dart';
 
 class const ItemState({
-  this.status = Status.initial,
-  this.data,
-  this.parsedText,
-  this.visited = false,
-  this.vote,
-  this.favorited = false,
-  this.flagged = false,
-  this.blocked = false,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final Item? data,
+  final ParsedData? parsedText,
+  final bool visited = false,
+  final VoteType? vote,
+  final bool favorited = false,
+  final bool flagged = false,
+  final bool blocked = false,
+  @override final Object? exception,
 }) with DataMixin<Item>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => ItemState(
     status: Status.values.byName(json['status'] as String),
@@ -33,19 +33,6 @@ class const ItemState({
     'flagged': flagged,
     'blocked': blocked,
   };
-
-  @override
-  final Status status;
-  @override
-  final Item? data;
-  final ParsedData? parsedText;
-  final bool visited;
-  final VoteType? vote;
-  final bool favorited;
-  final bool flagged;
-  final bool blocked;
-  @override
-  final Object? exception;
 
   ItemState copyWith({
     Status Function()? status,

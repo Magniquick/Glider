@@ -9,12 +9,11 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'submit_state.dart';
 
-class SubmitCubit(this._itemInteractionRepository, this._genericRepository)
-    extends HydratedCubit<SubmitState> {
+class SubmitCubit(
+  final ItemInteractionRepository _itemInteractionRepository,
+  final WebsiteRepository _genericRepository,
+) extends HydratedCubit<SubmitState> {
   this : super(const SubmitState());
-
-  final ItemInteractionRepository _itemInteractionRepository;
-  final WebsiteRepository _genericRepository;
 
   void setTitle(String title) {
     final titleInput = TitleInput.dirty(title);
@@ -55,10 +54,10 @@ class SubmitCubit(this._itemInteractionRepository, this._genericRepository)
   }
 
   Future<void> autofillTitle() async {
-    final url = Uri.tryParse(state.url.value);
+    final Uri? url = Uri.tryParse(state.url.value);
 
     if (url != null) {
-      final title = await _genericRepository.getWebsiteTitle(url);
+      final String? title = await _genericRepository.getWebsiteTitle(url);
 
       if (title != null) {
         final titleInput = TitleInput.dirty(title.trim());
@@ -73,7 +72,7 @@ class SubmitCubit(this._itemInteractionRepository, this._genericRepository)
   }
 
   Future<void> submit() async {
-    final success = await _itemInteractionRepository.submit(
+    final bool success = await _itemInteractionRepository.submit(
       title: state.title.value,
       url: state.url.value,
       text: state.text.value,

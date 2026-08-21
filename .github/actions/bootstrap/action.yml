@@ -14,11 +14,18 @@ runs:
         path: .pub-cache
         key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
         restore-keys: ${{ runner.os }}-pub-
-    - name: Set up Melos
-      shell: bash
-      run: |
-        dart pub global activate melos
-        echo "$PUB_CACHE/bin" >> "$GITHUB_PATH"
+    - name: Cache Gradle
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: ${{ runner.os }}-gradle-
     - name: Bootstrap workspace
       shell: bash
-      run: melos bootstrap
+      # melos is a dev_dependency, so its version is pinned by pubspec.lock
+      # rather than floating on whatever `pub global activate` resolves.
+      run: |
+        flutter pub get
+        dart run melos bootstrap

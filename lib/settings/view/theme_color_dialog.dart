@@ -7,56 +7,54 @@ import 'package:go_router/go_router.dart';
 
 const _totalColors = 20;
 
-final _colors = [
+final List<Color> _colors = [
   for (var i = 0; i < _totalColors; i++)
     HSVColor.fromAHSV(1, 360 / _totalColors * i, 0.5, 1).toColor(),
 ];
 
 const _iconSize = 40.0;
 
-class const ThemeColorDialog(this._settingsCubit, {super.key})
+class const ThemeColorDialog(final SettingsCubit _settingsCubit, {super.key})
     extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(context.l10n.themeColor),
-      contentPadding: AppSpacing.defaultTilePadding,
-      content: SizedBox(width: 0, child: _ThemeColorBody(_settingsCubit)),
-      actions: [
-        TextButton(
-          onPressed: () => context.pop(),
-          child: Text(MaterialLocalizations.of(context).okButtonLabel),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(context.l10n.themeColor),
+    contentPadding: AppSpacing.defaultTilePadding,
+    content: SizedBox(width: 0, child: _ThemeColorBody(_settingsCubit)),
+    actions: [
+      TextButton(
+        onPressed: () => context.pop(),
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+    ],
+  );
 }
 
-class const _ThemeColorBody(this._settingsCubit) extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
+class const _ThemeColorBody(final SettingsCubit _settingsCubit)
+    extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: _settingsCubit,
-      buildWhen: (previous, current) =>
-          previous.themeColor != current.themeColor,
-      builder: (context, state) => GridView.extent(
-        maxCrossAxisExtent: 64,
-        shrinkWrap: true,
-        children: [
-          for (final color in _colors)
-            IconButton(
-              icon: Icon(Icons.circle_outlined, color: color, size: _iconSize),
-              selectedIcon: Icon(Icons.circle, color: color, size: _iconSize),
-              isSelected: color == state.themeColor,
-              padding: const EdgeInsets.all(AppSpacing.m),
-              onPressed: () => _settingsCubit.setThemeColor(color),
-            ),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) =>
+      BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: _settingsCubit,
+        buildWhen: (previous, current) =>
+            previous.themeColor != current.themeColor,
+        builder: (context, state) => GridView.extent(
+          maxCrossAxisExtent: 64,
+          shrinkWrap: true,
+          children: [
+            for (final color in _colors)
+              IconButton(
+                icon: Icon(
+                  Icons.circle_outlined,
+                  color: color,
+                  size: _iconSize,
+                ),
+                selectedIcon: Icon(Icons.circle, color: color, size: _iconSize),
+                isSelected: color == state.themeColor,
+                padding: const EdgeInsets.all(AppSpacing.m),
+                onPressed: () => _settingsCubit.setThemeColor(color),
+              ),
+          ],
+        ),
+      );
 }

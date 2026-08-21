@@ -1,4 +1,5 @@
 import 'package:bloc_presentation/bloc_presentation.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:glider/app/container/app_container.dart';
@@ -26,8 +27,8 @@ class ItemTile extends StatefulWidget {
     ItemCubit itemCubit,
     this._authCubit,
     this._settingsCubit, {
-    this.storyUsername,
     required this.loadingType,
+    this.storyUsername,
     this.collapsedCount,
     this.showVisited = true,
     this.highlight = false,
@@ -45,8 +46,8 @@ class ItemTile extends StatefulWidget {
     this._authCubit,
     this._settingsCubit, {
     required this.id,
-    this.storyUsername,
     required this.loadingType,
+    this.storyUsername,
     this.collapsedCount,
     this.showVisited = true,
     this.highlight = false,
@@ -75,6 +76,25 @@ class ItemTile extends StatefulWidget {
 
   @override
   State<ItemTile> createState() => _ItemTileState();
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(IntProperty('id', id))
+      ..add(StringProperty('storyUsername', storyUsername))
+      ..add(EnumProperty<ItemType>('loadingType', loadingType))
+      ..add(IntProperty('collapsedCount', collapsedCount))
+      ..add(DiagnosticsProperty<bool>('showVisited', showVisited))
+      ..add(DiagnosticsProperty<bool>('highlight', highlight));
+    properties.add(
+      DiagnosticsProperty<bool>('forceShowMetadata', forceShowMetadata),
+    );
+    properties
+      ..add(EnumProperty<ItemStyle>('style', style))
+      ..add(DiagnosticsProperty<EdgeInsets>('padding', padding))
+      ..add(ObjectFlagProperty<ItemCallback?>.has('onTap', onTap));
+  }
 }
 
 class _ItemTileState()
@@ -92,7 +112,7 @@ class _ItemTileState()
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    return BlocPresentationListener<ItemCubit, ItemCubitEvent>(
+    return BlocPresentationListener<ItemCubit, ItemPresentationEvent>(
       bloc: _itemCubit,
       listener: (context, event) => switch (event) {
         ItemActionFailedEvent() => ScaffoldMessenger.of(
@@ -131,7 +151,7 @@ class _ItemTileState()
                       padding: widget.padding,
                     ),
                     success: () {
-                      final item = state.data!;
+                      final Item item = state.data!;
 
                       if (item.type == ItemType.job &&
                           !settingsState.showJobs) {
@@ -193,7 +213,7 @@ class _ItemTileState()
                                       authState,
                                       settingsState,
                                     )
-                                    ? (context, item) async =>
+                                    ? (context, item) =>
                                           ItemAction.upvote.execute(
                                             context,
                                             _itemCubit,
@@ -201,8 +221,8 @@ class _ItemTileState()
                                           )
                                     : null
                               : widget.onTap,
-                          onLongPress: (context, item) async =>
-                              showModalBottomSheet(
+                          onLongPress: (context, item) =>
+                              showModalBottomSheet<void>(
                                 context: rootNavigatorKey.currentContext!,
                                 builder: (context) => ItemBottomSheet(
                                   _itemCubit,
@@ -217,7 +237,7 @@ class _ItemTileState()
                                     authState,
                                     settingsState,
                                   )
-                              ? () async => ItemAction.upvote.execute(
+                              ? () => ItemAction.upvote.execute(
                                   context,
                                   _itemCubit,
                                   widget._authCubit,
@@ -230,7 +250,7 @@ class _ItemTileState()
                                     authState,
                                     settingsState,
                                   )
-                              ? () async => ItemAction.favorite.execute(
+                              ? () => ItemAction.favorite.execute(
                                   context,
                                   _itemCubit,
                                   widget._authCubit,
@@ -239,7 +259,7 @@ class _ItemTileState()
                         ),
                       );
                     },
-                    onRetry: () async => _itemCubit.load(),
+                    onRetry: () => _itemCubit.load(),
                   ),
                 ),
               ),

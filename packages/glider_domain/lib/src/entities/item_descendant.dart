@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 class ItemDescendant({
-  required this.id,
-  this.ancestorIds = const [],
-  this.isPart = false,
+  required final int id,
+  final List<int> ancestorIds = const [],
+  final bool isPart = false,
 }) with EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => ItemDescendant(
     id: json['id'] as int,
@@ -20,10 +20,6 @@ class ItemDescendant({
     'ancestorIds': ancestorIds,
     'isPart': isPart,
   };
-
-  final int id;
-  final List<int> ancestorIds;
-  final bool isPart;
 
   @override
   List<Object?> get props => [id, ancestorIds, isPart];

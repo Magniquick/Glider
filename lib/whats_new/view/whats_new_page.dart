@@ -6,55 +6,48 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class const WhatsNewPage(this._settingsCubit, {super.key})
+class const WhatsNewPage(final SettingsCubit _settingsCubit, {super.key})
     extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          const _SliverWhatsNewAppBar(),
-          SliverSafeArea(
-            top: false,
-            sliver: SliverToBoxAdapter(child: _WhatsNewBody(_settingsCubit)),
-          ),
-          const SliverPadding(
-            padding: AppSpacing.floatingActionButtonPageBottomPadding,
-          ),
-        ],
-      ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => context.pop(),
-        icon: const Icon(Icons.rocket_launch_outlined),
-        label: Text(context.l10n.explore),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+    body: CustomScrollView(
+      slivers: [
+        const _SliverWhatsNewAppBar(),
+        SliverSafeArea(
+          top: false,
+          sliver: SliverToBoxAdapter(child: _WhatsNewBody(_settingsCubit)),
+        ),
+        const SliverPadding(
+          padding: AppSpacing.floatingActionButtonPageBottomPadding,
+        ),
+      ],
+    ),
+    floatingActionButton: FloatingActionButton.extended(
+      onPressed: () => context.pop(),
+      icon: const Icon(Icons.rocket_launch_outlined),
+      label: Text(context.l10n.explore),
+    ),
+  );
 }
 
 class const _SliverWhatsNewAppBar() extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return SliverAppBar.medium(title: Text(context.l10n.whatsNew));
-  }
+  Widget build(BuildContext context) =>
+      SliverAppBar.medium(title: Text(context.l10n.whatsNew));
 }
 
-class const _WhatsNewBody(this._settingsCubit) extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
+class const _WhatsNewBody(final SettingsCubit _settingsCubit)
+    extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<SettingsCubit, SettingsState>(
-      bloc: _settingsCubit,
-      builder: (context, settingsState) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-        child: HackerNewsText(
-          context.l10n.whatsNewDescription,
-          useInAppBrowser: settingsState.useInAppBrowser,
+  Widget build(BuildContext context) =>
+      BlocBuilder<SettingsCubit, SettingsState>(
+        bloc: _settingsCubit,
+        builder: (context, settingsState) => Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+          child: HackerNewsText(
+            context.l10n.whatsNewDescription,
+            useInAppBrowser: settingsState.useInAppBrowser,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

@@ -8,30 +8,25 @@ import 'package:glider/user/models/user_style.dart';
 
 class const UserLoadingTile({
   super.key,
-  this.style = UserStyle.full,
-  this.padding = AppSpacing.defaultTilePadding,
+  final UserStyle style = UserStyle.full,
+  final EdgeInsets padding = AppSpacing.defaultTilePadding,
 }) extends StatelessWidget {
-  final UserStyle style;
-  final EdgeInsets padding;
-
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: padding,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (style.showPrimary) _buildPrimary(context),
-          if (style.showSecondary) _buildSecondary(context),
-        ].spaced(height: AppSpacing.m),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: padding,
+    child: Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (style.showPrimary) _buildPrimary(context),
+        if (style.showSecondary) _buildSecondary(context),
+      ].spaced(height: AppSpacing.m),
+    ),
+  );
 
   Widget _buildPrimary(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-    final color = Theme.of(context).colorScheme.outline
+    final TextTheme textTheme = Theme.of(context).textTheme;
+    final Color color = Theme.of(context).colorScheme.outline
         .withValues(alpha: LoadingBlock.opacity);
     return Row(
       children: [
@@ -66,7 +61,7 @@ class const UserLoadingTile({
   }
 
   Widget _buildSecondary(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
+    final TextTheme textTheme = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

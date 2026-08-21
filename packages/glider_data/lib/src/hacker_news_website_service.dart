@@ -4,16 +4,63 @@ import 'package:html/dom.dart' as html_dom;
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 
+/// Thrown when Hacker News does not hand back the one-time token an
+/// authenticated action needs.
+///
+/// In practice this means the stored session cookie is no longer valid: a
+/// logged-out item page carries no `auth` parameter, and `/submit` renders
+/// "You have to be logged in to submit." with no hidden `fnid`.
+class HackerNewsAuthException implements Exception {
+  /// Creates an exception for the named [action].
+  const HackerNewsAuthException(this.action);
+
+  /// The action that could not be authorised, e.g. `vote`.
+  final String action;
+
+  @override
+  String toString() =>
+      'Hacker News did not authorise the $action request. '
+      'The session has most likely expired.';
+}
+
+/// Thrown when Hacker News answers a request with a non-success status.
+class HackerNewsRequestException implements Exception {
+  /// Creates an exception for [statusCode] returned by [uri].
+  const HackerNewsRequestException(this.statusCode, this.uri);
+
+  /// The HTTP status Hacker News returned.
+  final int statusCode;
+
+  /// The request that failed.
+  final Uri uri;
+
+  @override
+  String toString() => 'Hacker News returned HTTP $statusCode for $uri.';
+}
+
 /// Outcome of a [HackerNewsWebsiteService.logIn] attempt.
 enum LogInResult() {
+  /// The session cookie was obtained.
   success,
+
+  /// Hacker News reported `Bad login.`
   badCredentials,
-  rejected
+
+  /// Hacker News refused the request outright, e.g. HTTP 429 for an embedded
+  /// browser user agent.
+  rejected,
+
+  /// Hacker News served a validation or captcha challenge, which cannot be
+  /// completed inside the app.
+  challengeRequired,
+
+  /// Something else went wrong: an outage, or a change to the login form.
+  failure
 }
 
 class const HackerNewsWebsiteService(
-  this._client, {
-  this.userAgent = _defaultUserAgent,
+  final http.Client _client, {
+  final String userAgent = _defaultUserAgent,
 }) {
   static const String authority = 'news.ycombinator.com';
 
@@ -22,9 +69,6 @@ class const HackerNewsWebsiteService(
   /// Android's WebView adds to its user agent. A self-identifying client is
   /// accepted, so send one rather than impersonating a browser.
   static const String _defaultUserAgent = 'Glider';
-
-  final http.Client _client;
-  final String userAgent;
 
   /// Submits credentials to the Hacker News login form, returning the `user`
   /// session cookie on success.
@@ -54,8 +98,15 @@ class const HackerNewsWebsiteService(
     final userCookie = _parseUserCookie(response.headers['set-cookie']);
     if (userCookie != null) return (LogInResult.success, userCookie);
 
-    // On failure Hacker News re-renders the form with a `Bad login.` notice.
-    return (LogInResult.badCredentials, null);
+    // Distinguish an actually-wrong password from everything else. Reporting
+    // "incorrect password" for a captcha challenge or an outage just makes the
+    // user retry credentials that were fine.
+    final body = response.body;
+    if (body.contains('Bad login.')) return (LogInResult.badCredentials, null);
+    if (body.contains('Validation required') || body.contains('recaptcha')) {
+      return (LogInResult.challengeRequired, null);
+    }
+    return (LogInResult.failure, null);
   }
 
   static String? _parseUserCookie(String? setCookieHeader) {
@@ -99,7 +150,7 @@ class const HackerNewsWebsiteService(
     });
     final response = await _performGet(uri, userCookie: userCookie);
     final document = await compute(html_parser.parse, response.body);
-    return document.getThingIds(
+    return await document.getThingIds(
       onMore: () => _getUpvotedType(
         username: username,
         userCookie: userCookie,
@@ -128,7 +179,7 @@ class const HackerNewsWebsiteService(
     });
     final response = await _performGet(uri);
     final document = await compute(html_parser.parse, response.body);
-    return document.getThingIds(
+    return await document.getThingIds(
       onMore: () => _getFavoritedType(
         username: username,
         page: page + 1,
@@ -168,7 +219,7 @@ class const HackerNewsWebsiteService(
     });
     final response = await _performGet(uri, userCookie: userCookie);
     final document = await compute(html_parser.parse, response.body);
-    return document.getThingIds(
+    return await document.getThingIds(
       onMore: () => _getFlaggedType(
         username: username,
         userCookie: userCookie,
@@ -188,7 +239,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'id': id.toString(),
       'how': upvote ? 'up' : 'un',
-      'auth': auth!,
+      'auth': _require(auth, 'vote'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -203,7 +254,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'id': id.toString(),
       'how': downvote ? 'down' : 'un',
-      'auth': auth!,
+      'auth': _require(auth, 'vote'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -218,7 +269,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'id': id.toString(),
       if (!favorite) 'un': 't',
-      'auth': auth!,
+      'auth': _require(auth, 'vote'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -233,7 +284,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'id': id.toString(),
       if (!flag) 'un': 't',
-      'auth': auth!,
+      'auth': _require(auth, 'vote'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -242,7 +293,6 @@ class const HackerNewsWebsiteService(
     required int id,
     String? title,
     String? text,
-    // ignore: always_put_required_named_parameters_first
     required String userCookie,
   }) async {
     final hmac = await _getHmacValue(
@@ -253,9 +303,9 @@ class const HackerNewsWebsiteService(
     final endpoint = Uri.https(authority, 'xedit');
     final body = <String, String>{
       'id': id.toString(),
-      if (title != null) 'title': title,
-      if (text != null) 'text': text,
-      'hmac': hmac!,
+      'title': ?title,
+      'text': ?text,
+      'hmac': _require(hmac, 'edit'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -270,7 +320,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'id': id.toString(),
       'd': 'Yes',
-      'hmac': hmac!,
+      'hmac': _require(hmac, 'edit'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -285,7 +335,7 @@ class const HackerNewsWebsiteService(
     final body = <String, String>{
       'parent': parentId.toString(),
       'text': text,
-      'hmac': hmac!,
+      'hmac': _require(hmac, 'edit'),
       'goto': 'item?id=$parentId',
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
@@ -295,17 +345,16 @@ class const HackerNewsWebsiteService(
     required String title,
     String? url,
     String? text,
-    // ignore: always_put_required_named_parameters_first
     required String userCookie,
   }) async {
     final (fnid, fnop) = await _getFnidFnopValues(userCookie: userCookie);
     final endpoint = Uri.https(authority, 'r');
     final body = <String, String>{
       'title': title,
-      if (url != null) 'url': url,
-      if (text != null) 'text': text,
-      'fnid': fnid!,
-      'fnop': fnop!,
+      'url': ?url,
+      'text': ?text,
+      'fnid': _require(fnid, 'submit'),
+      'fnop': _require(fnop, 'submit'),
     };
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
@@ -342,7 +391,7 @@ class const HackerNewsWebsiteService(
       'id': id.toString(),
     });
     final response = await _performGet(endpoint, userCookie: userCookie);
-    return compute(
+    return await compute(
       (body) => html_parser
           .parse(body)
           .hiddenFormAttributes
@@ -356,7 +405,7 @@ class const HackerNewsWebsiteService(
   }) async {
     final endpoint = Uri.https(authority, 'submit');
     final response = await _performGet(endpoint, userCookie: userCookie);
-    return compute((body) {
+    return await compute((body) {
       final attributes = html_parser.parse(body).hiddenFormAttributes;
       return (
         attributes?.getAttributeValue('fnid'),
@@ -365,17 +414,40 @@ class const HackerNewsWebsiteService(
     }, response.body);
   }
 
+  /// Returns [value], or reports an expired session for [action].
+  static String _require(String? value, String action) =>
+      value ?? (throw HackerNewsAuthException(action));
+
+  /// Hacker News answers rate limits with 429 and errors with an HTML page.
+  /// Without this check a failed page fetch simply parses to nothing, which
+  /// silently truncates paginated results instead of reporting a problem.
+  static http.Response _ensureSuccess(http.Response response, Uri endpoint) {
+    if (response.statusCode >= 400) {
+      throw HackerNewsRequestException(response.statusCode, endpoint);
+    }
+    return response;
+  }
+
   Future<http.Response> _performGet(Uri endpoint, {String? userCookie}) async =>
-      _client.get(endpoint, headers: _getHeaders(userCookie: userCookie));
+      _ensureSuccess(
+        await _client.get(
+          endpoint,
+          headers: _getHeaders(userCookie: userCookie),
+        ),
+        endpoint,
+      );
 
   Future<http.Response> _performPost(
     Uri endpoint, {
     Object? body,
     String? userCookie,
-  }) async => _client.post(
+  }) async => _ensureSuccess(
+    await _client.post(
+      endpoint,
+      body: body,
+      headers: _getHeaders(userCookie: userCookie),
+    ),
     endpoint,
-    body: body,
-    headers: _getHeaders(userCookie: userCookie),
   );
 
   Map<String, String> _getHeaders({String? userCookie}) => <String, String>{

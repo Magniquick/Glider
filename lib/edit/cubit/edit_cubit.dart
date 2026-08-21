@@ -11,11 +11,11 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 part 'edit_state.dart';
 
 class EditCubit(
-  this._itemRepository,
-  this._itemInteractionRepository, {
+  final ItemRepository _itemRepository,
+  final ItemInteractionRepository _itemInteractionRepository, {
   required int id,
 }) extends HydratedCubit<EditState> {
-  this : itemId = id, super(const EditState()) {
+  this : super(const EditState()) {
     _itemSubscription = _itemRepository
         .getItemStream(itemId)
         .listen(
@@ -33,9 +33,7 @@ class EditCubit(
         );
   }
 
-  final ItemRepository _itemRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
-  final int itemId;
+  final int itemId = id;
 
   late final StreamSubscription<Item> _itemSubscription;
 
@@ -67,7 +65,7 @@ class EditCubit(
   }
 
   Future<void> edit() async {
-    final success = await _itemInteractionRepository.edit(
+    final bool success = await _itemInteractionRepository.edit(
       itemId,
       title: state.title?.value,
       text: state.text?.value,
@@ -88,6 +86,6 @@ class EditCubit(
   @override
   Future<void> close() async {
     await _itemSubscription.cancel();
-    return super.close();
+    return await super.close();
   }
 }

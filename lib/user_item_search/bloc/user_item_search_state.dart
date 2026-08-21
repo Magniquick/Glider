@@ -1,19 +1,11 @@
 part of 'user_item_search_bloc.dart';
 
 class const UserItemSearchState({
-  this.status = Status.initial,
-  this.data,
-  this.searchText,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<int>? data,
+  final String? searchText,
+  @override final Object? exception,
 }) with DataMixin<List<int>>, EquatableMixin {
-  @override
-  final Status status;
-  @override
-  final List<int>? data;
-  final String? searchText;
-  @override
-  final Object? exception;
-
   UserItemSearchState copyWith({
     Status Function()? status,
     List<int>? Function()? data,

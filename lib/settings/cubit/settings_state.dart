@@ -1,48 +1,27 @@
 part of 'settings_cubit.dart';
 
 class const SettingsState({
-  this.themeMode = ThemeMode.system,
-  this.useDynamicTheme = true,
-  this.themeColor = const Color(0xff6750a4),
-  this.themeVariant = Variant.tonalSpot,
-  this.usePureBackground = false,
-  this.font = 'Noto Sans',
-  this.storyLines = 2,
-  this.useLargeStoryStyle = true,
-  this.showFavicons = true,
-  this.showStoryMetadata = true,
-  this.showUserAvatars = true,
-  this.useActionButtons = false,
-  this.showJobs = true,
-  this.useThreadNavigation = true,
-  this.enableDownvoting = false,
-  this.useInAppBrowser = false,
-  this.useNavigationDrawer = false,
-  this.wordFilters = const {},
-  this.domainFilters = const {},
-  this.appVersion,
+  final ThemeMode themeMode = ThemeMode.system,
+  final bool useDynamicTheme = true,
+  final Color themeColor = const Color(0xff6750a4),
+  final Variant themeVariant = Variant.tonalSpot,
+  final bool usePureBackground = false,
+  final String font = 'Noto Sans',
+  final int storyLines = 2,
+  final bool useLargeStoryStyle = true,
+  final bool showFavicons = true,
+  final bool showStoryMetadata = true,
+  final bool showUserAvatars = true,
+  final bool useActionButtons = false,
+  final bool showJobs = true,
+  final bool useThreadNavigation = true,
+  final bool enableDownvoting = false,
+  final bool useInAppBrowser = false,
+  final bool useNavigationDrawer = false,
+  final Set<String> wordFilters = const {},
+  final Set<String> domainFilters = const {},
+  final Version? appVersion,
 }) with EquatableMixin {
-  final ThemeMode themeMode;
-  final bool useDynamicTheme;
-  final Color themeColor;
-  final Variant themeVariant;
-  final bool usePureBackground;
-  final String font;
-  final int storyLines;
-  final bool useLargeStoryStyle;
-  final bool showFavicons;
-  final bool showStoryMetadata;
-  final bool showUserAvatars;
-  final bool useActionButtons;
-  final bool showJobs;
-  final bool useThreadNavigation;
-  final bool enableDownvoting;
-  final bool useInAppBrowser;
-  final bool useNavigationDrawer;
-  final Set<String> wordFilters;
-  final Set<String> domainFilters;
-  final Version? appVersion;
-
   SettingsState copyWith({
     ThemeMode Function()? themeMode,
     bool Function()? useDynamicTheme,

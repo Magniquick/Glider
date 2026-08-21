@@ -7,16 +7,14 @@ const _iconSize = 40.0;
 
 class const EmptyWidget({super.key}) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(AppSpacing.xl),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.air_outlined, size: _iconSize),
-          Text(context.l10n.empty),
-        ].spaced(height: AppSpacing.xl),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.all(AppSpacing.xl),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Icon(Icons.air_outlined, size: _iconSize),
+        Text(context.l10n.empty),
+      ].spaced(height: AppSpacing.xl),
+    ),
+  );
 }

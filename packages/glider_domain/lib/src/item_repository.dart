@@ -8,31 +8,27 @@ import 'package:glider_domain/src/extensions/behavior_subject_map_extension.dart
 import 'package:rxdart/streams.dart';
 import 'package:rxdart/subjects.dart';
 
-class ItemRepository(this._algoliaApiService, this._hackerNewsApiService) {
+class ItemRepository(
+  final AlgoliaApiService _algoliaApiService,
+  final HackerNewsApiService _hackerNewsApiService,
+) {
   this : _itemStreamControllers = {};
-
-  final AlgoliaApiService _algoliaApiService;
-  final HackerNewsApiService _hackerNewsApiService;
 
   final Map<int, BehaviorSubject<Item>> _itemStreamControllers;
 
-  Future<List<int>> getTopStoryIds() async =>
-      _hackerNewsApiService.getTopStoryIds();
+  Future<List<int>> getTopStoryIds() => _hackerNewsApiService.getTopStoryIds();
 
-  Future<List<int>> getNewStoryIds() async =>
-      _hackerNewsApiService.getNewStoryIds();
+  Future<List<int>> getNewStoryIds() => _hackerNewsApiService.getNewStoryIds();
 
-  Future<List<int>> getBestStoryIds() async =>
+  Future<List<int>> getBestStoryIds() =>
       _hackerNewsApiService.getBestStoryIds();
 
-  Future<List<int>> getAskStoryIds() async =>
-      _hackerNewsApiService.getAskStoryIds();
+  Future<List<int>> getAskStoryIds() => _hackerNewsApiService.getAskStoryIds();
 
-  Future<List<int>> getShowStoryIds() async =>
+  Future<List<int>> getShowStoryIds() =>
       _hackerNewsApiService.getShowStoryIds();
 
-  Future<List<int>> getJobStoryIds() async =>
-      _hackerNewsApiService.getJobStoryIds();
+  Future<List<int>> getJobStoryIds() => _hackerNewsApiService.getJobStoryIds();
 
   Future<List<Item>> searchStories({
     String? text,

@@ -1,11 +1,11 @@
 part of 'item_tree_cubit.dart';
 
 class ItemTreeState({
-  this.status = Status.initial,
-  this.data,
-  this.previousData,
-  this.collapsedIds = const {},
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<ItemDescendant>? data,
+  final List<ItemDescendant>? previousData,
+  final Set<int> collapsedIds = const {},
+  @override final Object? exception,
 }) with DataMixin<List<ItemDescendant>>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => ItemTreeState(
     status: Status.values.byName(json['status'] as String),
@@ -27,20 +27,11 @@ class ItemTreeState({
     'collapsedIds': collapsedIds.toList(growable: false),
   };
 
-  @override
-  final Status status;
-  @override
-  final List<ItemDescendant>? data;
-  final List<ItemDescendant>? previousData;
-  final Set<int> collapsedIds;
-  @override
-  final Object? exception;
-
   late final List<ItemDescendant>? viewableData = data
       ?.where((e) => !e.ancestorIds.any(collapsedIds.contains))
       .toList(growable: false);
 
-  late int newDescendantsCount = data != null && previousData != null
+  late final int newDescendantsCount = data != null && previousData != null
       ? {...?data}.difference({...?previousData}).length
       : 0;
 
@@ -58,6 +49,8 @@ class ItemTreeState({
     exception: exception != null ? exception() : this.exception,
   );
 
+  // viewableData and newDescendantsCount are memoised derivations of data and
+  // previousData, which are already compared below.
   @override
   List<Object?> get props => [
     status,

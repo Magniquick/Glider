@@ -1,11 +1,11 @@
 part of 'stories_cubit.dart';
 
 class StoriesState({
-  this.status = Status.initial,
-  this.data,
-  this.page = 1,
-  this.storyType = StoryType.topStories,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<int>? data,
+  @override final int page = 1,
+  final StoryType storyType = StoryType.topStories,
+  @override final Object? exception,
 }) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => StoriesState(
     status: Status.values.byName(json['status'] as String),
@@ -22,20 +22,10 @@ class StoriesState({
   };
 
   @override
-  final Status status;
-  @override
-  final List<int>? data;
-  @override
-  final int page;
-  final StoryType storyType;
-  @override
-  final Object? exception;
+  late final List<int>? loadedData = super.loadedData?.toList(growable: false);
 
   @override
-  late List<int>? loadedData = super.loadedData?.toList(growable: false);
-
-  @override
-  late List<int>? currentPageData = super.currentPageData?.toList(
+  late final List<int>? currentPageData = super.currentPageData?.toList(
     growable: false,
   );
 
@@ -53,6 +43,8 @@ class StoriesState({
     exception: exception != null ? exception() : this.exception,
   );
 
+  // loadedData and currentPageData are memoised derivations of data and page,
+  // which are already compared below.
   @override
   List<Object?> get props => [status, data, page, storyType, exception];
 }

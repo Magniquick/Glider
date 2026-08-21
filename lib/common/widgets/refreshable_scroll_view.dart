@@ -8,31 +8,23 @@ import 'package:flutter/rendering.dart';
 const _cacheExtent = 2760.0;
 
 class const RefreshableScrollView({
+  required final List<Widget> slivers,
+  required final RefreshCallback onRefresh,
   super.key,
-  this.scrollController,
-  required this.slivers,
-  required this.onRefresh,
-  this.toolbarHeight,
-  this.edgeOffset,
+  final ScrollController? scrollController,
+  final double? toolbarHeight,
+  final double? edgeOffset,
 }) extends StatelessWidget {
-  final ScrollController? scrollController;
-  final List<Widget> slivers;
-  final RefreshCallback onRefresh;
-  final double? toolbarHeight;
-  final double? edgeOffset;
-
   @override
-  Widget build(BuildContext context) {
-    return RefreshIndicator(
-      onRefresh: onRefresh,
-      displacement: toolbarHeight ?? kToolbarHeight,
-      edgeOffset: edgeOffset ?? MediaQuery.paddingOf(context).top,
-      child: CustomScrollView(
-        controller: scrollController,
-        scrollCacheExtent: ScrollCacheExtent.pixels(_cacheExtent),
-        physics: const AlwaysScrollableScrollPhysics(),
-        slivers: slivers,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => RefreshIndicator(
+    onRefresh: onRefresh,
+    displacement: toolbarHeight ?? kToolbarHeight,
+    edgeOffset: edgeOffset ?? MediaQuery.paddingOf(context).top,
+    child: CustomScrollView(
+      controller: scrollController,
+      scrollCacheExtent: const ScrollCacheExtent.pixels(_cacheExtent),
+      physics: const AlwaysScrollableScrollPhysics(),
+      slivers: slivers,
+    ),
+  );
 }

@@ -8,14 +8,12 @@ enum TitleValidationError() {
 }
 
 extension TitleValidationErrorExtension on TitleValidationError {
-  String label(BuildContext context) {
-    return switch (this) {
-      TitleValidationError.empty => context.l10n.emptyError,
-      TitleValidationError.tooLong => context.l10n.tooLongError(
-        TitleInput.maxLength,
-      ),
-    };
-  }
+  String label(BuildContext context) => switch (this) {
+    TitleValidationError.empty => context.l10n.emptyError,
+    TitleValidationError.tooLong => context.l10n.tooLongError(
+      TitleInput.maxLength,
+    ),
+  };
 }
 
 final class TitleInput extends FormzInput<String, TitleValidationError> {

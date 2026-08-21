@@ -6,75 +6,74 @@ import 'package:glider/common/extensions/widget_list_extension.dart';
 import 'package:glider/stories_search/bloc/stories_search_bloc.dart';
 import 'package:glider/stories_search/models/search_range.dart';
 
-class const StoriesSearchRangeView(this._storiesSearchBloc, {super.key})
-    extends StatelessWidget {
-  final StoriesSearchBloc _storiesSearchBloc;
-
+class const StoriesSearchRangeView(
+  final StoriesSearchBloc _storiesSearchBloc, {
+  super.key,
+}) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<StoriesSearchBloc, StoriesSearchState>(
-      bloc: _storiesSearchBloc,
-      listenWhen: (previous, current) =>
-          previous.searchRange != current.searchRange ||
-          previous.dateRange != current.dateRange,
-      listener: (context, state) async {
-        if (state.searchRange == SearchRange.custom &&
-            state.dateRange == null) {
-          final dateRange = await showDateRangePicker(
-            context: context,
-            firstDate: DateTime.fromMillisecondsSinceEpoch(0),
-            lastDate: clock.now(),
-          );
-          _storiesSearchBloc.add(
-            dateRange != null
-                ? SetDateRangeStoriesSearchEvent(dateRange)
-                : const SetSearchRangeStoriesSearchEvent(null),
-          );
-        }
-      },
-      buildWhen: (previous, current) =>
-          previous.searchRange != current.searchRange ||
-          previous.dateRange != current.dateRange,
-      builder: (context, state) {
-        final directionality = Directionality.of(context);
-        final padding = MediaQuery.paddingOf(context);
+  Widget build(
+    BuildContext context,
+  ) => BlocConsumer<StoriesSearchBloc, StoriesSearchState>(
+    bloc: _storiesSearchBloc,
+    listenWhen: (previous, current) =>
+        previous.searchRange != current.searchRange ||
+        previous.dateRange != current.dateRange,
+    listener: (context, state) async {
+      if (state.searchRange == SearchRange.custom && state.dateRange == null) {
+        final DateTimeRange<DateTime>? dateRange = await showDateRangePicker(
+          context: context,
+          firstDate: DateTime.fromMillisecondsSinceEpoch(0),
+          lastDate: clock.now(),
+        );
+        _storiesSearchBloc.add(
+          dateRange != null
+              ? SetDateRangeStoriesSearchEvent(dateRange)
+              : const SetSearchRangeStoriesSearchEvent(null),
+        );
+      }
+    },
+    buildWhen: (previous, current) =>
+        previous.searchRange != current.searchRange ||
+        previous.dateRange != current.dateRange,
+    builder: (context, state) {
+      final TextDirection directionality = Directionality.of(context);
+      final EdgeInsets padding = MediaQuery.paddingOf(context);
 
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: EdgeInsetsDirectional.only(
-            top: AppSpacing.s,
-            bottom: AppSpacing.s,
-            start:
-                AppSpacing.xl +
-                switch (directionality) {
-                  TextDirection.ltr => padding.left,
-                  TextDirection.rtl => padding.right,
-                },
-            end:
-                AppSpacing.xl +
-                switch (directionality) {
-                  TextDirection.ltr => padding.right,
-                  TextDirection.rtl => padding.left,
-                },
-          ),
-          child: Row(
-            children: [
-              for (final searchRange in SearchRange.values)
-                ChoiceChip(
-                  label: Text(
-                    searchRange.label(context, dateRange: state.dateRange),
-                  ),
-                  selected: state.searchRange == searchRange,
-                  onSelected: (selected) => _storiesSearchBloc.add(
-                    SetSearchRangeStoriesSearchEvent(
-                      selected ? searchRange : null,
-                    ),
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsetsDirectional.only(
+          top: AppSpacing.s,
+          bottom: AppSpacing.s,
+          start:
+              AppSpacing.xl +
+              switch (directionality) {
+                TextDirection.ltr => padding.left,
+                TextDirection.rtl => padding.right,
+              },
+          end:
+              AppSpacing.xl +
+              switch (directionality) {
+                TextDirection.ltr => padding.right,
+                TextDirection.rtl => padding.left,
+              },
+        ),
+        child: Row(
+          children: [
+            for (final searchRange in SearchRange.values)
+              ChoiceChip(
+                label: Text(
+                  searchRange.label(context, dateRange: state.dateRange),
+                ),
+                selected: state.searchRange == searchRange,
+                onSelected: (selected) => _storiesSearchBloc.add(
+                  SetSearchRangeStoriesSearchEvent(
+                    selected ? searchRange : null,
                   ),
                 ),
-            ].spaced(width: AppSpacing.m),
-          ),
-        );
-      },
-    );
-  }
+              ),
+          ].spaced(width: AppSpacing.m),
+        ),
+      );
+    },
+  );
 }

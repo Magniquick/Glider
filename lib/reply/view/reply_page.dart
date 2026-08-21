@@ -18,18 +18,17 @@ import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
 import 'package:go_router/go_router.dart';
 
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
 class ReplyPage(
-  this._replyCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
-  required this.id,
+  final ReplyCubitFactory _replyCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
+  required final int id,
 }) extends StatefulWidget {
   this : super(key: ValueKey(id));
-
-  final ReplyCubitFactory _replyCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final int id;
 
   @override
   State<ReplyPage> createState() => _ReplyPageState();
@@ -51,87 +50,78 @@ class _ReplyPageState() extends State<ReplyPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<ReplyCubit, ReplyState>(
-      bloc: _replyCubit,
-      listenWhen: (previous, current) => previous.success != current.success,
-      listener: (context, state) {
-        if (state.success) context.pop();
-      },
-      builder: (context, state) => Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            const _SliverReplyAppBar(),
-            SliverSafeArea(
-              top: false,
-              sliver: SliverToBoxAdapter(child: _ReplyBody(_replyCubit)),
-            ),
-            const SliverPadding(
-              padding: AppSpacing.floatingActionButtonPageBottomPadding,
-            ),
-          ],
-        ),
-        bottomNavigationBar: BlocSelector<ReplyCubit, ReplyState, bool>(
-          bloc: _replyCubit,
-          selector: (state) => state.preview,
-          builder: (context, preview) => PreviewBottomPanel(
-            visible: preview,
-            onChanged: _replyCubit.setPreview,
-            child: _ReplyPreview(
-              _replyCubit,
-              widget._authCubit,
-              widget._settingsCubit,
-            ),
+  Widget build(BuildContext context) => BlocConsumer<ReplyCubit, ReplyState>(
+    bloc: _replyCubit,
+    listenWhen: (previous, current) => previous.success != current.success,
+    listener: (context, state) {
+      if (state.success) context.pop();
+    },
+    builder: (context, state) => Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          const _SliverReplyAppBar(),
+          SliverSafeArea(
+            top: false,
+            sliver: SliverToBoxAdapter(child: _ReplyBody(_replyCubit)),
+          ),
+          const SliverPadding(
+            padding: AppSpacing.floatingActionButtonPageBottomPadding,
+          ),
+        ],
+      ),
+      bottomNavigationBar: BlocSelector<ReplyCubit, ReplyState, bool>(
+        bloc: _replyCubit,
+        selector: (state) => state.preview,
+        builder: (context, preview) => PreviewBottomPanel(
+          visible: preview,
+          onChanged: _replyCubit.setPreview,
+          child: _ReplyPreview(
+            _replyCubit,
+            widget._authCubit,
+            widget._settingsCubit,
           ),
         ),
-        floatingActionButton: state.isValid
-            ? FloatingActionButton.extended(
-                onPressed: () async => _replyCubit.reply(),
-                label: Text(context.l10n.reply),
-                icon: const Icon(Icons.reply_outlined),
-              )
-            : null,
       ),
-    );
-  }
+      floatingActionButton: state.isValid
+          ? FloatingActionButton.extended(
+              onPressed: () => _replyCubit.reply(),
+              label: Text(context.l10n.reply),
+              icon: const Icon(Icons.reply_outlined),
+            )
+          : null,
+    ),
+  );
 }
 
 class const _SliverReplyAppBar() extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return SliverAppBar.medium(title: Text(context.l10n.reply));
-  }
+  Widget build(BuildContext context) =>
+      SliverAppBar.medium(title: Text(context.l10n.reply));
 }
 
-class const _ReplyBody(this._replyCubit) extends StatelessWidget {
-  final ReplyCubit _replyCubit;
-
+class const _ReplyBody(final ReplyCubit _replyCubit) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ReplyCubit, ReplyState>(
-      bloc: _replyCubit,
-      builder: (context, state) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _ReplyForm(_replyCubit),
-            if (state.parentItem?.text != null)
-              ElevatedButton.icon(
-                onPressed: _replyCubit.quoteParent,
-                icon: const Icon(Icons.format_quote),
-                label: Text(context.l10n.quoteParent),
-              ),
-          ].spaced(height: AppSpacing.xl),
-        ),
+  Widget build(BuildContext context) => BlocBuilder<ReplyCubit, ReplyState>(
+    bloc: _replyCubit,
+    builder: (context, state) => Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _ReplyForm(_replyCubit),
+          if (state.parentItem?.text != null)
+            ElevatedButton.icon(
+              onPressed: _replyCubit.quoteParent,
+              icon: const Icon(Icons.format_quote),
+              label: Text(context.l10n.quoteParent),
+            ),
+        ].spaced(height: AppSpacing.xl),
       ),
-    );
-  }
+    ),
+  );
 }
 
-class const _ReplyForm(this._replyCubit) extends StatefulWidget {
-  final ReplyCubit _replyCubit;
-
+class const _ReplyForm(final ReplyCubit _replyCubit) extends StatefulWidget {
   @override
   State<_ReplyForm> createState() => _ReplyFormState();
 }
@@ -142,7 +132,7 @@ class _ReplyFormState() extends State<_ReplyForm> {
   @override
   void initState() {
     super.initState();
-    final state = widget._replyCubit.state;
+    final ReplyState state = widget._replyCubit.state;
     _textController = TextEditingController(text: state.text.value);
   }
 
@@ -153,88 +143,79 @@ class _ReplyFormState() extends State<_ReplyForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocListener<ReplyCubit, ReplyState>(
+  Widget build(BuildContext context) => BlocListener<ReplyCubit, ReplyState>(
+    bloc: widget._replyCubit,
+    listener: (context, state) {
+      if (state.text.value != _textController.text) {
+        _textController.value = TextEditingValue(
+          text: state.text.value,
+          selection: TextSelection.collapsed(offset: state.text.value.length),
+        );
+      }
+    },
+    child: BlocBuilder<ReplyCubit, ReplyState>(
       bloc: widget._replyCubit,
-      listener: (context, state) {
-        if (state.text.value != _textController.text) {
-          _textController.value = TextEditingValue(
-            text: state.text.value,
-            selection: TextSelection.collapsed(offset: state.text.value.length),
-          );
-        }
-      },
-      child: BlocBuilder<ReplyCubit, ReplyState>(
-        bloc: widget._replyCubit,
-        buildWhen: (previous, current) => previous.text != current.text,
-        builder: (context, state) => TextFormField(
-          controller: _textController,
-          decoration: InputDecoration(
-            labelText: context.l10n.text,
-            errorText: state.text.displayError?.label(context),
-          ),
-          keyboardType: TextInputType.multiline,
-          textCapitalization: TextCapitalization.sentences,
-          maxLines: null,
-          onChanged: widget._replyCubit.setText,
+      buildWhen: (previous, current) => previous.text != current.text,
+      builder: (context, state) => TextFormField(
+        controller: _textController,
+        decoration: InputDecoration(
+          labelText: context.l10n.text,
+          errorText: state.text.displayError?.label(context),
         ),
+        keyboardType: TextInputType.multiline,
+        textCapitalization: TextCapitalization.sentences,
+        maxLines: null,
+        onChanged: widget._replyCubit.setText,
       ),
-    );
-  }
+    ),
+  );
 }
 
 class const _ReplyPreview(
-  this._replyCubit,
-  this._authCubit,
-  this._settingsCubit,
+  final ReplyCubit _replyCubit,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final ReplyCubit _replyCubit;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      primary: false,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: PreviewCard(
-          child: BlocBuilder<ReplyCubit, ReplyState>(
-            bloc: _replyCubit,
-            buildWhen: (previous, current) => previous.text != current.text,
-            builder: (context, state) =>
-                BlocSelector<AuthCubit, AuthState, String?>(
-                  bloc: _authCubit,
-                  selector: (state) => state.username,
-                  builder: (context, username) =>
-                      BlocBuilder<SettingsCubit, SettingsState>(
-                        bloc: _settingsCubit,
-                        builder: (context, settingsState) => HeroMode(
-                          enabled: false,
-                          child: ItemDataTile(
-                            Item(
-                              id: 0,
-                              username: username,
-                              type: ItemType.comment,
-                              text: state.text.value.isNotEmpty
-                                  ? state.text.value
-                                  : null,
-                              dateTime: clock.now(),
-                            ),
-                            storyLines: settingsState.storyLines,
-                            useLargeStoryStyle:
-                                settingsState.useLargeStoryStyle,
-                            showFavicons: settingsState.showFavicons,
-                            showUserAvatars: settingsState.showUserAvatars,
-                            usernameStyle: UsernameStyle.loggedInUser,
-                            useInAppBrowser: settingsState.useInAppBrowser,
+  Widget build(BuildContext context) => SingleChildScrollView(
+    primary: false,
+    child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: PreviewCard(
+        child: BlocBuilder<ReplyCubit, ReplyState>(
+          bloc: _replyCubit,
+          buildWhen: (previous, current) => previous.text != current.text,
+          builder: (context, state) =>
+              BlocSelector<AuthCubit, AuthState, String?>(
+                bloc: _authCubit,
+                selector: (state) => state.username,
+                builder: (context, username) =>
+                    BlocBuilder<SettingsCubit, SettingsState>(
+                      bloc: _settingsCubit,
+                      builder: (context, settingsState) => HeroMode(
+                        enabled: false,
+                        child: ItemDataTile(
+                          Item(
+                            id: 0,
+                            username: username,
+                            type: ItemType.comment,
+                            text: state.text.value.isNotEmpty
+                                ? state.text.value
+                                : null,
+                            dateTime: clock.now(),
                           ),
+                          storyLines: settingsState.storyLines,
+                          useLargeStoryStyle: settingsState.useLargeStoryStyle,
+                          showFavicons: settingsState.showFavicons,
+                          showUserAvatars: settingsState.showUserAvatars,
+                          usernameStyle: UsernameStyle.loggedInUser,
+                          useInAppBrowser: settingsState.useInAppBrowser,
                         ),
                       ),
-                ),
-          ),
+                    ),
+              ),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

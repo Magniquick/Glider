@@ -14,19 +14,13 @@ import 'package:glider/user/view/user_page.dart';
 import 'package:go_router/go_router.dart';
 
 class const AuthPage(
-  this._authCubit,
-  this._settingsCubit,
-  this._userCubitFactory,
-  this._itemCubitFactory,
-  this._userItemSearchBlocFactory, {
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
+  final UserCubitFactory _userCubitFactory,
+  final ItemCubitFactory _itemCubitFactory,
+  final UserItemSearchBlocFactory _userItemSearchBlocFactory, {
   super.key,
 }) extends StatefulWidget {
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final UserCubitFactory _userCubitFactory;
-  final ItemCubitFactory _itemCubitFactory;
-  final UserItemSearchBlocFactory _userItemSearchBlocFactory;
-
   @override
   State<AuthPage> createState() => _AuthPageState();
 }
@@ -39,58 +33,52 @@ class _AuthPageState() extends State<AuthPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<AuthCubit, AuthState>(
-      listenWhen: (previous, current) => current.isLoggedIn,
-      listener: (context, state) async {
-        final confirm = await context.push<bool>(
-          AppRoute.confirmDialog.location(),
-          extra: (
-            title: context.l10n.synchronize,
-            text: context.l10n.synchronizeDescription,
-          ),
-        );
-        if (confirm ?? false) {
-          await widget._userCubitFactory(state.username!).synchronize();
-        }
-      },
-      bloc: widget._authCubit,
-      builder: (context, state) => state.isLoggedIn
-          ? UserPage(
-              widget._userCubitFactory,
-              widget._itemCubitFactory,
-              widget._userItemSearchBlocFactory,
-              widget._authCubit,
-              widget._settingsCubit,
-              username: state.username!,
-            )
-          : Scaffold(
-              body: CustomScrollView(
-                slivers: [
-                  const SliverAppBar(),
-                  SliverSafeArea(
-                    top: false,
-                    // The form must not be forced to fill the viewport: the
-                    // software keyboard shrinks it and the content overflows.
-                    sliver: SliverToBoxAdapter(
-                      child: _AuthBody(
-                        widget._authCubit,
-                        widget._settingsCubit,
-                      ),
-                    ),
+  Widget build(BuildContext context) => BlocConsumer<AuthCubit, AuthState>(
+    listenWhen: (previous, current) => current.isLoggedIn,
+    listener: (context, state) async {
+      final bool? confirm = await context.push<bool>(
+        AppRoute.confirmDialog.location(),
+        extra: (
+          title: context.l10n.synchronize,
+          text: context.l10n.synchronizeDescription,
+        ),
+      );
+      if (confirm ?? false) {
+        await widget._userCubitFactory(state.username!).synchronize();
+      }
+    },
+    bloc: widget._authCubit,
+    builder: (context, state) => state.isLoggedIn
+        ? UserPage(
+            widget._userCubitFactory,
+            widget._itemCubitFactory,
+            widget._userItemSearchBlocFactory,
+            widget._authCubit,
+            widget._settingsCubit,
+            username: state.username!,
+          )
+        : Scaffold(
+            body: CustomScrollView(
+              slivers: [
+                const SliverAppBar(),
+                SliverSafeArea(
+                  top: false,
+                  // The form must not be forced to fill the viewport: the
+                  // software keyboard shrinks it and the content overflows.
+                  sliver: SliverToBoxAdapter(
+                    child: _AuthBody(widget._authCubit, widget._settingsCubit),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-    );
-  }
+          ),
+  );
 }
 
-class const _AuthBody(this._authCubit, this._settingsCubit)
-    extends StatefulWidget {
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
+class const _AuthBody(
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
+) extends StatefulWidget {
   @override
   State<_AuthBody> createState() => _AuthBodyState();
 }
@@ -120,133 +108,129 @@ class _AuthBodyState() extends State<_AuthBody> {
       switch (status) {
         AuthStatus.badCredentials => context.l10n.badCredentialsError,
         AuthStatus.rejected => context.l10n.loginRejectedError,
+        AuthStatus.challengeRequired => context.l10n.loginChallengeError,
         AuthStatus.failure => context.l10n.loginFailedError,
         _ => null,
       };
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<AuthCubit, AuthState>(
-      bloc: widget._authCubit,
-      builder: (context, state) {
-        final inProgress = state.status == AuthStatus.inProgress;
-        final errorText = _errorText(context, state.status);
-        return Padding(
-          padding: AppSpacing.defaultTilePadding,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(context.l10n.authDescription),
-                TextFormField(
-                  controller: _usernameController,
-                  enabled: !inProgress,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  textInputAction: TextInputAction.next,
-                  autofillHints: const [AutofillHints.username],
-                  decoration: InputDecoration(
-                    labelText: context.l10n.username,
-                    border: const OutlineInputBorder(),
-                  ),
-                  validator: (value) => value == null || value.trim().isEmpty
-                      ? context.l10n.emptyError
-                      : null,
+  Widget build(BuildContext context) => BlocBuilder<AuthCubit, AuthState>(
+    bloc: widget._authCubit,
+    builder: (context, state) {
+      final inProgress = state.status == AuthStatus.inProgress;
+      final String? errorText = _errorText(context, state.status);
+      return Padding(
+        padding: AppSpacing.defaultTilePadding,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(context.l10n.authDescription),
+              TextFormField(
+                controller: _usernameController,
+                enabled: !inProgress,
+                autocorrect: false,
+                enableSuggestions: false,
+                textInputAction: TextInputAction.next,
+                autofillHints: const [AutofillHints.username],
+                decoration: InputDecoration(
+                  labelText: context.l10n.username,
+                  border: const OutlineInputBorder(),
                 ),
-                TextFormField(
-                  controller: _passwordController,
-                  enabled: !inProgress,
-                  obscureText: _obscurePassword,
-                  autocorrect: false,
-                  enableSuggestions: false,
-                  textInputAction: TextInputAction.done,
-                  autofillHints: const [AutofillHints.password],
-                  onFieldSubmitted: (_) async => _submit(),
-                  decoration: InputDecoration(
-                    labelText: context.l10n.password,
-                    border: const OutlineInputBorder(),
-                    errorText: errorText,
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_outlined
-                            : Icons.visibility_off_outlined,
-                      ),
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
+                validator: (value) => value == null || value.trim().isEmpty
+                    ? context.l10n.emptyError
+                    : null,
+              ),
+              TextFormField(
+                controller: _passwordController,
+                enabled: !inProgress,
+                obscureText: _obscurePassword,
+                autocorrect: false,
+                enableSuggestions: false,
+                textInputAction: TextInputAction.done,
+                autofillHints: const [AutofillHints.password],
+                onFieldSubmitted: (_) => _submit(),
+                decoration: InputDecoration(
+                  labelText: context.l10n.password,
+                  border: const OutlineInputBorder(),
+                  errorText: errorText,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
                     ),
+                    onPressed: () =>
+                        setState(() => _obscurePassword = !_obscurePassword),
                   ),
-                  validator: (value) => value == null || value.isEmpty
-                      ? context.l10n.emptyError
-                      : null,
                 ),
-                FilledButton.icon(
-                  onPressed: inProgress ? null : () async => _submit(),
-                  icon: inProgress
-                      ? const SizedBox.square(
-                          dimension: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : const Icon(Icons.login_outlined),
-                  label: Text(context.l10n.login),
-                ),
-                _AuthLinks(widget._settingsCubit),
-              ].spaced(height: AppSpacing.m),
-            ),
+                validator: (value) => value == null || value.isEmpty
+                    ? context.l10n.emptyError
+                    : null,
+              ),
+              FilledButton.icon(
+                onPressed: inProgress ? null : _submit,
+                icon: inProgress
+                    ? const SizedBox.square(
+                        dimension: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.login_outlined),
+                label: Text(context.l10n.login),
+              ),
+              _AuthLinks(widget._settingsCubit),
+            ].spaced(height: AppSpacing.m),
           ),
-        );
-      },
-    );
-  }
+        ),
+      );
+    },
+  );
 }
 
-class const _AuthLinks(this._settingsCubit) extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-
+class const _AuthLinks(final SettingsCubit _settingsCubit)
+    extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return TextButtonTheme(
-      data: TextButtonThemeData(
-        style: TextButton.styleFrom(
-          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+  Widget build(BuildContext context) => TextButtonTheme(
+    data: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
+    ),
+    child: OverflowBar(
+      alignment: MainAxisAlignment.end,
+      spacing: AppSpacing.s,
+      children: [
+        TextButton(
+          onPressed: () =>
+              Uri.https(
+                'github.com',
+                'Mosc/Glider/blob/master/PRIVACY.md',
+              ).tryLaunch(
+                context,
+                useInAppBrowser: _settingsCubit.state.useInAppBrowser,
+              ),
+          child: Text(context.l10n.privacyPolicy),
         ),
-      ),
-      child: OverflowBar(
-        alignment: MainAxisAlignment.end,
-        spacing: AppSpacing.s,
-        children: [
-          TextButton(
-            onPressed: () async =>
-                Uri.https(
-                  'github.com',
-                  'Mosc/Glider/blob/master/PRIVACY.md',
-                ).tryLaunch(
-                  context,
-                  useInAppBrowser: _settingsCubit.state.useInAppBrowser,
-                ),
-            child: Text(context.l10n.privacyPolicy),
-          ),
-          TextButton(
-            onPressed: () async => Uri.https('www.ycombinator.com', 'legal')
-                .replace(fragment: 'privacy')
-                .tryLaunch(
-                  context,
-                  useInAppBrowser: _settingsCubit.state.useInAppBrowser,
-                ),
-            child: Text(context.l10n.privacyPolicyYc),
-          ),
-          TextButton(
-            onPressed: () async => Uri.https('www.ycombinator.com', 'legal')
-                .replace(fragment: 'tou')
-                .tryLaunch(
-                  context,
-                  useInAppBrowser: _settingsCubit.state.useInAppBrowser,
-                ),
-            child: Text(context.l10n.termsOfUseYc),
-          ),
-        ],
-      ),
-    );
-  }
+        TextButton(
+          onPressed: () => Uri.https('www.ycombinator.com', 'legal')
+              .replace(fragment: 'privacy')
+              .tryLaunch(
+                context,
+                useInAppBrowser: _settingsCubit.state.useInAppBrowser,
+              ),
+          child: Text(context.l10n.privacyPolicyYc),
+        ),
+        TextButton(
+          onPressed: () => Uri.https('www.ycombinator.com', 'legal')
+              .replace(fragment: 'tou')
+              .tryLaunch(
+                context,
+                useInAppBrowser: _settingsCubit.state.useInAppBrowser,
+              ),
+          child: Text(context.l10n.termsOfUseYc),
+        ),
+      ],
+    ),
+  );
 }

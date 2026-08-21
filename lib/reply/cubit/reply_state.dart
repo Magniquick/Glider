@@ -1,11 +1,11 @@
 part of 'reply_cubit.dart';
 
 class const ReplyState({
-  this.parentItem,
-  this.text = const TextInput.pure(''),
-  this.isValid = false,
-  this.preview = true,
-  this.success = false,
+  final Item? parentItem,
+  final TextInput text = const TextInput.pure(''),
+  final bool isValid = false,
+  final bool preview = true,
+  final bool success = false,
 }) with EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => ReplyState(
     parentItem: json['parentItem'] != null
@@ -20,12 +20,6 @@ class const ReplyState({
     'text': text.value,
     'isValid': isValid,
   };
-
-  final Item? parentItem;
-  final TextInput text;
-  final bool isValid;
-  final bool preview;
-  final bool success;
 
   ReplyState copyWith({
     Item Function()? parentItem,

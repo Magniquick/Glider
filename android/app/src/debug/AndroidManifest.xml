@@ -1,0 +1,7 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <!-- Distinguish the debug install from a release one in the launcher. -->
+    <application
+        android:label="Glider (debug)"
+        tools:replace="android:label" />
+</manifest>

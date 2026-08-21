@@ -18,7 +18,9 @@ jobs:
       - name: Bootstrap workspace
         uses: ./.github/actions/bootstrap
       - name: Run static analysis checks
-        run: melos lint
+        run: dart run melos run lint
+      - name: Run tests
+        run: dart run melos run test
       - name: Build Android APK (profile)
         run: flutter build apk --profile
       - name: Upload APK (profile) artifact

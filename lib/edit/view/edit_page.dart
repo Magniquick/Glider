@@ -17,13 +17,16 @@ import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:go_router/go_router.dart';
 
-class EditPage(this._editCubitFactory, this._settingsCubit, {required this.id})
-    extends StatefulWidget {
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
+class EditPage(
+  final EditCubitFactory _editCubitFactory,
+  final SettingsCubit _settingsCubit, {
+  required final int id,
+}) extends StatefulWidget {
   this : super(key: ValueKey(id));
-
-  final EditCubitFactory _editCubitFactory;
-  final SettingsCubit _settingsCubit;
-  final int id;
 
   @override
   State<EditPage> createState() => _EditPageState();
@@ -45,69 +48,60 @@ class _EditPageState() extends State<EditPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<EditCubit, EditState>(
-      bloc: _editCubit,
-      listenWhen: (previous, current) => previous.success != current.success,
-      listener: (context, state) {
-        if (state.success) context.pop();
-      },
-      builder: (context, state) => Scaffold(
-        body: CustomScrollView(
-          slivers: [
-            const _SliverEditAppBar(),
-            SliverSafeArea(
-              top: false,
-              sliver: SliverToBoxAdapter(child: _EditBody(_editCubit)),
-            ),
-            const SliverPadding(
-              padding: AppSpacing.floatingActionButtonPageBottomPadding,
-            ),
-          ],
-        ),
-        bottomNavigationBar: BlocSelector<EditCubit, EditState, bool>(
-          bloc: _editCubit,
-          selector: (state) => state.preview,
-          builder: (context, preview) => PreviewBottomPanel(
-            visible: preview,
-            onChanged: _editCubit.setPreview,
-            child: _EditPreview(_editCubit, widget._settingsCubit),
+  Widget build(BuildContext context) => BlocConsumer<EditCubit, EditState>(
+    bloc: _editCubit,
+    listenWhen: (previous, current) => previous.success != current.success,
+    listener: (context, state) {
+      if (state.success) context.pop();
+    },
+    builder: (context, state) => Scaffold(
+      body: CustomScrollView(
+        slivers: [
+          const _SliverEditAppBar(),
+          SliverSafeArea(
+            top: false,
+            sliver: SliverToBoxAdapter(child: _EditBody(_editCubit)),
           ),
-        ),
-        floatingActionButton: state.isValid
-            ? FloatingActionButton.extended(
-                onPressed: () async => _editCubit.edit(),
-                label: Text(context.l10n.edit),
-                icon: const Icon(Icons.edit_outlined),
-              )
-            : null,
+          const SliverPadding(
+            padding: AppSpacing.floatingActionButtonPageBottomPadding,
+          ),
+        ],
       ),
-    );
-  }
+      bottomNavigationBar: BlocSelector<EditCubit, EditState, bool>(
+        bloc: _editCubit,
+        selector: (state) => state.preview,
+        builder: (context, preview) => PreviewBottomPanel(
+          visible: preview,
+          onChanged: _editCubit.setPreview,
+          child: _EditPreview(_editCubit, widget._settingsCubit),
+        ),
+      ),
+      floatingActionButton: state.isValid
+          ? FloatingActionButton.extended(
+              onPressed: () => _editCubit.edit(),
+              label: Text(context.l10n.edit),
+              icon: const Icon(Icons.edit_outlined),
+            )
+          : null,
+    ),
+  );
 }
 
 class const _SliverEditAppBar() extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return SliverAppBar.medium(title: Text(context.l10n.edit));
-  }
+  Widget build(BuildContext context) =>
+      SliverAppBar.medium(title: Text(context.l10n.edit));
 }
 
-class const _EditBody(this._editCubit) extends StatelessWidget {
-  final EditCubit _editCubit;
-
+class const _EditBody(final EditCubit _editCubit) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-      child: _EditForm(_editCubit),
-    );
-  }
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
+    child: _EditForm(_editCubit),
+  );
 }
 
-class const _EditForm(this._editCubit) extends StatefulWidget {
-  final EditCubit _editCubit;
-
+class const _EditForm(final EditCubit _editCubit) extends StatefulWidget {
   @override
   State<_EditForm> createState() => _EditFormState();
 }
@@ -120,7 +114,7 @@ class _EditFormState() extends State<_EditForm> {
   @override
   void initState() {
     super.initState();
-    final state = widget._editCubit.state;
+    final EditState state = widget._editCubit.state;
     _titleController = TextEditingController(text: state.title?.value);
     _urlController = TextEditingController(text: state.item?.url?.toString());
     _textController = TextEditingController(text: state.text?.value);
@@ -135,127 +129,122 @@ class _EditFormState() extends State<_EditForm> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocConsumer<EditCubit, EditState>(
-      bloc: widget._editCubit,
-      listener: (context, state) {
-        if (state.title?.value case final title?) {
-          if (title != _titleController.text) {
-            _titleController.value = TextEditingValue(
-              text: title,
-              selection: TextSelection.collapsed(offset: title.length),
-            );
-          }
+  Widget build(BuildContext context) => BlocConsumer<EditCubit, EditState>(
+    bloc: widget._editCubit,
+    listener: (context, state) {
+      if (state.title?.value case final title?) {
+        if (title != _titleController.text) {
+          _titleController.value = TextEditingValue(
+            text: title,
+            selection: TextSelection.collapsed(offset: title.length),
+          );
         }
+      }
 
-        if (state.item?.url?.toString() case final url?) {
-          if (url != _urlController.text) {
-            _urlController.value = TextEditingValue(
-              text: url,
-              selection: TextSelection.collapsed(offset: url.length),
-            );
-          }
+      if (state.item?.url?.toString() case final url?) {
+        if (url != _urlController.text) {
+          _urlController.value = TextEditingValue(
+            text: url,
+            selection: TextSelection.collapsed(offset: url.length),
+          );
         }
+      }
 
-        if (state.text?.value case final text?) {
-          if (text != _textController.text) {
-            _textController.value = TextEditingValue(
-              text: text,
-              selection: TextSelection.collapsed(offset: text.length),
-            );
-          }
+      if (state.text?.value case final text?) {
+        if (text != _textController.text) {
+          _textController.value = TextEditingValue(
+            text: text,
+            selection: TextSelection.collapsed(offset: text.length),
+          );
         }
-      },
-      builder: (context, state) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (state.title != null)
-            BlocBuilder<EditCubit, EditState>(
-              bloc: widget._editCubit,
-              buildWhen: (previous, current) => previous.title != current.title,
-              builder: (context, state) => TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.title,
-                  errorText: state.title?.displayError?.label(context),
-                ),
-                textCapitalization: TextCapitalization.words,
-                maxLength: TitleInput.maxLength,
-                maxLengthEnforcement: MaxLengthEnforcement.none,
-                onChanged: widget._editCubit.setTitle,
+      }
+    },
+    builder: (context, state) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (state.title != null)
+          BlocBuilder<EditCubit, EditState>(
+            bloc: widget._editCubit,
+            buildWhen: (previous, current) => previous.title != current.title,
+            builder: (context, state) => TextFormField(
+              controller: _titleController,
+              decoration: InputDecoration(
+                labelText: context.l10n.title,
+                errorText: state.title?.displayError?.label(context),
               ),
+              textCapitalization: TextCapitalization.words,
+              maxLength: TitleInput.maxLength,
+              maxLengthEnforcement: MaxLengthEnforcement.none,
+              onChanged: widget._editCubit.setTitle,
             ),
-          if (state.item?.url != null)
-            BlocBuilder<EditCubit, EditState>(
-              bloc: widget._editCubit,
-              buildWhen: (previous, current) =>
-                  previous.item?.url != current.item?.url,
-              builder: (context, state) => TextFormField(
-                controller: _urlController,
-                decoration: InputDecoration(labelText: context.l10n.link),
-                enabled: false,
+          ),
+        if (state.item?.url != null)
+          BlocBuilder<EditCubit, EditState>(
+            bloc: widget._editCubit,
+            buildWhen: (previous, current) =>
+                previous.item?.url != current.item?.url,
+            builder: (context, state) => TextFormField(
+              controller: _urlController,
+              decoration: InputDecoration(labelText: context.l10n.link),
+              enabled: false,
+            ),
+          ),
+        if (state.text != null)
+          BlocBuilder<EditCubit, EditState>(
+            bloc: widget._editCubit,
+            buildWhen: (previous, current) => previous.text != current.text,
+            builder: (context, state) => TextFormField(
+              controller: _textController,
+              decoration: InputDecoration(
+                labelText: context.l10n.text,
+                errorText: state.text?.displayError?.label(context),
               ),
+              keyboardType: TextInputType.multiline,
+              textCapitalization: TextCapitalization.sentences,
+              maxLines: null,
+              onChanged: widget._editCubit.setText,
             ),
-          if (state.text != null)
-            BlocBuilder<EditCubit, EditState>(
-              bloc: widget._editCubit,
-              buildWhen: (previous, current) => previous.text != current.text,
-              builder: (context, state) => TextFormField(
-                controller: _textController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.text,
-                  errorText: state.text?.displayError?.label(context),
-                ),
-                keyboardType: TextInputType.multiline,
-                textCapitalization: TextCapitalization.sentences,
-                maxLines: null,
-                onChanged: widget._editCubit.setText,
-              ),
-            ),
-        ].spaced(height: AppSpacing.m),
-      ),
-    );
-  }
+          ),
+      ].spaced(height: AppSpacing.m),
+    ),
+  );
 }
 
-class const _EditPreview(this._editCubit, this._settingsCubit)
-    extends StatelessWidget {
-  final EditCubit _editCubit;
-  final SettingsCubit _settingsCubit;
-
+class const _EditPreview(
+  final EditCubit _editCubit,
+  final SettingsCubit _settingsCubit,
+) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      primary: false,
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: PreviewCard(
-          child: BlocBuilder<EditCubit, EditState>(
-            bloc: _editCubit,
-            buildWhen: (previous, current) =>
-                previous.item != current.item ||
-                previous.title != current.title ||
-                previous.text != current.text,
-            builder: (context, state) => state.item != null
-                ? BlocBuilder<SettingsCubit, SettingsState>(
-                    bloc: _settingsCubit,
-                    builder: (context, settingsState) => ItemDataTile(
-                      state.item!.copyWith(
-                        title: () => state.title?.value,
-                        text: () => state.text?.value,
-                      ),
-                      storyLines: settingsState.storyLines,
-                      useLargeStoryStyle: settingsState.useLargeStoryStyle,
-                      showFavicons: settingsState.showFavicons,
-                      showUserAvatars: settingsState.showUserAvatars,
-                      usernameStyle: UsernameStyle.loggedInUser,
-                      useInAppBrowser: settingsState.useInAppBrowser,
+  Widget build(BuildContext context) => SingleChildScrollView(
+    primary: false,
+    child: Padding(
+      padding: const EdgeInsets.all(AppSpacing.xl),
+      child: PreviewCard(
+        child: BlocBuilder<EditCubit, EditState>(
+          bloc: _editCubit,
+          buildWhen: (previous, current) =>
+              previous.item != current.item ||
+              previous.title != current.title ||
+              previous.text != current.text,
+          builder: (context, state) => state.item != null
+              ? BlocBuilder<SettingsCubit, SettingsState>(
+                  bloc: _settingsCubit,
+                  builder: (context, settingsState) => ItemDataTile(
+                    state.item!.copyWith(
+                      title: () => state.title?.value,
+                      text: () => state.text?.value,
                     ),
-                  )
-                : const SizedBox.shrink(),
-          ),
+                    storyLines: settingsState.storyLines,
+                    useLargeStoryStyle: settingsState.useLargeStoryStyle,
+                    showFavicons: settingsState.showFavicons,
+                    showUserAvatars: settingsState.showUserAvatars,
+                    usernameStyle: UsernameStyle.loggedInUser,
+                    useInAppBrowser: settingsState.useInAppBrowser,
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ),
-    );
-  }
+    ),
+  );
 }

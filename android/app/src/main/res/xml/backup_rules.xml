@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Used on Android 11 and below. flutter_secure_storage wraps its AES key with an
+  Android Keystore key, which is never backed up, so a restored copy of these
+  files cannot be decrypted; restoring them yields an unusable session rather
+  than a leaked one. Exclude all three files the plugin writes.
+-->
 <full-backup-content>
-    <exclude domain="sharedpref" path="FlutterSecureStorage"/>
+    <exclude domain="sharedpref" path="FlutterSecureKeyStorage.xml"/>
+    <exclude domain="sharedpref" path="FlutterSecureStorageConfiguration:FlutterSecureStorage.xml"/>
+    <exclude domain="sharedpref" path="FlutterSecureStorage.xml"/>
 </full-backup-content>

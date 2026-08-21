@@ -9,9 +9,9 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'story_similar_state.dart';
 
-class StorySimilarCubit(this._itemRepository, {required int id})
+class StorySimilarCubit(final ItemRepository _itemRepository, {required int id})
     extends HydratedCubit<StorySimilarState> {
-  this : itemId = id, super(const StorySimilarState()) {
+  this : super(const StorySimilarState()) {
     safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
       (item) async {
@@ -30,8 +30,7 @@ class StorySimilarCubit(this._itemRepository, {required int id})
     );
   }
 
-  final ItemRepository _itemRepository;
-  final int itemId;
+  final int itemId = id;
 
   late final StreamSubscription<Item> _itemSubscription;
 
@@ -41,10 +40,8 @@ class StorySimilarCubit(this._itemRepository, {required int id})
   Future<void> _load() async {
     if (state.item?.url case final url?) {
       try {
-        final similarStories = await _itemRepository.getSimilarStories(
-          itemId,
-          url: url.toString(),
-        );
+        final List<Item> similarStories = await _itemRepository
+            .getSimilarStories(itemId, url: url.toString());
         safeEmit(
           state.copyWith(
             status: () => Status.success,

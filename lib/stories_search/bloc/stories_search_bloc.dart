@@ -16,8 +16,8 @@ part 'stories_search_event.dart';
 part 'stories_search_state.dart';
 
 class StoriesSearchBloc(
-  this._itemRepository, {
-  this.searchType = SearchType.search,
+  final ItemRepository _itemRepository, {
+  final SearchType searchType = SearchType.search,
 }) extends HydratedBloc<StoriesSearchEvent, StoriesSearchState> {
   this
     : super(
@@ -28,20 +28,15 @@ class StoriesSearchBloc(
         ),
       ) {
     on<LoadStoriesSearchEvent>(
-      (event, emit) async => _load(),
+      (event, emit) => _load(),
       transformer: debounce(const Duration(milliseconds: 300)),
     );
-    on<SetTextStoriesSearchEvent>((event, emit) async => _setText(event));
+    on<SetTextStoriesSearchEvent>((event, emit) => _setText(event));
     on<SetSearchRangeStoriesSearchEvent>(
-      (event, emit) async => _setSearchRange(event),
+      (event, emit) => _setSearchRange(event),
     );
-    on<SetDateRangeStoriesSearchEvent>(
-      (event, emit) async => _setDateRange(event),
-    );
+    on<SetDateRangeStoriesSearchEvent>((event, emit) => _setDateRange(event));
   }
-
-  final ItemRepository _itemRepository;
-  final SearchType searchType;
 
   @override
   String get id => searchType.name;
@@ -56,14 +51,14 @@ class StoriesSearchBloc(
     );
 
     try {
-      final dateRange =
+      final DateTimeRange<DateTime>? dateRange =
           state.searchRange == SearchRange.custom && state.dateRange != null
           ? DateTimeRange(
               start: state.dateRange!.start,
               end: state.dateRange!.end.add(const Duration(days: 1)),
             )
           : state.searchRange?.dateRange();
-      final items = await _itemRepository.searchStories(
+      final List<Item> items = await _itemRepository.searchStories(
         text: state.searchText,
         startDate: dateRange?.start,
         endDate: dateRange?.end,

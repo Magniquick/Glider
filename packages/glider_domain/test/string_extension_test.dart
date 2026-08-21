@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:glider_domain/src/extensions/string_extension.dart';
+import 'package:glider_domain/glider_domain.dart';
 
 /// Extracts the label and destination from `[label](<destination>)`.
 ({String label, String destination}) parseLink(String markdown) {
@@ -22,14 +22,14 @@ void main() {
       final link = parseLink(convertAnchor(href));
       expect(
         link.label,
-        'https://en.wikipedia.org/wiki/Bhāskara_I\'s_sine_approximation_formula',
+        "https://en.wikipedia.org/wiki/Bhāskara_I's_sine_approximation_formula",
       );
       expect(link.destination, href, reason: 'target must stay encoded');
     });
 
     test('decodes multi-byte UTF-8 escapes', () {
       const href =
-          'https://en.wikipedia.org/wiki/%C4%80ryabha%E1%B9%ADa\'s_sine_table';
+          "https://en.wikipedia.org/wiki/%C4%80ryabha%E1%B9%ADa's_sine_table";
       final link = parseLink(convertAnchor(href));
       expect(link.label, contains('Āryabhaṭa'));
       expect(link.destination, href);
@@ -85,6 +85,22 @@ void main() {
         'https://example.com/a%3Cb%3Ec',
       );
     });
+
+    test('escapes markdown metacharacters revealed by decoding', () {
+      // %2A decodes to `*` and %60 to a backtick; unescaped they would turn
+      // part of the displayed URL into emphasis or inline code.
+      final link = parseLink(convertAnchor('https://ex.com/%2Ax%2A/%60y%60'));
+      expect(link.label, r'https://ex.com/\*x\*/\`y\`');
+      expect(link.destination, 'https://ex.com/%2Ax%2A/%60y%60');
+    });
+
+    test(
+      'percent-encodes a backslash so it cannot escape the closing angle',
+      () {
+        final link = parseLink(convertAnchor(r'https://example.com/a\'));
+        expect(link.destination, 'https://example.com/a%5C');
+      },
+    );
 
     test('falls back to the anchor text when there is no href', () {
       expect(

@@ -15,42 +15,46 @@ part 'settings_cubit_event.dart';
 part 'settings_state.dart';
 
 class SettingsCubit(
-  this._settingsRepository,
-  this._packageRepository,
-  this._itemInteractionRepository,
+  final SettingsRepository _settingsRepository,
+  final PackageRepository _packageRepository,
+  final ItemInteractionRepository _itemInteractionRepository,
 ) extends Cubit<SettingsState>
-    with BlocPresentationMixin<SettingsState, SettingsCubitEvent> {
+    with BlocPresentationMixin<SettingsState, SettingsPresentationEvent> {
   this : super(const SettingsState()) {
     unawaited(_load());
   }
 
-  final SettingsRepository _settingsRepository;
-  final PackageRepository _packageRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
-
   Future<void> _load() async {
-    final themeMode = await _settingsRepository.getThemeMode();
-    final useDynamicTheme = await _settingsRepository.getUseDynamicTheme();
-    final themeColor = await _settingsRepository.getThemeColor();
-    final themeVariant = await _settingsRepository.getThemeVariant();
-    final usePureBackground = await _settingsRepository.getUsePureBackground();
-    final font = await _settingsRepository.getFont();
-    final storyLines = await _settingsRepository.getStoryLines();
-    final useLargeStoryStyle = await _settingsRepository
+    final ThemeMode? themeMode = await _settingsRepository.getThemeMode();
+    final bool? useDynamicTheme = await _settingsRepository
+        .getUseDynamicTheme();
+    final Color? themeColor = await _settingsRepository.getThemeColor();
+    final Variant? themeVariant = await _settingsRepository.getThemeVariant();
+    final bool? usePureBackground = await _settingsRepository
+        .getUsePureBackground();
+    final String? font = await _settingsRepository.getFont();
+    final int? storyLines = await _settingsRepository.getStoryLines();
+    final bool? useLargeStoryStyle = await _settingsRepository
         .getUseLargeStoryStyle();
-    final showFavicons = await _settingsRepository.getShowFavicons();
-    final showStoryMetadata = await _settingsRepository.getShowStoryMetadata();
-    final showUserAvatars = await _settingsRepository.getShowUserAvatars();
-    final useActionButtons = await _settingsRepository.getUseActionButtons();
-    final showJobs = await _settingsRepository.getShowJobs();
-    final useThreadNavigation = await _settingsRepository
+    final bool? showFavicons = await _settingsRepository.getShowFavicons();
+    final bool? showStoryMetadata = await _settingsRepository
+        .getShowStoryMetadata();
+    final bool? showUserAvatars = await _settingsRepository
+        .getShowUserAvatars();
+    final bool? useActionButtons = await _settingsRepository
+        .getUseActionButtons();
+    final bool? showJobs = await _settingsRepository.getShowJobs();
+    final bool? useThreadNavigation = await _settingsRepository
         .getUseThreadNavigation();
-    final enableDownvoting = await _settingsRepository.getEnableDownvoting();
-    final useInAppBrowser = await _settingsRepository.getUseInAppBrowser();
-    final useNavigationDrawer = await _settingsRepository
+    final bool? enableDownvoting = await _settingsRepository
+        .getEnableDownvoting();
+    final bool? useInAppBrowser = await _settingsRepository
+        .getUseInAppBrowser();
+    final bool? useNavigationDrawer = await _settingsRepository
         .getUseNavigationDrawer();
-    final wordFilters = await _settingsRepository.getWordFilters();
-    final domainFilters = await _settingsRepository.getDomainFilters();
+    final Set<String>? wordFilters = await _settingsRepository.getWordFilters();
+    final Set<String>? domainFilters = await _settingsRepository
+        .getDomainFilters();
     safeEmit(
       state.copyWith(
         themeMode: themeMode != null ? () => themeMode : null,
@@ -93,7 +97,7 @@ class SettingsCubit(
 
   Future<void> setUseLargeStoryStyle(bool value) async {
     await _settingsRepository.setUseLargeStoryStyle(value: value);
-    final useLargeStoryStyle = await _settingsRepository
+    final bool? useLargeStoryStyle = await _settingsRepository
         .getUseLargeStoryStyle();
 
     if (useLargeStoryStyle != null) {
@@ -103,7 +107,7 @@ class SettingsCubit(
 
   Future<void> setThemeMode(ThemeMode value) async {
     await _settingsRepository.setThemeMode(value: value);
-    final themeMode = await _settingsRepository.getThemeMode();
+    final ThemeMode? themeMode = await _settingsRepository.getThemeMode();
 
     if (themeMode != null) {
       safeEmit(state.copyWith(themeMode: () => themeMode));
@@ -112,7 +116,8 @@ class SettingsCubit(
 
   Future<void> setUseDynamicTheme(bool value) async {
     await _settingsRepository.setUseDynamicTheme(value: value);
-    final useDynamicTheme = await _settingsRepository.getUseDynamicTheme();
+    final bool? useDynamicTheme = await _settingsRepository
+        .getUseDynamicTheme();
 
     if (useDynamicTheme != null) {
       safeEmit(state.copyWith(useDynamicTheme: () => useDynamicTheme));
@@ -121,7 +126,7 @@ class SettingsCubit(
 
   Future<void> setThemeColor(Color value) async {
     await _settingsRepository.setThemeColor(value: value);
-    final themeColor = await _settingsRepository.getThemeColor();
+    final Color? themeColor = await _settingsRepository.getThemeColor();
 
     if (themeColor != null) {
       safeEmit(state.copyWith(themeColor: () => themeColor));
@@ -130,7 +135,7 @@ class SettingsCubit(
 
   Future<void> setThemeVariant(Variant value) async {
     await _settingsRepository.setThemeVariant(value: value);
-    final themeVariant = await _settingsRepository.getThemeVariant();
+    final Variant? themeVariant = await _settingsRepository.getThemeVariant();
 
     if (themeVariant != null) {
       safeEmit(state.copyWith(themeVariant: () => themeVariant));
@@ -139,7 +144,8 @@ class SettingsCubit(
 
   Future<void> setUsePureBackground(bool value) async {
     await _settingsRepository.setUsePureBackground(value: value);
-    final usePureBackground = await _settingsRepository.getUsePureBackground();
+    final bool? usePureBackground = await _settingsRepository
+        .getUsePureBackground();
 
     if (usePureBackground != null) {
       safeEmit(state.copyWith(usePureBackground: () => usePureBackground));
@@ -148,7 +154,7 @@ class SettingsCubit(
 
   Future<void> setStoryLines(int value) async {
     await _settingsRepository.setStoryLines(value: value);
-    final storyLines = await _settingsRepository.getStoryLines();
+    final int? storyLines = await _settingsRepository.getStoryLines();
 
     if (storyLines != null) {
       safeEmit(state.copyWith(storyLines: () => storyLines));
@@ -157,7 +163,7 @@ class SettingsCubit(
 
   Future<void> setFont(String value) async {
     await _settingsRepository.setFont(value: value);
-    final font = await _settingsRepository.getFont();
+    final String? font = await _settingsRepository.getFont();
 
     if (font != null) {
       safeEmit(state.copyWith(font: () => font));
@@ -166,7 +172,7 @@ class SettingsCubit(
 
   Future<void> setShowFavicons(bool value) async {
     await _settingsRepository.setShowFavicons(value: value);
-    final showFavicons = await _settingsRepository.getShowFavicons();
+    final bool? showFavicons = await _settingsRepository.getShowFavicons();
 
     if (showFavicons != null) {
       safeEmit(state.copyWith(showFavicons: () => showFavicons));
@@ -175,7 +181,8 @@ class SettingsCubit(
 
   Future<void> setShowStoryMetadata(bool value) async {
     await _settingsRepository.setShowStoryMetadata(value: value);
-    final showStoryMetadata = await _settingsRepository.getShowStoryMetadata();
+    final bool? showStoryMetadata = await _settingsRepository
+        .getShowStoryMetadata();
 
     if (showStoryMetadata != null) {
       safeEmit(state.copyWith(showStoryMetadata: () => showStoryMetadata));
@@ -184,7 +191,8 @@ class SettingsCubit(
 
   Future<void> setShowUserAvatars(bool value) async {
     await _settingsRepository.setShowUserAvatars(value: value);
-    final showUserAvatars = await _settingsRepository.getShowUserAvatars();
+    final bool? showUserAvatars = await _settingsRepository
+        .getShowUserAvatars();
 
     if (showUserAvatars != null) {
       safeEmit(state.copyWith(showUserAvatars: () => showUserAvatars));
@@ -193,7 +201,8 @@ class SettingsCubit(
 
   Future<void> setUseActionButtons(bool value) async {
     await _settingsRepository.setUseActionButtons(value: value);
-    final useActionButtons = await _settingsRepository.getUseActionButtons();
+    final bool? useActionButtons = await _settingsRepository
+        .getUseActionButtons();
 
     if (useActionButtons != null) {
       safeEmit(state.copyWith(useActionButtons: () => useActionButtons));
@@ -202,7 +211,7 @@ class SettingsCubit(
 
   Future<void> setShowJobs(bool value) async {
     await _settingsRepository.setShowJobs(value: value);
-    final showJobs = await _settingsRepository.getShowJobs();
+    final bool? showJobs = await _settingsRepository.getShowJobs();
 
     if (showJobs != null) {
       safeEmit(state.copyWith(showJobs: () => showJobs));
@@ -211,7 +220,7 @@ class SettingsCubit(
 
   Future<void> setUseThreadNavigation(bool value) async {
     await _settingsRepository.setUseThreadNavigation(value: value);
-    final useThreadNavigation = await _settingsRepository
+    final bool? useThreadNavigation = await _settingsRepository
         .getUseThreadNavigation();
 
     if (useThreadNavigation != null) {
@@ -221,7 +230,8 @@ class SettingsCubit(
 
   Future<void> setEnableDownvoting(bool value) async {
     await _settingsRepository.setEnableDownvoting(value: value);
-    final enableDownvoting = await _settingsRepository.getEnableDownvoting();
+    final bool? enableDownvoting = await _settingsRepository
+        .getEnableDownvoting();
 
     if (enableDownvoting != null) {
       safeEmit(state.copyWith(enableDownvoting: () => enableDownvoting));
@@ -230,7 +240,8 @@ class SettingsCubit(
 
   Future<void> setUseInAppBrowser(bool value) async {
     await _settingsRepository.setUseInAppBrowser(value: value);
-    final useInAppBrowser = await _settingsRepository.getUseInAppBrowser();
+    final bool? useInAppBrowser = await _settingsRepository
+        .getUseInAppBrowser();
 
     if (useInAppBrowser != null) {
       safeEmit(state.copyWith(useInAppBrowser: () => useInAppBrowser));
@@ -239,7 +250,7 @@ class SettingsCubit(
 
   Future<void> setUseNavigationDrawer(bool value) async {
     await _settingsRepository.setUseNavigationDrawer(value: value);
-    final useNavigationDrawer = await _settingsRepository
+    final bool? useNavigationDrawer = await _settingsRepository
         .getUseNavigationDrawer();
 
     if (useNavigationDrawer != null) {
@@ -249,7 +260,7 @@ class SettingsCubit(
 
   Future<void> setWordFilter(String value, {required bool filter}) async {
     await _settingsRepository.setWordFilter(value: value, filter: filter);
-    final wordFilters = await _settingsRepository.getWordFilters();
+    final Set<String>? wordFilters = await _settingsRepository.getWordFilters();
 
     if (wordFilters != null) {
       safeEmit(state.copyWith(wordFilters: () => wordFilters));
@@ -258,7 +269,8 @@ class SettingsCubit(
 
   Future<void> setDomainFilter(String value, {required bool filter}) async {
     await _settingsRepository.setDomainFilter(value: value, filter: filter);
-    final domainFilters = await _settingsRepository.getDomainFilters();
+    final Set<String>? domainFilters = await _settingsRepository
+        .getDomainFilters();
 
     if (domainFilters != null) {
       safeEmit(state.copyWith(domainFilters: () => domainFilters));
@@ -266,7 +278,8 @@ class SettingsCubit(
   }
 
   Future<void> exportFavorites() async {
-    final favorites = await _itemInteractionRepository.favoritedStream.first;
+    final List<int> favorites =
+        await _itemInteractionRepository.favoritedStream.first;
 
     try {
       await Share.share(jsonEncode(favorites));
@@ -276,7 +289,7 @@ class SettingsCubit(
   }
 
   Future<void> clearVisited() async {
-    final success = await _itemInteractionRepository.clearVisited();
+    final bool success = await _itemInteractionRepository.clearVisited();
 
     if (!success) {
       emitPresentation(const SettingsActionFailedEvent());

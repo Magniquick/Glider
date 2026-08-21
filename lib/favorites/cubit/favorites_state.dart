@@ -1,9 +1,9 @@
 part of 'favorites_cubit.dart';
 
 class const FavoritesState({
-  this.status = Status.initial,
-  this.data,
-  this.exception,
+  @override final Status status = Status.initial,
+  @override final List<int>? data,
+  @override final Object? exception,
 }) with DataMixin<List<int>>, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => FavoritesState(
     status: Status.values.byName(json['status'] as String),
@@ -16,13 +16,6 @@ class const FavoritesState({
     'status': status.name,
     'data': data,
   };
-
-  @override
-  final Status status;
-  @override
-  final List<int>? data;
-  @override
-  final Object? exception;
 
   FavoritesState copyWith({
     Status Function()? status,

@@ -8,8 +8,8 @@ import 'package:url_launcher/url_launcher.dart';
 extension UriExtension on Uri {
   Future<bool> tryLaunch(
     BuildContext context, {
-    String? title,
     required bool useInAppBrowser,
+    String? title,
   }) async {
     if (authority == AppUris.hackerNewsUri.authority) {
       unawaited(context.push(toString()));
@@ -18,7 +18,7 @@ extension UriExtension on Uri {
 
     if (await canLaunchUrl(this)) {
       if (await supportsLaunchMode(LaunchMode.externalNonBrowserApplication)) {
-        final success = await launchUrl(
+        final bool success = await launchUrl(
           this,
           mode: LaunchMode.externalNonBrowserApplication,
           webOnlyWindowName: title,
@@ -28,7 +28,7 @@ extension UriExtension on Uri {
 
       if (useInAppBrowser &&
           await supportsLaunchMode(LaunchMode.inAppBrowserView)) {
-        final success = await launchUrl(
+        final bool success = await launchUrl(
           this,
           mode: LaunchMode.inAppBrowserView,
           webOnlyWindowName: title,
@@ -37,7 +37,7 @@ extension UriExtension on Uri {
       }
 
       if (await supportsLaunchMode(LaunchMode.externalApplication)) {
-        final success = await launchUrl(
+        final bool success = await launchUrl(
           this,
           mode: LaunchMode.externalApplication,
           webOnlyWindowName: title,

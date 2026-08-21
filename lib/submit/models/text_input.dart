@@ -7,11 +7,10 @@ enum TextValidationError() {
 }
 
 extension TextValidationErrorExtension on TextValidationError {
-  String label(BuildContext context, {required String otherField}) {
-    return switch (this) {
-      TextValidationError.empty => context.l10n.bothEmptyError(otherField),
-    };
-  }
+  String label(BuildContext context, {required String otherField}) =>
+      switch (this) {
+        TextValidationError.empty => context.l10n.bothEmptyError(otherField),
+      };
 }
 
 final class TextInput extends FormzInput<String, TextValidationError> {

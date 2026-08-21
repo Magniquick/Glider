@@ -3,21 +3,21 @@ import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/src/extensions/string_extension.dart';
 
 class Item({
-  required this.id,
-  this.isDeleted = false,
-  this.type,
-  this.username,
-  this.dateTime,
-  this.text,
-  this.isDead = false,
-  this.parentId,
-  this.pollId,
-  this.childIds,
-  this.url,
-  this.score,
-  this.title,
-  this.partIds,
-  this.descendantCount,
+  required final int id,
+  final bool isDeleted = false,
+  final ItemType? type,
+  final String? username,
+  final DateTime? dateTime,
+  final String? text,
+  final bool isDead = false,
+  final int? parentId,
+  final int? pollId,
+  final List<int>? childIds,
+  final Uri? url,
+  final int? score,
+  final String? title,
+  final List<int>? partIds,
+  final int? descendantCount,
 }) with EquatableMixin {
   factory fromDto(ItemDto dto) => Item(
     id: dto.id,
@@ -98,22 +98,6 @@ class Item({
     'partIds': partIds,
     'descendantCount': descendantCount,
   };
-
-  final int id;
-  final bool isDeleted;
-  final ItemType? type;
-  final String? username;
-  final DateTime? dateTime;
-  final String? text;
-  final bool isDead;
-  final int? parentId;
-  final int? pollId;
-  final List<int>? childIds;
-  final Uri? url;
-  final int? score;
-  final String? title;
-  final List<int>? partIds;
-  final int? descendantCount;
 
   Item copyWith({
     int Function()? id,

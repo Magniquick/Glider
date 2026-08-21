@@ -12,57 +12,46 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:relative_time/relative_time.dart';
 
 class const App(
-  this._settingsCubit,
-  this._routerConfig,
-  this._deviceInfo, {
+  final SettingsCubit _settingsCubit,
+  final RouterConfig<Object> _routerConfig,
+  final BaseDeviceInfo _deviceInfo, {
   super.key,
 }) extends StatelessWidget {
-  final SettingsCubit _settingsCubit;
-  final RouterConfig<Object> _routerConfig;
-  final BaseDeviceInfo _deviceInfo;
-
   @override
-  Widget build(BuildContext context) {
-    return DynamicColorBuilder(
-      builder: (lightDynamic, darkDynamic) =>
-          BlocBuilder<SettingsCubit, SettingsState>(
-            bloc: _settingsCubit,
-            buildWhen: (previous, current) =>
-                previous.themeMode != current.themeMode ||
-                previous.useDynamicTheme != current.useDynamicTheme ||
-                previous.themeColor != current.themeColor ||
-                previous.themeVariant != current.themeVariant ||
-                previous.usePureBackground != current.usePureBackground ||
-                previous.font != current.font,
-            builder: (context, state) => MaterialApp.router(
-              routerConfig: _routerConfig,
-              theme: _buildTheme(
-                context,
-                state,
-                lightDynamic,
-                Brightness.light,
-              ),
-              darkTheme: _buildTheme(
-                context,
-                state,
-                darkDynamic,
-                Brightness.dark,
-              ),
-              themeMode: state.themeMode.toMaterialThemeMode(),
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                RelativeTimeLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-              ],
-              supportedLocales: AppLocalizations.supportedLocales,
-              debugShowCheckedModeBanner: false,
-              scrollBehavior: _AppScrollBehavior(_deviceInfo),
+  Widget build(BuildContext context) => DynamicColorBuilder(
+    builder: (lightDynamic, darkDynamic) =>
+        BlocBuilder<SettingsCubit, SettingsState>(
+          bloc: _settingsCubit,
+          buildWhen: (previous, current) =>
+              previous.themeMode != current.themeMode ||
+              previous.useDynamicTheme != current.useDynamicTheme ||
+              previous.themeColor != current.themeColor ||
+              previous.themeVariant != current.themeVariant ||
+              previous.usePureBackground != current.usePureBackground ||
+              previous.font != current.font,
+          builder: (context, state) => MaterialApp.router(
+            routerConfig: _routerConfig,
+            theme: _buildTheme(context, state, lightDynamic, Brightness.light),
+            darkTheme: _buildTheme(
+              context,
+              state,
+              darkDynamic,
+              Brightness.dark,
             ),
+            themeMode: state.themeMode.toMaterialThemeMode(),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              RelativeTimeLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            debugShowCheckedModeBanner: false,
+            scrollBehavior: _AppScrollBehavior(_deviceInfo),
           ),
-    );
-  }
+        ),
+  );
 
   ThemeData _buildTheme(
     BuildContext context,
@@ -70,7 +59,7 @@ class const App(
     ColorScheme? dynamicColorScheme,
     Brightness brightness,
   ) {
-    final colorScheme =
+    final ColorScheme colorScheme =
         switch (state) {
           SettingsState(useDynamicTheme: true)
               when dynamicColorScheme != null =>
@@ -147,46 +136,40 @@ class const App(
   }
 }
 
-class const _AppScrollBehavior(this._deviceInfo)
+class const _AppScrollBehavior(final BaseDeviceInfo _deviceInfo)
     extends MaterialScrollBehavior {
-  final BaseDeviceInfo _deviceInfo;
-
   @override
   Widget buildScrollbar(
     BuildContext context,
     Widget child,
     ScrollableDetails details,
-  ) {
-    return switch (axisDirectionToAxis(details.direction)) {
-      Axis.horizontal => child,
-      Axis.vertical => Scrollbar(controller: details.controller, child: child),
-    };
-  }
+  ) => switch (axisDirectionToAxis(details.direction)) {
+    Axis.horizontal => child,
+    Axis.vertical => Scrollbar(controller: details.controller, child: child),
+  };
 
   @override
   Widget buildOverscrollIndicator(
     BuildContext context,
     Widget child,
     ScrollableDetails details,
-  ) {
-    return switch (getPlatform(context)) {
-      TargetPlatform.iOS ||
-      TargetPlatform.linux ||
-      TargetPlatform.macOS ||
-      TargetPlatform.windows => child,
-      TargetPlatform.android
-          when _deviceInfo is AndroidDeviceInfo &&
-              _deviceInfo.version.sdkInt >= 31 =>
-        StretchingOverscrollIndicator(
-          axisDirection: details.direction,
-          clipBehavior: details.decorationClipBehavior ?? Clip.hardEdge,
-          child: child,
-        ),
-      _ => GlowingOverscrollIndicator(
+  ) => switch (getPlatform(context)) {
+    TargetPlatform.iOS ||
+    TargetPlatform.linux ||
+    TargetPlatform.macOS ||
+    TargetPlatform.windows => child,
+    TargetPlatform.android
+        when _deviceInfo is AndroidDeviceInfo &&
+            _deviceInfo.version.sdkInt >= 31 =>
+      StretchingOverscrollIndicator(
         axisDirection: details.direction,
-        color: Theme.of(context).colorScheme.secondary,
+        clipBehavior: details.decorationClipBehavior ?? Clip.hardEdge,
         child: child,
       ),
-    };
-  }
+    _ => GlowingOverscrollIndicator(
+      axisDirection: details.direction,
+      color: Theme.of(context).colorScheme.secondary,
+      child: child,
+    ),
+  };
 }

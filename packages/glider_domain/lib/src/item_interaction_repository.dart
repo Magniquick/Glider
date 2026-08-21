@@ -4,9 +4,9 @@ import 'package:glider_data/glider_data.dart';
 import 'package:rxdart/subjects.dart';
 
 class ItemInteractionRepository(
-  this._hackerNewsWebsiteService,
-  this._secureStorageService,
-  this._sharedPreferencesService,
+  final HackerNewsWebsiteService _hackerNewsWebsiteService,
+  final SecureStorageService _secureStorageService,
+  final SharedPreferencesService _sharedPreferencesService,
 ) {
   this {
     unawaited(getVisitedIds());
@@ -14,10 +14,6 @@ class ItemInteractionRepository(
     unawaited(getFavoritedIds());
     unawaited(getFlaggedIds());
   }
-
-  final HackerNewsWebsiteService _hackerNewsWebsiteService;
-  final SecureStorageService _secureStorageService;
-  final SharedPreferencesService _sharedPreferencesService;
 
   final BehaviorSubject<List<int>> _visitedStreamController = BehaviorSubject();
   final BehaviorSubject<List<int>> _upvotedStreamController = BehaviorSubject();

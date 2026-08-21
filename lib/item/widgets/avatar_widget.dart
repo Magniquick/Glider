@@ -3,15 +3,17 @@ import 'dart:ui';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/widgets.dart';
 
-class AvatarWidget({required this.username}) extends StatelessWidget {
+// The key is derived from a constructor parameter, so this constructor can
+// never be const. The lint does not see the non-const super initialiser in
+// primary-constructor syntax (false positive on Dart 3.13).
+// ignore: prefer_const_constructors_in_immutables
+class AvatarWidget({required final String username}) extends StatelessWidget {
   this : super(key: ValueKey(username));
-
-  final String username;
 
   @override
   Widget build(BuildContext context) {
-    final pixelSize = MediaQuery.textScalerOf(context).scale(2);
-    final avatarSize = pixelSize * 7;
+    final double pixelSize = MediaQuery.textScalerOf(context).scale(2);
+    final double avatarSize = pixelSize * 7;
 
     return CustomPaint(
       painter: _AvatarPainter(
@@ -26,14 +28,10 @@ class AvatarWidget({required this.username}) extends StatelessWidget {
 
 // Algorithm based on https://news.ycombinator.com/item?id=30668207 by tomxor.
 class const _AvatarPainter({
-  required this.username,
-  required this.pixelSize,
-  required this.offset,
+  required final String username,
+  required final double pixelSize,
+  required final Offset offset,
 }) extends CustomPainter with EquatableMixin {
-  final String username;
-  final double pixelSize;
-  final Offset offset;
-
   @override
   void paint(Canvas canvas, Size size) {
     const seedSteps = 28;
@@ -41,18 +39,18 @@ class const _AvatarPainter({
     final paint = Paint()..strokeWidth = pixelSize;
     var seed = 1;
 
-    for (var i = seedSteps + username.length - 1; i >= seedSteps; i--) {
+    for (int i = seedSteps + username.length - 1; i >= seedSteps; i--) {
       seed = _xorShift32(seed);
       seed += username.codeUnitAt(i - seedSteps);
     }
 
     paint.color = Color(seed >> 8 | 0xff000000);
 
-    for (var i = seedSteps - 1; i >= 0; i--) {
+    for (int i = seedSteps - 1; i >= 0; i--) {
       seed = _xorShift32(seed);
 
-      final x = i & 3;
-      final y = i >> 2;
+      final int x = i & 3;
+      final int y = i >> 2;
 
       if (seed.toUnsigned(32) >> seedSteps + 1 > x * x / 3 + y / 2) {
         points

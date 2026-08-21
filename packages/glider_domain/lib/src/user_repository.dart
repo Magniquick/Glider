@@ -6,15 +6,13 @@ import 'package:glider_domain/src/entities/user.dart';
 import 'package:glider_domain/src/extensions/behavior_subject_map_extension.dart';
 import 'package:rxdart/subjects.dart';
 
-class UserRepository(this._hackerNewsApiService) {
+class UserRepository(final HackerNewsApiService _hackerNewsApiService) {
   this : _userStreamControllers = {};
-
-  final HackerNewsApiService _hackerNewsApiService;
 
   final Map<String, BehaviorSubject<User>> _userStreamControllers;
 
   Stream<User> getUserStream(String username) => _userStreamControllers
-      .getOrAdd(username, asyncSeed: () async => getUser(username))
+      .getOrAdd(username, asyncSeed: () => getUser(username))
       .stream;
 
   Future<User> getUser(String username) async {

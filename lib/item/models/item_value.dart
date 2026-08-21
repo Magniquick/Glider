@@ -5,6 +5,7 @@ import 'package:glider/common/interfaces/menu_item.dart';
 import 'package:glider/item/cubit/item_cubit.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
+import 'package:glider_domain/glider_domain.dart';
 
 enum ItemValue() implements MenuItem<ItemState> {
   title,
@@ -18,7 +19,7 @@ enum ItemValue() implements MenuItem<ItemState> {
     AuthState authState,
     SettingsState settingsState,
   ) {
-    final item = state.data;
+    final Item? item = state.data;
     if (item == null) return false;
     return switch (this) {
       ItemValue.title => item.title != null,
@@ -29,27 +30,23 @@ enum ItemValue() implements MenuItem<ItemState> {
   }
 
   @override
-  String label(BuildContext context, ItemState state) {
-    return switch (this) {
-      ItemValue.title => context.l10n.title,
-      ItemValue.link => context.l10n.link,
-      ItemValue.text => context.l10n.text,
-      ItemValue.itemLink => context.l10n.itemLink,
-    };
-  }
+  String label(BuildContext context, ItemState state) => switch (this) {
+    ItemValue.title => context.l10n.title,
+    ItemValue.link => context.l10n.link,
+    ItemValue.text => context.l10n.text,
+    ItemValue.itemLink => context.l10n.itemLink,
+  };
 
   @override
-  IconData icon(ItemState state) {
-    return switch (this) {
-      ItemValue.title => Icons.title_outlined,
-      ItemValue.link => Icons.link_outlined,
-      ItemValue.text => Icons.notes_outlined,
-      ItemValue.itemLink => Icons.forum_outlined,
-    };
-  }
+  IconData icon(ItemState state) => switch (this) {
+    ItemValue.title => Icons.title_outlined,
+    ItemValue.link => Icons.link_outlined,
+    ItemValue.text => Icons.notes_outlined,
+    ItemValue.itemLink => Icons.forum_outlined,
+  };
 
   String? value(ItemCubit itemCubit) {
-    final item = itemCubit.state.data;
+    final Item? item = itemCubit.state.data;
     return switch (this) {
       ItemValue.title => item?.title,
       ItemValue.link => item?.url.toString(),

@@ -51,9 +51,28 @@ android {
     }
 
     buildTypes {
+        debug {
+            // Install alongside a release/store install instead of replacing it
+            // (which would take the session and local data with it).
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+
         release {
-            // Fall back to debug signing so `flutter build apk` works without key.properties.
-            signingConfig = if (rootProject.file("key.properties").exists()) {
+            // Fall back to debug signing so `flutter build apk` works locally
+            // without key.properties -- but never in CI, where a silently
+            // debug-signed release artifact could be published. The Android
+            // debug key is a well-known constant, so such a build would be
+            // forgeable by anyone and could not upgrade a real install.
+            val hasKeystore = rootProject.file("key.properties").exists()
+            val isCi = System.getenv("CI").toBoolean()
+            if (!hasKeystore && isCi) {
+                throw GradleException(
+                    "android/key.properties is missing. Refusing to produce a " +
+                        "debug-signed release build in CI.",
+                )
+            }
+            signingConfig = if (hasKeystore) {
                 signingConfigs.getByName("release")
             } else {
                 signingConfigs.getByName("debug")

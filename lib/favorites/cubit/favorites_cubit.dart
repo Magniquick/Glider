@@ -9,7 +9,7 @@ import 'package:hydrated_bloc/hydrated_bloc.dart';
 
 part 'favorites_state.dart';
 
-class FavoritesCubit(this._itemInteractionRepository)
+class FavoritesCubit(final ItemInteractionRepository _itemInteractionRepository)
     extends HydratedCubit<FavoritesState> {
   this : super(const FavoritesState()) {
     _favoriteIdsSubscription = _itemInteractionRepository.favoritedStream
@@ -30,8 +30,6 @@ class FavoritesCubit(this._itemInteractionRepository)
         );
   }
 
-  final ItemInteractionRepository _itemInteractionRepository;
-
   late final StreamSubscription<List<int>> _favoriteIdsSubscription;
 
   Future<void> load() async {
@@ -50,6 +48,6 @@ class FavoritesCubit(this._itemInteractionRepository)
   @override
   Future<void> close() async {
     await _favoriteIdsSubscription.cancel();
-    return super.close();
+    return await super.close();
   }
 }

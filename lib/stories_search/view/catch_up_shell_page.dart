@@ -13,17 +13,12 @@ import 'package:glider/stories_search/view/sliver_stories_search_body.dart';
 import 'package:glider/stories_search/view/stories_search_range_view.dart';
 
 class const CatchUpShellPage(
-  this._storiesSearchBloc,
-  this._itemCubitFactory,
-  this._authCubit,
-  this._settingsCubit, {
+  final StoriesSearchBloc _storiesSearchBloc,
+  final ItemCubitFactory _itemCubitFactory,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit, {
   super.key,
 }) extends StatefulWidget {
-  final StoriesSearchBloc _storiesSearchBloc;
-  final ItemCubitFactory _itemCubitFactory;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
   State<CatchUpShellPage> createState() => _CatchUpShellPageState();
 }
@@ -36,80 +31,72 @@ class _CatchUpShellPageState() extends State<CatchUpShellPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Material(
-      type: MaterialType.transparency,
-      child: RefreshableScrollView(
-        onRefresh: () async =>
-            widget._storiesSearchBloc.add(const LoadStoriesSearchEvent()),
-        slivers: [
-          _SliverCatchUpAppBar(
+  Widget build(BuildContext context) => Material(
+    type: MaterialType.transparency,
+    child: RefreshableScrollView(
+      onRefresh: () async =>
+          widget._storiesSearchBloc.add(const LoadStoriesSearchEvent()),
+      slivers: [
+        _SliverCatchUpAppBar(
+          widget._storiesSearchBloc,
+          widget._authCubit,
+          widget._settingsCubit,
+        ),
+        SliverToBoxAdapter(
+          child: StoriesSearchRangeView(widget._storiesSearchBloc),
+        ),
+        SliverSafeArea(
+          top: false,
+          sliver: SliverStoriesSearchBody(
             widget._storiesSearchBloc,
+            widget._itemCubitFactory,
             widget._authCubit,
             widget._settingsCubit,
           ),
-          SliverToBoxAdapter(
-            child: StoriesSearchRangeView(widget._storiesSearchBloc),
-          ),
-          SliverSafeArea(
-            top: false,
-            sliver: SliverStoriesSearchBody(
-              widget._storiesSearchBloc,
-              widget._itemCubitFactory,
-              widget._authCubit,
-              widget._settingsCubit,
-            ),
-          ),
-          const SliverPadding(
-            padding: AppSpacing.floatingActionButtonPageBottomPadding,
-          ),
-        ],
-      ),
-    );
-  }
+        ),
+        const SliverPadding(
+          padding: AppSpacing.floatingActionButtonPageBottomPadding,
+        ),
+      ],
+    ),
+  );
 }
 
 class const _SliverCatchUpAppBar(
-  this._storiesSearchBloc,
-  this._authCubit,
-  this._settingsCubit,
+  final StoriesSearchBloc _storiesSearchBloc,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
 ) extends StatelessWidget {
-  final StoriesSearchBloc _storiesSearchBloc;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-
   @override
-  Widget build(BuildContext context) {
-    return SliverAppBar(
-      title: Text(context.l10n.catchUp),
-      flexibleSpace: AppBarProgressIndicator(_storiesSearchBloc),
-      actions: [
-        BlocBuilder<AuthCubit, AuthState>(
-          bloc: _authCubit,
-          builder: (context, authState) =>
-              BlocBuilder<SettingsCubit, SettingsState>(
-                bloc: _settingsCubit,
-                builder: (context, settingsState) => MenuAnchor(
-                  menuChildren: [
-                    for (final action in NavigationShellAction.values)
-                      if (action.isVisible(null, authState, settingsState))
-                        MenuItemButton(
-                          onPressed: () async => action.execute(context),
-                          child: Text(action.label(context, null)),
-                        ),
-                  ],
-                  builder: (context, controller, child) => IconButton(
-                    icon: Icon(Icons.adaptive.more_outlined),
-                    tooltip: MaterialLocalizations.of(context).showMenuTooltip,
-                    onPressed: () => controller.isOpen
-                        ? controller.close()
-                        : controller.open(),
-                  ),
+  Widget build(BuildContext context) => SliverAppBar(
+    title: Text(context.l10n.catchUp),
+    flexibleSpace: AppBarProgressIndicator(_storiesSearchBloc),
+    actions: [
+      BlocBuilder<AuthCubit, AuthState>(
+        bloc: _authCubit,
+        builder: (context, authState) =>
+            BlocBuilder<SettingsCubit, SettingsState>(
+              bloc: _settingsCubit,
+              builder: (context, settingsState) => MenuAnchor(
+                menuChildren: [
+                  for (final action in NavigationShellAction.values)
+                    if (action.isVisible(null, authState, settingsState))
+                      MenuItemButton(
+                        onPressed: () => action.execute(context),
+                        child: Text(action.label(context, null)),
+                      ),
+                ],
+                builder: (context, controller, child) => IconButton(
+                  icon: Icon(Icons.adaptive.more_outlined),
+                  tooltip: MaterialLocalizations.of(context).showMenuTooltip,
+                  onPressed: () => controller.isOpen
+                      ? controller.close()
+                      : controller.open(),
                 ),
               ),
-        ),
-      ],
-      floating: true,
-    );
-  }
+            ),
+      ),
+    ],
+    floating: true,
+  );
 }

@@ -16,16 +16,16 @@ part 'item_cubit_event.dart';
 part 'item_state.dart';
 
 class ItemCubit(
-  this._itemRepository,
-  this._itemInteractionRepository,
-  this._userInteractionRepository, {
+  final ItemRepository _itemRepository,
+  final ItemInteractionRepository _itemInteractionRepository,
+  final UserInteractionRepository _userInteractionRepository, {
   required int id,
 }) extends HydratedCubit<ItemState>
-    with BlocPresentationMixin<ItemState, ItemCubitEvent> {
-  this : itemId = id, _blockedSubscription = null, super(const ItemState()) {
+    with BlocPresentationMixin<ItemState, ItemPresentationEvent> {
+  this : _blockedSubscription = null, super(const ItemState()) {
     safeEmit(state.copyWith(status: () => Status.loading));
     _itemSubscription = _itemRepository.getItemStream(itemId).listen(
-      (item) async {
+      (item) {
         if (item.username != state.data?.username ||
             _blockedSubscription == null) {
           unawaited(_blockedSubscription?.cancel());
@@ -95,10 +95,7 @@ class ItemCubit(
     );
   }
 
-  final ItemRepository _itemRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
-  final UserInteractionRepository _userInteractionRepository;
-  final int itemId;
+  final int itemId = id;
 
   late final StreamSubscription<Item> _itemSubscription;
   late final StreamSubscription<List<int>> _visitedSubscription;
@@ -117,9 +114,9 @@ class ItemCubit(
   }
 
   Future<void> visit(bool visit) async {
-    final visited = state.visited;
+    final bool visited = state.visited;
     safeEmit(state.copyWith(visited: () => visit));
-    final success = await _itemInteractionRepository.visit(
+    final bool success = await _itemInteractionRepository.visit(
       itemId,
       visit: visit,
     );
@@ -130,9 +127,9 @@ class ItemCubit(
   }
 
   Future<void> upvote(bool upvote) async {
-    final vote = state.vote;
+    final VoteType? vote = state.vote;
     safeEmit(state.copyWith(vote: () => VoteType.upvote));
-    final success = await _itemInteractionRepository.upvote(
+    final bool success = await _itemInteractionRepository.upvote(
       itemId,
       upvote: upvote,
     );
@@ -146,9 +143,9 @@ class ItemCubit(
   }
 
   Future<void> downvote(bool downvote) async {
-    final vote = state.vote;
+    final VoteType? vote = state.vote;
     safeEmit(state.copyWith(vote: () => VoteType.downvote));
-    final success = await _itemInteractionRepository.downvote(
+    final bool success = await _itemInteractionRepository.downvote(
       itemId,
       downvote: downvote,
     );
@@ -162,9 +159,9 @@ class ItemCubit(
   }
 
   Future<void> favorite(bool favorite) async {
-    final favorited = state.favorited;
+    final bool favorited = state.favorited;
     safeEmit(state.copyWith(favorited: () => favorite));
-    final success = await _itemInteractionRepository.favorite(
+    final bool success = await _itemInteractionRepository.favorite(
       itemId,
       favorite: favorite,
     );
@@ -176,9 +173,12 @@ class ItemCubit(
   }
 
   Future<void> flag(bool flag) async {
-    final flagged = state.flagged;
+    final bool flagged = state.flagged;
     safeEmit(state.copyWith(flagged: () => flag));
-    final success = await _itemInteractionRepository.flag(itemId, flag: flag);
+    final bool success = await _itemInteractionRepository.flag(
+      itemId,
+      flag: flag,
+    );
 
     if (!success) {
       safeEmit(state.copyWith(flagged: () => flagged));
@@ -189,11 +189,11 @@ class ItemCubit(
   }
 
   Future<void> delete() async {
-    final isDeleted = state.data?.isDeleted ?? false;
+    final bool isDeleted = state.data?.isDeleted ?? false;
     safeEmit(
       state.copyWith(data: () => state.data?.copyWith(isDeleted: () => true)),
     );
-    final success = await _itemInteractionRepository.delete(itemId);
+    final bool success = await _itemInteractionRepository.delete(itemId);
 
     if (!success) {
       safeEmit(
@@ -231,6 +231,6 @@ class ItemCubit(
     await _favoritedSubscription.cancel();
     await _flaggedSubscription.cancel();
     await _blockedSubscription?.cancel();
-    return super.close();
+    return await super.close();
   }
 }

@@ -5,6 +5,7 @@ import 'package:glider/common/interfaces/menu_item.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
 import 'package:glider/user/cubit/user_cubit.dart';
+import 'package:glider_domain/glider_domain.dart';
 
 enum UserValue() implements MenuItem<UserState> {
   username,
@@ -17,7 +18,7 @@ enum UserValue() implements MenuItem<UserState> {
     AuthState authState,
     SettingsState settingsState,
   ) {
-    final user = state.data;
+    final User? user = state.data;
     if (user == null) return false;
     return switch (this) {
       UserValue.username => true,
@@ -27,25 +28,21 @@ enum UserValue() implements MenuItem<UserState> {
   }
 
   @override
-  String label(BuildContext context, UserState state) {
-    return switch (this) {
-      UserValue.username => context.l10n.username,
-      UserValue.about => context.l10n.about,
-      UserValue.userLink => context.l10n.userLink,
-    };
-  }
+  String label(BuildContext context, UserState state) => switch (this) {
+    UserValue.username => context.l10n.username,
+    UserValue.about => context.l10n.about,
+    UserValue.userLink => context.l10n.userLink,
+  };
 
   @override
-  IconData icon(UserState state) {
-    return switch (this) {
-      UserValue.username => Icons.person_outline_outlined,
-      UserValue.about => Icons.notes_outlined,
-      UserValue.userLink => Icons.account_circle_outlined,
-    };
-  }
+  IconData icon(UserState state) => switch (this) {
+    UserValue.username => Icons.person_outline_outlined,
+    UserValue.about => Icons.notes_outlined,
+    UserValue.userLink => Icons.account_circle_outlined,
+  };
 
   String? value(UserCubit userCubit) {
-    final user = userCubit.state.data;
+    final User? user = userCubit.state.data;
     return switch (this) {
       UserValue.username => userCubit.username,
       UserValue.about => user?.about,

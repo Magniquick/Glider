@@ -3,16 +3,23 @@ import 'package:glider_data/glider_data.dart';
 export 'package:glider_data/glider_data.dart' show LogInResult;
 
 class const AuthRepository(
-  this._hackerNewsWebsiteService,
-  this._secureStorageService,
-  this._sharedPreferencesService,
+  final HackerNewsWebsiteService _hackerNewsWebsiteService,
+  final SecureStorageService _secureStorageService,
+  final SharedPreferencesService _sharedPreferencesService,
 ) {
-  final HackerNewsWebsiteService _hackerNewsWebsiteService;
-  final SecureStorageService _secureStorageService;
-  final SharedPreferencesService _sharedPreferencesService;
-
   Future<(String? username, String? userCookie)> getUserAuth() async {
-    final userCookie = await _secureStorageService.getUserCookie();
+    // Secure storage can fail to decrypt: the AES key is wrapped by an Android
+    // Keystore key that does not survive a cloud restore or device transfer,
+    // and flutter_secure_storage 11 dropped the pre-v10 storage backend
+    // outright. Either way the stored cookie is unrecoverable, so discard it
+    // and present a logged-out app rather than letting the throw escape.
+    final String? userCookie;
+    try {
+      userCookie = await _secureStorageService.getUserCookie();
+    } on Object {
+      await _secureStorageService.clearUserCookie();
+      return (null, null);
+    }
     final username = userCookie?.split('&').first;
     return (username, userCookie);
   }

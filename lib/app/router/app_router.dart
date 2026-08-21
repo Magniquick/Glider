@@ -26,252 +26,258 @@ import 'package:go_router/go_router.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-class AppRouter._(this.config) {
-  factory create(AppContainer appContainer) {
-    return AppRouter._(
-      GoRouter(
-        navigatorKey: rootNavigatorKey,
-        initialLocation: AppRoute.stories.location(),
-        debugLogDiagnostics: kDebugMode,
-        routes: [
-          StatefulShellRoute.indexedStack(
-            builder: (context, state, navigationShell) =>
-                NavigationShellScaffold(
-                  appContainer.navigationShellCubit,
+class AppRouter._(final RouterConfig<Object> config) {
+  factory create(AppContainer appContainer) => AppRouter._(
+    GoRouter(
+      navigatorKey: rootNavigatorKey,
+      initialLocation: AppRoute.stories.location(),
+      debugLogDiagnostics: kDebugMode,
+      routes: [
+        StatefulShellRoute.indexedStack(
+          builder: (context, state, navigationShell) => NavigationShellScaffold(
+            appContainer.navigationShellCubit,
+            appContainer.authCubit,
+            appContainer.settingsCubit,
+            navigationShell,
+          ),
+          branches: [
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRoute.stories.path,
+                  pageBuilder: (context, state) => NoTransitionPage<void>(
+                    child: StoriesShellPage(
+                      appContainer.storiesCubit,
+                      appContainer.storiesSearchBloc,
+                      appContainer.itemCubitFactory,
+                      appContainer.authCubit,
+                      appContainer.settingsCubit,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRoute.catchUp.path,
+                  pageBuilder: (context, state) => NoTransitionPage<void>(
+                    child: CatchUpShellPage(
+                      appContainer.catchUpBloc,
+                      appContainer.itemCubitFactory,
+                      appContainer.authCubit,
+                      appContainer.settingsCubit,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRoute.favorites.path,
+                  pageBuilder: (context, state) => NoTransitionPage<void>(
+                    child: FavoritesShellPage(
+                      appContainer.favoritesCubit,
+                      appContainer.itemCubitFactory,
+                      appContainer.authCubit,
+                      appContainer.settingsCubit,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            StatefulShellBranch(
+              routes: [
+                GoRoute(
+                  path: AppRoute.inbox.path,
+                  pageBuilder: (context, state) => NoTransitionPage<void>(
+                    child: InboxShellPage(
+                      appContainer.inboxCubit,
+                      appContainer.itemCubitFactory,
+                      appContainer.authCubit,
+                      appContainer.settingsCubit,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+        GoRoute(
+          path: AppRoute.whatsNew.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            fullscreenDialog: true,
+            child: WhatsNewPage(appContainer.settingsCubit),
+          ),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        GoRoute(
+          path: AppRoute.auth.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            fullscreenDialog: true,
+            child: AuthPage(
+              appContainer.authCubit,
+              appContainer.settingsCubit,
+              appContainer.userCubitFactory,
+              appContainer.itemCubitFactory,
+              appContainer.userItemSearchBlocFactory,
+            ),
+          ),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        GoRoute(
+          path: AppRoute.settings.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            fullscreenDialog: true,
+            child: SettingsPage(appContainer.settingsCubit),
+          ),
+          parentNavigatorKey: rootNavigatorKey,
+          routes: [
+            GoRoute(
+              path: AppRoute.themeColorDialog.path,
+              pageBuilder: (context, state) => DialogPage<void>(
+                builder: (context) =>
+                    ThemeColorDialog(appContainer.settingsCubit),
+              ),
+              parentNavigatorKey: rootNavigatorKey,
+            ),
+            GoRoute(
+              path: AppRoute.filtersDialog.path,
+              pageBuilder: (context, state) => DialogPage<void>(
+                builder: (context) => FiltersDialog(appContainer.settingsCubit),
+              ),
+              parentNavigatorKey: rootNavigatorKey,
+            ),
+          ],
+        ),
+        GoRoute(
+          path: AppRoute.submit.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            fullscreenDialog: true,
+            child: SubmitPage(
+              appContainer.submitCubit,
+              appContainer.authCubit,
+              appContainer.settingsCubit,
+            ),
+          ),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        GoRoute(
+          path: AppRoute.item.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            child: ItemPage(
+              appContainer.itemCubitFactory,
+              appContainer.itemTreeCubitFactory,
+              appContainer.storySimilarCubitFactory,
+              appContainer.storyItemSearchCubitFactory,
+              appContainer.authCubit,
+              appContainer.settingsCubit,
+              id: state.uri.itemId,
+            ),
+          ),
+          parentNavigatorKey: rootNavigatorKey,
+          routes: [
+            GoRoute(
+              path: AppRoute.edit.path,
+              pageBuilder: (context, state) => MaterialPage<void>(
+                fullscreenDialog: true,
+                child: EditPage(
+                  appContainer.editCubitFactory,
+                  appContainer.settingsCubit,
+                  id: state.uri.itemId,
+                ),
+              ),
+              parentNavigatorKey: rootNavigatorKey,
+            ),
+            GoRoute(
+              path: AppRoute.reply.path,
+              pageBuilder: (context, state) => MaterialPage<void>(
+                fullscreenDialog: true,
+                child: ReplyPage(
+                  appContainer.replyCubitFactory,
                   appContainer.authCubit,
                   appContainer.settingsCubit,
-                  navigationShell,
+                  id: state.uri.itemId,
                 ),
-            branches: [
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: AppRoute.stories.path,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      child: StoriesShellPage(
-                        appContainer.storiesCubit,
-                        appContainer.storiesSearchBloc,
-                        appContainer.itemCubitFactory,
-                        appContainer.authCubit,
-                        appContainer.settingsCubit,
-                      ),
-                    ),
-                  ),
-                ],
               ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: AppRoute.catchUp.path,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      child: CatchUpShellPage(
-                        appContainer.catchUpBloc,
-                        appContainer.itemCubitFactory,
-                        appContainer.authCubit,
-                        appContainer.settingsCubit,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: AppRoute.favorites.path,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      child: FavoritesShellPage(
-                        appContainer.favoritesCubit,
-                        appContainer.itemCubitFactory,
-                        appContainer.authCubit,
-                        appContainer.settingsCubit,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              StatefulShellBranch(
-                routes: [
-                  GoRoute(
-                    path: AppRoute.inbox.path,
-                    pageBuilder: (context, state) => NoTransitionPage<void>(
-                      child: InboxShellPage(
-                        appContainer.inboxCubit,
-                        appContainer.itemCubitFactory,
-                        appContainer.authCubit,
-                        appContainer.settingsCubit,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          GoRoute(
-            path: AppRoute.whatsNew.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              fullscreenDialog: true,
-              child: WhatsNewPage(appContainer.settingsCubit),
+              parentNavigatorKey: rootNavigatorKey,
             ),
-            parentNavigatorKey: rootNavigatorKey,
-          ),
-          GoRoute(
-            path: AppRoute.auth.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              fullscreenDialog: true,
-              child: AuthPage(
-                appContainer.authCubit,
-                appContainer.settingsCubit,
-                appContainer.userCubitFactory,
-                appContainer.itemCubitFactory,
-                appContainer.userItemSearchBlocFactory,
-              ),
-            ),
-            parentNavigatorKey: rootNavigatorKey,
-          ),
-          GoRoute(
-            path: AppRoute.settings.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              fullscreenDialog: true,
-              child: SettingsPage(appContainer.settingsCubit),
-            ),
-            parentNavigatorKey: rootNavigatorKey,
-            routes: [
-              GoRoute(
-                path: AppRoute.themeColorDialog.path,
-                pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) =>
-                      ThemeColorDialog(appContainer.settingsCubit),
+            GoRoute(
+              path: AppRoute.itemValueDialog.path,
+              pageBuilder: (context, state) => DialogPage<void>(
+                builder: (context) => ItemValueDialog(
+                  appContainer.itemCubitFactory,
+                  appContainer.authCubit,
+                  appContainer.settingsCubit,
+                  id: state.uri.itemId,
+                  title: state.extra as String?,
                 ),
-                parentNavigatorKey: rootNavigatorKey,
               ),
-              GoRoute(
-                path: AppRoute.filtersDialog.path,
-                pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) =>
-                      FiltersDialog(appContainer.settingsCubit),
-                ),
-                parentNavigatorKey: rootNavigatorKey,
-              ),
-            ],
-          ),
-          GoRoute(
-            path: AppRoute.submit.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              fullscreenDialog: true,
-              child: SubmitPage(
-                appContainer.submitCubit,
-                appContainer.authCubit,
-                appContainer.settingsCubit,
-              ),
+              parentNavigatorKey: rootNavigatorKey,
             ),
-            parentNavigatorKey: rootNavigatorKey,
-          ),
-          GoRoute(
-            path: AppRoute.item.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              child: ItemPage(
-                appContainer.itemCubitFactory,
-                appContainer.itemTreeCubitFactory,
-                appContainer.storySimilarCubitFactory,
-                appContainer.storyItemSearchCubitFactory,
-                appContainer.authCubit,
-                appContainer.settingsCubit,
-                id: int.parse(state.uri.queryParameters['id']!),
-              ),
+          ],
+        ),
+        GoRoute(
+          path: AppRoute.user.path,
+          pageBuilder: (context, state) => MaterialPage<void>(
+            child: UserPage(
+              appContainer.userCubitFactory,
+              appContainer.itemCubitFactory,
+              appContainer.userItemSearchBlocFactory,
+              appContainer.authCubit,
+              appContainer.settingsCubit,
+              username: state.uri.queryParameters['id']!,
             ),
-            parentNavigatorKey: rootNavigatorKey,
-            routes: [
-              GoRoute(
-                path: AppRoute.edit.path,
-                pageBuilder: (context, state) => MaterialPage<void>(
-                  fullscreenDialog: true,
-                  child: EditPage(
-                    appContainer.editCubitFactory,
-                    appContainer.settingsCubit,
-                    id: int.parse(state.uri.queryParameters['id']!),
-                  ),
-                ),
-                parentNavigatorKey: rootNavigatorKey,
-              ),
-              GoRoute(
-                path: AppRoute.reply.path,
-                pageBuilder: (context, state) => MaterialPage<void>(
-                  fullscreenDialog: true,
-                  child: ReplyPage(
-                    appContainer.replyCubitFactory,
-                    appContainer.authCubit,
-                    appContainer.settingsCubit,
-                    id: int.parse(state.uri.queryParameters['id']!),
-                  ),
-                ),
-                parentNavigatorKey: rootNavigatorKey,
-              ),
-              GoRoute(
-                path: AppRoute.itemValueDialog.path,
-                pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) => ItemValueDialog(
-                    appContainer.itemCubitFactory,
-                    appContainer.authCubit,
-                    appContainer.settingsCubit,
-                    id: int.parse(state.uri.queryParameters['id']!),
-                    title: state.extra as String?,
-                  ),
-                ),
-                parentNavigatorKey: rootNavigatorKey,
-              ),
-            ],
           ),
-          GoRoute(
-            path: AppRoute.user.path,
-            pageBuilder: (context, state) => MaterialPage<void>(
-              child: UserPage(
-                appContainer.userCubitFactory,
-                appContainer.itemCubitFactory,
-                appContainer.userItemSearchBlocFactory,
-                appContainer.authCubit,
-                appContainer.settingsCubit,
-                username: state.uri.queryParameters['id']!,
+          parentNavigatorKey: rootNavigatorKey,
+          routes: [
+            GoRoute(
+              path: AppRoute.userValueDialog.path,
+              pageBuilder: (context, state) => DialogPage<void>(
+                builder: (context) => UserValueDialog(
+                  appContainer.userCubitFactory,
+                  appContainer.authCubit,
+                  appContainer.settingsCubit,
+                  username: state.uri.queryParameters['id']!,
+                  title: state.extra as String?,
+                ),
               ),
+              parentNavigatorKey: rootNavigatorKey,
             ),
-            parentNavigatorKey: rootNavigatorKey,
-            routes: [
-              GoRoute(
-                path: AppRoute.userValueDialog.path,
-                pageBuilder: (context, state) => DialogPage<void>(
-                  builder: (context) => UserValueDialog(
-                    appContainer.userCubitFactory,
-                    appContainer.authCubit,
-                    appContainer.settingsCubit,
-                    username: state.uri.queryParameters['id']!,
-                    title: state.extra as String?,
-                  ),
-                ),
-                parentNavigatorKey: rootNavigatorKey,
-              ),
-            ],
+          ],
+        ),
+        GoRoute(
+          path: AppRoute.textSelectDialog.path,
+          pageBuilder: (context, state) => DialogPage<void>(
+            builder: (context) =>
+                TextSelectDialog(text: state.extra! as String),
           ),
-          GoRoute(
-            path: AppRoute.textSelectDialog.path,
-            pageBuilder: (context, state) => DialogPage<void>(
-              builder: (context) =>
-                  TextSelectDialog(text: state.extra! as String),
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+        GoRoute(
+          path: AppRoute.confirmDialog.path,
+          pageBuilder: (context, state) => DialogPage<void>(
+            builder: (context) => ConfirmDialog(
+              title: (state.extra as ConfirmDialogExtra?)?.title,
+              text: (state.extra as ConfirmDialogExtra?)?.text,
             ),
-            parentNavigatorKey: rootNavigatorKey,
           ),
-          GoRoute(
-            path: AppRoute.confirmDialog.path,
-            pageBuilder: (context, state) => DialogPage<void>(
-              builder: (context) => ConfirmDialog(
-                title: (state.extra as ConfirmDialogExtra?)?.title,
-                text: (state.extra as ConfirmDialogExtra?)?.text,
-              ),
-            ),
-            parentNavigatorKey: rootNavigatorKey,
-          ),
-        ],
-      ),
-    );
-  }
-
-  final RouterConfig<Object> config;
+          parentNavigatorKey: rootNavigatorKey,
+        ),
+      ],
+    ),
+  );
 }
+
+/// Hacker News deep links reach the app from any other app or web page, and the
+/// intent filter matches `/item` even without a query string. A missing or
+/// non-numeric `id` must therefore be handled rather than asserted.
+extension on Uri {
+  int get itemId => int.tryParse(queryParameters['id'] ?? '') ?? _invalidItemId;
+}
+
+/// Sentinel for a deep link whose `id` was absent or unparseable. No Hacker
+/// News item has a negative id, so the item page will simply fail to load and
+/// show its normal error state.
+const _invalidItemId = -1;

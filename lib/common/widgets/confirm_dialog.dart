@@ -4,26 +4,21 @@ import 'package:go_router/go_router.dart';
 
 typedef ConfirmDialogExtra = ({String? title, String? text});
 
-class const ConfirmDialog({super.key, this.title, this.text})
+class const ConfirmDialog({super.key, final String? title, final String? text})
     extends StatelessWidget {
-  final String? title;
-  final String? text;
-
   @override
-  Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(title ?? context.l10n.confirm),
-      content: text != null ? SingleChildScrollView(child: Text(text!)) : null,
-      actions: [
-        TextButton(
-          onPressed: () => context.pop(false),
-          child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
-        ),
-        TextButton(
-          onPressed: () => context.pop(true),
-          child: Text(MaterialLocalizations.of(context).okButtonLabel),
-        ),
-      ],
-    );
-  }
+  Widget build(BuildContext context) => AlertDialog(
+    title: Text(title ?? context.l10n.confirm),
+    content: text != null ? SingleChildScrollView(child: Text(text!)) : null,
+    actions: [
+      TextButton(
+        onPressed: () => context.pop(false),
+        child: Text(MaterialLocalizations.of(context).cancelButtonLabel),
+      ),
+      TextButton(
+        onPressed: () => context.pop(true),
+        child: Text(MaterialLocalizations.of(context).okButtonLabel),
+      ),
+    ],
+  );
 }

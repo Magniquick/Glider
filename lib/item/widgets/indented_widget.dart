@@ -4,13 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 
 class const IndentedWidget({
+  required final int depth,
+  required final Widget child,
   super.key,
-  required this.depth,
-  required this.child,
 }) extends StatelessWidget {
-  final int depth;
-  final Widget child;
-
   static const double _fadedOpacity = 0.25;
 
   @override
@@ -19,8 +16,8 @@ class const IndentedWidget({
       return child;
     }
 
-    final colorScheme = Theme.of(context).colorScheme;
-    final colors = [
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+    final List<Color> colors = [
       colorScheme.primary,
       colorScheme.secondary,
       colorScheme.tertiary,

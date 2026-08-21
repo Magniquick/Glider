@@ -17,17 +17,12 @@ import 'package:go_router/go_router.dart';
 const _navigationBarHeight = 80.0;
 
 class const NavigationShellScaffold(
-  this._navigationShellCubit,
-  this._authCubit,
-  this._settingsCubit,
-  this._navigationShell, {
+  final NavigationShellCubit _navigationShellCubit,
+  final AuthCubit _authCubit,
+  final SettingsCubit _settingsCubit,
+  final StatefulNavigationShell _navigationShell, {
   super.key,
 }) extends StatefulWidget {
-  final NavigationShellCubit _navigationShellCubit;
-  final AuthCubit _authCubit;
-  final SettingsCubit _settingsCubit;
-  final StatefulNavigationShell _navigationShell;
-
   @override
   State<NavigationShellScaffold> createState() =>
       _NavigationShellScaffoldState();
@@ -66,110 +61,111 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocPresentationListener<
-      NavigationShellCubit,
-      NavigationShellCubitEvent
-    >(
-      bloc: widget._navigationShellCubit,
-      listener: (context, event) => switch (event) {
-        ShowWhatsNewEvent() => context.push(AppRoute.whatsNew.location()),
-      },
-      child: BlocSelector<AuthCubit, AuthState, bool>(
-        bloc: widget._authCubit,
-        selector: (state) => state.isLoggedIn,
-        builder: (context, isLoggedIn) =>
-            BlocBuilder<SettingsCubit, SettingsState>(
-              bloc: widget._settingsCubit,
-              buildWhen: (previous, current) =>
-                  previous.useNavigationDrawer != current.useNavigationDrawer,
-              builder: (context, settingsState) {
-                final destinations = [
-                  NavigationDestination(
-                    icon: const Icon(Icons.whatshot_outlined),
-                    selectedIcon: const Icon(Icons.whatshot),
-                    label: context.l10n.stories,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.fast_rewind_outlined),
-                    selectedIcon: const Icon(Icons.fast_rewind),
-                    label: context.l10n.catchUp,
-                  ),
-                  NavigationDestination(
-                    icon: const Icon(Icons.favorite_outline_outlined),
-                    selectedIcon: const Icon(Icons.favorite),
-                    label: context.l10n.favorites,
-                  ),
-                  if (isLoggedIn)
+  Widget build(BuildContext context) =>
+      BlocPresentationListener<
+        NavigationShellCubit,
+        NavigationShellPresentationEvent
+      >(
+        bloc: widget._navigationShellCubit,
+        listener: (context, event) => switch (event) {
+          ShowWhatsNewEvent() => context.push(AppRoute.whatsNew.location()),
+        },
+        child: BlocSelector<AuthCubit, AuthState, bool>(
+          bloc: widget._authCubit,
+          selector: (state) => state.isLoggedIn,
+          builder: (context, isLoggedIn) =>
+              BlocBuilder<SettingsCubit, SettingsState>(
+                bloc: widget._settingsCubit,
+                buildWhen: (previous, current) =>
+                    previous.useNavigationDrawer != current.useNavigationDrawer,
+                builder: (context, settingsState) {
+                  final destinations = [
                     NavigationDestination(
-                      icon: const Icon(Icons.inbox_outlined),
-                      selectedIcon: const Icon(Icons.inbox),
-                      label: context.l10n.inbox,
+                      icon: const Icon(Icons.whatshot_outlined),
+                      selectedIcon: const Icon(Icons.whatshot),
+                      label: context.l10n.stories,
                     ),
-                ];
-                final floatingActionButton = isLoggedIn
-                    ? FloatingActionButton(
-                        onPressed: () =>
-                            context.push(AppRoute.submit.location()),
-                        tooltip: context.l10n.submit,
-                        child: const Icon(Icons.add_outlined),
-                      )
-                    : null;
-
-                return AdaptiveLayout(
-                  primaryNavigation: settingsState.useNavigationDrawer
-                      ? null
-                      : SlotLayout(
-                          config: <Breakpoint, SlotLayoutConfig>{
-                            Breakpoints.mediumAndUp: SlotLayout.from(
-                              key: const Key('primaryNavigationMediumAndUp'),
-                              builder: (context) => _buildPrimaryNavigation(
-                                context,
-                                destinations,
-                                leading: floatingActionButton,
-                              ),
-                            ),
-                          },
-                        ),
-                  bottomNavigation: settingsState.useNavigationDrawer
-                      ? null
-                      : SlotLayout(
-                          config: {
-                            Breakpoints.small: SlotLayout.from(
-                              key: const Key('bottomNavigationStandard'),
-                              builder: (context) =>
-                                  _buildBottomNavigation(context, destinations),
-                            ),
-                          },
-                        ),
-                  body: SlotLayout(
-                    config: {
-                      Breakpoints.standard: SlotLayout.from(
-                        key: const Key('bodyStandard'),
-                        builder: (context) => _buildBody(
-                          context,
-                          destinations,
-                          floatingActionButton: floatingActionButton,
-                          useNavigationDrawer:
-                              settingsState.useNavigationDrawer,
-                        ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.fast_rewind_outlined),
+                      selectedIcon: const Icon(Icons.fast_rewind),
+                      label: context.l10n.catchUp,
+                    ),
+                    NavigationDestination(
+                      icon: const Icon(Icons.favorite_outline_outlined),
+                      selectedIcon: const Icon(Icons.favorite),
+                      label: context.l10n.favorites,
+                    ),
+                    if (isLoggedIn)
+                      NavigationDestination(
+                        icon: const Icon(Icons.inbox_outlined),
+                        selectedIcon: const Icon(Icons.inbox),
+                        label: context.l10n.inbox,
                       ),
-                    },
-                  ),
-                );
-              },
-            ),
-      ),
-    );
-  }
+                  ];
+                  final FloatingActionButton? floatingActionButton = isLoggedIn
+                      ? FloatingActionButton(
+                          onPressed: () =>
+                              context.push(AppRoute.submit.location()),
+                          tooltip: context.l10n.submit,
+                          child: const Icon(Icons.add_outlined),
+                        )
+                      : null;
+
+                  return AdaptiveLayout(
+                    primaryNavigation: settingsState.useNavigationDrawer
+                        ? null
+                        : SlotLayout(
+                            config: <Breakpoint, SlotLayoutConfig>{
+                              Breakpoints.mediumAndUp: SlotLayout.from(
+                                key: const Key('primaryNavigationMediumAndUp'),
+                                builder: (context) => _buildPrimaryNavigation(
+                                  context,
+                                  destinations,
+                                  leading: floatingActionButton,
+                                ),
+                              ),
+                            },
+                          ),
+                    bottomNavigation: settingsState.useNavigationDrawer
+                        ? null
+                        : SlotLayout(
+                            config: {
+                              Breakpoints.small: SlotLayout.from(
+                                key: const Key('bottomNavigationStandard'),
+                                builder: (context) => _buildBottomNavigation(
+                                  context,
+                                  destinations,
+                                ),
+                              ),
+                            },
+                          ),
+                    body: SlotLayout(
+                      config: {
+                        Breakpoints.standard: SlotLayout.from(
+                          key: const Key('bodyStandard'),
+                          builder: (context) => _buildBody(
+                            context,
+                            destinations,
+                            floatingActionButton: floatingActionButton,
+                            useNavigationDrawer:
+                                settingsState.useNavigationDrawer,
+                          ),
+                        ),
+                      },
+                    ),
+                  );
+                },
+              ),
+        ),
+      );
 
   Widget _buildPrimaryNavigation(
     BuildContext context,
     List<NavigationDestination> destinations, {
     Widget? leading,
   }) {
-    final padding = MediaQuery.paddingOf(context);
-    final directionality = Directionality.of(context);
+    final EdgeInsets padding = MediaQuery.paddingOf(context);
+    final TextDirection directionality = Directionality.of(context);
 
     return Material(
       child: AdaptiveScaffold.standardNavigationRail(
@@ -199,21 +195,19 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
   Widget _buildBottomNavigation(
     BuildContext context,
     List<NavigationDestination> destinations,
-  ) {
-    return ValueListenableBuilder(
-      valueListenable: _currentNavigationBarHeightNotifier,
-      builder: (context, currentNavigationBarHeight, child) => Align(
-        heightFactor: currentNavigationBarHeight / _paddedNavigationBarHeight,
-        alignment: Alignment.topCenter,
-        child: child,
-      ),
-      child: AdaptiveScaffold.standardBottomNavigationBar(
-        destinations: destinations,
-        currentIndex: _currentIndex,
-        onDestinationSelected: onDestinationSelected,
-      ),
-    );
-  }
+  ) => ValueListenableBuilder(
+    valueListenable: _currentNavigationBarHeightNotifier,
+    builder: (context, currentNavigationBarHeight, child) => Align(
+      heightFactor: currentNavigationBarHeight / _paddedNavigationBarHeight,
+      alignment: Alignment.topCenter,
+      child: child,
+    ),
+    child: AdaptiveScaffold.standardBottomNavigationBar(
+      destinations: destinations,
+      currentIndex: _currentIndex,
+      onDestinationSelected: onDestinationSelected,
+    ),
+  );
 
   Widget _buildBody(
     BuildContext context,
@@ -221,17 +215,19 @@ class _NavigationShellScaffoldState() extends State<NavigationShellScaffold> {
     Widget? floatingActionButton,
     bool useNavigationDrawer = false,
   }) {
-    final directionality = Directionality.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final padding = mediaQuery.padding;
-    final viewPadding = mediaQuery.viewPadding;
-    final isSmallBreakpointActive = Breakpoints.small.isActive(context);
-    final hasNavigationBar = !useNavigationDrawer && isSmallBreakpointActive;
-    final hasNavigationRail = !useNavigationDrawer && !isSmallBreakpointActive;
+    final TextDirection directionality = Directionality.of(context);
+    final MediaQueryData mediaQuery = MediaQuery.of(context);
+    final EdgeInsets padding = mediaQuery.padding;
+    final EdgeInsets viewPadding = mediaQuery.viewPadding;
+    final bool isSmallBreakpointActive = Breakpoints.small.isActive(context);
+    final bool hasNavigationBar =
+        !useNavigationDrawer && isSmallBreakpointActive;
+    final bool hasNavigationRail =
+        !useNavigationDrawer && !isSmallBreakpointActive;
 
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
-        final distance = switch (notification) {
+        final double? distance = switch (notification) {
           // Process in-range updates as normal. Ignore at-edge updates, because
           // it appears to cause false positives on bounces back.
           ScrollUpdateNotification(

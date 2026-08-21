@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
@@ -5,12 +7,11 @@ import 'package:glider_domain/glider_domain.dart';
 
 part 'auth_state.dart';
 
-class AuthCubit(this._authRepository, this._itemInteractionRepository)
-    extends Cubit<AuthState> {
+class AuthCubit(
+  final AuthRepository _authRepository,
+  final ItemInteractionRepository _itemInteractionRepository,
+) extends Cubit<AuthState> {
   this : super(const AuthState());
-
-  final AuthRepository _authRepository;
-  final ItemInteractionRepository _itemInteractionRepository;
 
   Future<void> init() async {
     await _updateLoggedIn();
@@ -28,7 +29,8 @@ class AuthCubit(this._authRepository, this._itemInteractionRepository)
         username: username,
         password: password,
       );
-    } on Object {
+    } on Object catch (error, stackTrace) {
+      log('Log in failed', error: error, stackTrace: stackTrace);
       safeEmit(state.copyWith(status: () => AuthStatus.failure));
       return;
     }
@@ -41,6 +43,10 @@ class AuthCubit(this._authRepository, this._itemInteractionRepository)
         safeEmit(state.copyWith(status: () => AuthStatus.badCredentials));
       case LogInResult.rejected:
         safeEmit(state.copyWith(status: () => AuthStatus.rejected));
+      case LogInResult.challengeRequired:
+        safeEmit(state.copyWith(status: () => AuthStatus.challengeRequired));
+      case LogInResult.failure:
+        safeEmit(state.copyWith(status: () => AuthStatus.failure));
     }
   }
 
@@ -53,7 +59,8 @@ class AuthCubit(this._authRepository, this._itemInteractionRepository)
   }
 
   Future<void> _updateLoggedIn() async {
-    final (username, userCookie) = await _authRepository.getUserAuth();
+    final (String? username, String? userCookie) = await _authRepository
+        .getUserAuth();
     safeEmit(
       state.copyWith(
         isLoggedIn: () => userCookie != null,

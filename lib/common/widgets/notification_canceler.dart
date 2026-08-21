@@ -1,16 +1,12 @@
 import 'package:flutter/material.dart';
 
 class const NotificationCanceler<T extends Notification>({
+  required final Widget child,
   super.key,
-  required this.child,
 }) extends StatelessWidget {
-  final Widget child;
-
   @override
-  Widget build(BuildContext context) {
-    return NotificationListener<T>(
-      onNotification: (notification) => true,
-      child: child,
-    );
-  }
+  Widget build(BuildContext context) => NotificationListener<T>(
+    onNotification: (notification) => true,
+    child: child,
+  );
 }

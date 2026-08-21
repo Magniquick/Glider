@@ -2,21 +2,23 @@ import 'package:bloc/bloc.dart';
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:equatable/equatable.dart';
 import 'package:glider_domain/glider_domain.dart';
+import 'package:pub_semver/pub_semver.dart';
 
 part 'navigation_shell_cubit_event.dart';
 part 'navigation_shell_state.dart';
 
-class NavigationShellCubit(this._packageRepository)
+class NavigationShellCubit(final PackageRepository _packageRepository)
     extends Cubit<NavigationShellState>
     with
-        BlocPresentationMixin<NavigationShellState, NavigationShellCubitEvent> {
+        BlocPresentationMixin<
+          NavigationShellState,
+          NavigationShellPresentationEvent
+        > {
   this : super(const NavigationShellState());
 
-  final PackageRepository _packageRepository;
-
   Future<void> init() async {
-    final version = _packageRepository.getVersion();
-    final lastVersion = await _packageRepository.getLastVersion();
+    final Version version = _packageRepository.getVersion();
+    final Version? lastVersion = await _packageRepository.getLastVersion();
 
     if (version != lastVersion) {
       await _packageRepository.setLastVersion(value: version);
