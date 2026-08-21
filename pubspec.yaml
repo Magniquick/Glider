@@ -105,6 +105,17 @@ melos:
       run: dart analyze . --no-fatal-warnings
       description: Analyze the whole workspace.
 
+    update-datasets:
+      # Refreshes the two vendored datasets in assets/. Deliberately NOT part
+      # of a normal build: fetching on every build would mean the same commit
+      # produces different APKs on different days, and would break building
+      # offline. A scheduled workflow runs this and opens a pull request, so
+      # the refresh lands as a reviewable commit like any other change.
+      run: |
+        uv run tool/update_public_suffix_list.py
+        uv run tool/update_simple_icons_map.py
+      description: Refresh the public suffix list and Simple Icons index.
+
     format:
       run: dart format .
       description: Format the whole workspace.
