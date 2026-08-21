@@ -85,6 +85,19 @@ android {
     }
 }
 
+configurations.all {
+    resolutionStrategy {
+        // play-services-cronet 18.1.1 pulls Cronet 141, whose cronet-api and
+        // cronet-shared artifacts both declare the namespace
+        // `org.chromium.net`. AGP 9 rejects that as a collision and the
+        // manifest merger fails. Cronet 143 gives them distinct namespaces
+        // (org.chromium.net.cronet_api / .cronet_shared), and it is also the
+        // version cronet_http uses for its no-Play embedded variant.
+        force("org.chromium.net:cronet-api:143.7445.0")
+        force("org.chromium.net:cronet-shared:143.7445.0")
+    }
+}
+
 flutter {
     source = "../.."
 }

@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:glider/app/container/http_client.dart';
 import 'package:glider/auth/cubit/auth_cubit.dart';
 import 'package:glider/edit/cubit/edit_cubit.dart';
 import 'package:glider/favorites/cubit/favorites_cubit.dart';
@@ -18,7 +19,6 @@ import 'package:glider/user/cubit/user_cubit.dart';
 import 'package:glider/user_item_search/bloc/user_item_search_bloc.dart';
 import 'package:glider_data/glider_data.dart';
 import 'package:glider_domain/glider_domain.dart';
-import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/util/legacy_to_async_migration_util.dart';
@@ -59,7 +59,7 @@ class const AppContainer(
   final UserItemSearchBlocFactory userItemSearchBlocFactory,
 ) {
   static Future<AppContainer> create() async {
-    final httpClient = http.Client();
+    final httpClient = createHttpClient();
     final PackageInfo packageInfo = await PackageInfo.fromPlatform();
     // The legacy SharedPreferences API is on its way to deprecation. Migrating
     // to the async API is a one-way move of the underlying store, so the

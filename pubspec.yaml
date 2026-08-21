@@ -15,6 +15,7 @@ dependencies:
   bloc_presentation: ^1.1.2
   clock: ^1.1.2
   collection: any
+  cronet_http: ^1.9.0
   device_info_plus: ^13.2.0
   dynamic_color: ^1.9.0
   equatable: ^2.1.0
