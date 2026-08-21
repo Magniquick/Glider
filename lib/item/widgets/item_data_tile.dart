@@ -520,6 +520,13 @@ class const _ItemFavicon(
           ),
           width: imageSize,
           height: imageSize,
+          // Scale small icons up to fill the tile. Most favicons are 32x32
+          // against a 44px tile, so this is a 1.4x upscale; only genuine 16x16
+          // outliers blur noticeably, and those looked lost in the tile
+          // otherwise. Without this, Flutter never enlarges: ResizeImage
+          // defaults to allowUpscaling false and paintImage defaults to
+          // BoxFit.scaleDown.
+          fit: BoxFit.contain,
           // A favicon that fails to load should leave the tile empty rather
           // than an error glyph; plenty of sites simply have none.
           errorBuilder: (context, error, stackTrace) => const SizedBox.shrink(),
