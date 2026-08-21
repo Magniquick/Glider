@@ -8,26 +8,35 @@ runs:
       uses: jdx/mise-action@v2
       with:
         cache: true
+    - name: Cache Android SDK
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/mise/installs/android-sdk
+        key: ${{ runner.os }}-android-sdk-${{ hashFiles('mise.toml', '.github/actions/bootstrap/action.yml') }}
+        restore-keys: ${{ runner.os }}-android-sdk-
     - name: Install Android SDK components and accept licences
       shell: bash
       # mise's android-sdk provides cmdline-tools only, and it exports
       # ANDROID_HOME at its own install, which shadows the runner's preinstalled
       # SDK and its accepted licences. Without this the Gradle build fails with
       # LicenceNotAcceptedException.
+      #
+      # Runs after the cache restore, not before: restoring unpacks over
+      # ANDROID_HOME and would undo anything installed first. Everything Gradle
+      # needs has to land here, because AGP's own auto-download resolves the
+      # compile target before the download finishes and fails the build with
+      # "Failed to find target with hash string 'android-37'". 36.0.0 is AGP's
+      # default build-tools version, which it fetches even though the build
+      # pins 36.1.0.
       run: |
         yes | sdkmanager --licenses > /dev/null 2>&1 || true
         sdkmanager --install \
           "platforms;android-37" \
           "platforms;android-36" \
           "build-tools;36.1.0" \
+          "build-tools;36.0.0" \
           "platform-tools" \
           "ndk;28.2.13676358" > /dev/null
-    - name: Cache Android SDK
-      uses: actions/cache@v4
-      with:
-        path: ~/.local/share/mise/installs/android-sdk
-        key: ${{ runner.os }}-android-sdk-${{ hashFiles('mise.toml') }}
-        restore-keys: ${{ runner.os }}-android-sdk-
     - name: Cache pub
       uses: actions/cache@v4
       with:
