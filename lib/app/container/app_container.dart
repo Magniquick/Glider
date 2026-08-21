@@ -1,5 +1,3 @@
-import 'package:flutter_inappwebview/flutter_inappwebview.dart'
-    show CookieManager;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:glider/auth/cubit/auth_cubit.dart';
 import 'package:glider/edit/cubit/edit_cubit.dart';
@@ -67,27 +65,36 @@ class AppContainer {
     final sharedPreferencesFactory = await SharedPreferences.getInstance();
     const flutterSecureStorage = FlutterSecureStorage(
       iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-      aOptions: AndroidOptions(encryptedSharedPreferences: true),
     );
     final algoliaApiService = AlgoliaApiService(httpClient);
     final genericWebsiteService = GenericWebsiteService(httpClient);
     final hackerNewsApiService = HackerNewsApiService(httpClient);
-    final hackerNewsWebsiteService = HackerNewsWebsiteService(httpClient);
+    final hackerNewsWebsiteService = HackerNewsWebsiteService(
+      httpClient,
+      userAgent: 'Glider/${packageInfo.version}',
+    );
     const secureStorageService = SecureStorageService(flutterSecureStorage);
-    final sharedPreferencesService =
-        SharedPreferencesService(sharedPreferencesFactory);
-    final cookieManager = CookieManager.instance();
-    final authRepository =
-        AuthRepository(secureStorageService, sharedPreferencesService);
-    final itemRepository =
-        ItemRepository(algoliaApiService, hackerNewsApiService);
+    final sharedPreferencesService = SharedPreferencesService(
+      sharedPreferencesFactory,
+    );
+    final authRepository = AuthRepository(
+      hackerNewsWebsiteService,
+      secureStorageService,
+      sharedPreferencesService,
+    );
+    final itemRepository = ItemRepository(
+      algoliaApiService,
+      hackerNewsApiService,
+    );
     final itemInteractionRepository = ItemInteractionRepository(
       hackerNewsWebsiteService,
       secureStorageService,
       sharedPreferencesService,
     );
-    final packageRepository =
-        PackageRepository(sharedPreferencesService, packageInfo);
+    final packageRepository = PackageRepository(
+      sharedPreferencesService,
+      packageInfo,
+    );
     final settingsRepository = SettingsRepository(sharedPreferencesService);
     final userRepository = UserRepository(hackerNewsApiService);
     final userInteractionRepository = UserInteractionRepository(
@@ -99,7 +106,7 @@ class AppContainer {
 
     return AppContainer(
       NavigationShellCubit(packageRepository),
-      AuthCubit(authRepository, itemInteractionRepository, cookieManager),
+      AuthCubit(authRepository, itemInteractionRepository),
       SettingsCubit(
         settingsRepository,
         packageRepository,

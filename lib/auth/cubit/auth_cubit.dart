@@ -1,39 +1,46 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:glider/common/constants/app_uris.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
 
 part 'auth_state.dart';
 
 class AuthCubit extends Cubit<AuthState> {
-  AuthCubit(
-    this._authRepository,
-    this._itemInteractionRepository,
-    this._cookieManager,
-  ) : super(const AuthState());
+  AuthCubit(this._authRepository, this._itemInteractionRepository)
+    : super(const AuthState());
 
   final AuthRepository _authRepository;
   final ItemInteractionRepository _itemInteractionRepository;
-  final CookieManager _cookieManager;
 
   Future<void> init() async {
     await _updateLoggedIn();
   }
 
-  Future<void> login() async {
-    final userCookieUrl = WebUri.uri(AppUris.hackerNewsUri);
-    const userCookieName = 'user';
-    final userCookie = await _cookieManager.getCookie(
-      url: userCookieUrl,
-      name: userCookieName,
-    );
+  Future<void> logIn({
+    required String username,
+    required String password,
+  }) async {
+    safeEmit(state.copyWith(status: () => AuthStatus.inProgress));
+    final LogInResult result;
 
-    if (userCookie case Cookie(:final String value)) {
-      await _authRepository.login(value);
-      await _cookieManager.deleteAllCookies();
-      await _updateLoggedIn();
+    try {
+      result = await _authRepository.logIn(
+        username: username,
+        password: password,
+      );
+    } on Object {
+      safeEmit(state.copyWith(status: () => AuthStatus.failure));
+      return;
+    }
+
+    switch (result) {
+      case LogInResult.success:
+        await _updateLoggedIn();
+        safeEmit(state.copyWith(status: () => AuthStatus.success));
+      case LogInResult.badCredentials:
+        safeEmit(state.copyWith(status: () => AuthStatus.badCredentials));
+      case LogInResult.rejected:
+        safeEmit(state.copyWith(status: () => AuthStatus.rejected));
     }
   }
 

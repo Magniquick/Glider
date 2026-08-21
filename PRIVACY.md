@@ -8,7 +8,7 @@ If you choose to use our Service, then you agree to the collection and use of in
 
 **Information Collection and Use**
 
-For a better experience, while using our Service, you may optionally provide us with your Hacker News username and password. The information that we request will be securely stored on the device.
+For a better experience, while using our Service, you may optionally provide us with your Hacker News username and password. Your password is transmitted only to the Hacker News website in order to obtain a session cookie, and is never stored by the app. Only your username and the resulting session cookie are retained, in the device's secure storage, and they are used solely for requests that require authentication. Logging out deletes the stored session cookie.
 
 **Service Providers**
 

@@ -1,15 +1,70 @@
 import 'package:collection/collection.dart';
-import 'package:compute/compute.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/dom.dart' as html_dom;
 import 'package:html/parser.dart' as html_parser;
 import 'package:http/http.dart' as http;
 
+/// Outcome of a [HackerNewsWebsiteService.logIn] attempt.
+enum LogInResult { success, badCredentials, rejected }
+
 class HackerNewsWebsiteService {
-  const HackerNewsWebsiteService(this._client);
+  const HackerNewsWebsiteService(
+    this._client, {
+    this.userAgent = _defaultUserAgent,
+  });
 
   static const String authority = 'news.ycombinator.com';
 
+  /// Hacker News refuses requests from embedded browsers on `/login` and
+  /// `/submit`, which it detects by the `wv` and `Version/4.0` tokens that
+  /// Android's WebView adds to its user agent. A self-identifying client is
+  /// accepted, so send one rather than impersonating a browser.
+  static const String _defaultUserAgent = 'Glider';
+
   final http.Client _client;
+  final String userAgent;
+
+  /// Submits credentials to the Hacker News login form, returning the `user`
+  /// session cookie on success.
+  ///
+  /// The password is sent to Hacker News and never retained; only the returned
+  /// cookie is persisted, by the caller.
+  Future<(LogInResult, String? userCookie)> logIn({
+    required String username,
+    required String password,
+  }) async {
+    // Success is a 302 carrying `Set-Cookie`, so redirects must not be
+    // followed or the cookie is lost.
+    final request = http.Request('POST', Uri.https(authority, 'login'))
+      ..followRedirects = false
+      ..headers.addAll(_getHeaders())
+      ..bodyFields = <String, String>{
+        'acct': username,
+        'pw': password,
+        'goto': 'news',
+      };
+    final response = await http.Response.fromStream(
+      await _client.send(request),
+    );
+
+    if (response.statusCode == 429) return (LogInResult.rejected, null);
+
+    final userCookie = _parseUserCookie(response.headers['set-cookie']);
+    if (userCookie != null) return (LogInResult.success, userCookie);
+
+    // On failure Hacker News re-renders the form with a `Bad login.` notice.
+    return (LogInResult.badCredentials, null);
+  }
+
+  static String? _parseUserCookie(String? setCookieHeader) {
+    if (setCookieHeader == null) return null;
+    // `expires` values contain commas, so the joined header cannot be split on
+    // them; match the cookie by name instead.
+    final match = RegExp(r'(?:^|[,;]\s*)user=([^;]+)')
+        .firstMatch(setCookieHeader);
+    final value = match?.group(1);
+    return value != null && value.isNotEmpty ? value : null;
+  }
 
   Future<Iterable<int>> getUpvoted({
     required String username,
@@ -35,15 +90,11 @@ class HackerNewsWebsiteService {
     required bool comments,
     int page = 1,
   }) async {
-    final uri = Uri.https(
-      authority,
-      'upvoted',
-      <String, String>{
-        'id': username,
-        if (page > 1) 'p': page.toString(),
-        if (comments) 'comments': 't',
-      },
-    );
+    final uri = Uri.https(authority, 'upvoted', <String, String>{
+      'id': username,
+      if (page > 1) 'p': page.toString(),
+      if (comments) 'comments': 't',
+    });
     final response = await _performGet(uri, userCookie: userCookie);
     final document = await compute(html_parser.parse, response.body);
     return document.getThingIds(
@@ -58,14 +109,8 @@ class HackerNewsWebsiteService {
 
   Future<Iterable<int>> getFavorited({required String username}) async {
     return [
-      ...await _getFavoritedType(
-        username: username,
-        comments: false,
-      ),
-      ...await _getFavoritedType(
-        username: username,
-        comments: true,
-      ),
+      ...await _getFavoritedType(username: username, comments: false),
+      ...await _getFavoritedType(username: username, comments: true),
     ].sorted((a, b) => b.compareTo(a));
   }
 
@@ -74,15 +119,11 @@ class HackerNewsWebsiteService {
     required bool comments,
     int page = 1,
   }) async {
-    final uri = Uri.https(
-      authority,
-      'favorites',
-      <String, String>{
-        'id': username,
-        if (page > 1) 'p': page.toString(),
-        if (comments) 'comments': 't',
-      },
-    );
+    final uri = Uri.https(authority, 'favorites', <String, String>{
+      'id': username,
+      if (page > 1) 'p': page.toString(),
+      if (comments) 'comments': 't',
+    });
     final response = await _performGet(uri);
     final document = await compute(html_parser.parse, response.body);
     return document.getThingIds(
@@ -118,15 +159,11 @@ class HackerNewsWebsiteService {
     required bool comments,
     int page = 1,
   }) async {
-    final uri = Uri.https(
-      authority,
-      'flagged',
-      <String, String>{
-        'id': username,
-        if (page > 1) 'p': page.toString(),
-        if (comments) 'kind': 'comment',
-      },
-    );
+    final uri = Uri.https(authority, 'flagged', <String, String>{
+      'id': username,
+      if (page > 1) 'p': page.toString(),
+      if (comments) 'kind': 'comment',
+    });
     final response = await _performGet(uri, userCookie: userCookie);
     final document = await compute(html_parser.parse, response.body);
     return document.getThingIds(
@@ -221,10 +258,7 @@ class HackerNewsWebsiteService {
     await _performPost(endpoint, body: body, userCookie: userCookie);
   }
 
-  Future<void> delete({
-    required int id,
-    required String userCookie,
-  }) async {
+  Future<void> delete({required int id, required String userCookie}) async {
     final hmac = await _getHmacValue(
       path: 'delete-confirm',
       id: id,
@@ -279,11 +313,9 @@ class HackerNewsWebsiteService {
     required int id,
     required String userCookie,
   }) async {
-    final endpoint = Uri.https(
-      authority,
-      path,
-      <String, dynamic>{'id': id.toString()},
-    );
+    final endpoint = Uri.https(authority, path, <String, dynamic>{
+      'id': id.toString(),
+    });
     final response = await _performGet(endpoint, userCookie: userCookie);
     final voteHref = await compute(
       (body) =>
@@ -304,11 +336,9 @@ class HackerNewsWebsiteService {
     required int id,
     required String userCookie,
   }) async {
-    final endpoint = Uri.https(
-      authority,
-      path,
-      <String, dynamic>{'id': id.toString()},
-    );
+    final endpoint = Uri.https(authority, path, <String, dynamic>{
+      'id': id.toString(),
+    });
     final response = await _performGet(endpoint, userCookie: userCookie);
     return compute(
       (body) => html_parser
@@ -324,61 +354,49 @@ class HackerNewsWebsiteService {
   }) async {
     final endpoint = Uri.https(authority, 'submit');
     final response = await _performGet(endpoint, userCookie: userCookie);
-    return compute(
-      (body) {
-        final attributes = html_parser.parse(body).hiddenFormAttributes;
-        return (
-          attributes?.getAttributeValue('fnid'),
-          attributes?.getAttributeValue('fnop'),
-        );
-      },
-      response.body,
-    );
+    return compute((body) {
+      final attributes = html_parser.parse(body).hiddenFormAttributes;
+      return (
+        attributes?.getAttributeValue('fnid'),
+        attributes?.getAttributeValue('fnop'),
+      );
+    }, response.body);
   }
 
-  Future<http.Response> _performGet(
-    Uri endpoint, {
-    String? userCookie,
-  }) async =>
-      _client.get(
-        endpoint,
-        headers: _getHeaders(userCookie: userCookie),
-      );
+  Future<http.Response> _performGet(Uri endpoint, {String? userCookie}) async =>
+      _client.get(endpoint, headers: _getHeaders(userCookie: userCookie));
 
   Future<http.Response> _performPost(
     Uri endpoint, {
     Object? body,
     String? userCookie,
-  }) async =>
-      _client.post(
-        endpoint,
-        body: body,
-        headers: _getHeaders(userCookie: userCookie),
-      );
+  }) async => _client.post(
+    endpoint,
+    body: body,
+    headers: _getHeaders(userCookie: userCookie),
+  );
 
   Map<String, String> _getHeaders({String? userCookie}) => <String, String>{
-        if (userCookie != null) 'cookie': 'user=$userCookie',
-      };
+    'user-agent': userAgent,
+    if (userCookie != null) 'cookie': 'user=$userCookie',
+  };
 }
 
 extension on html_dom.Document {
   Iterable<Map<Object, String>>? get hiddenFormAttributes =>
-      getElementsByTagName('form')
-          .firstOrNull
+      getElementsByTagName('form').firstOrNull
           ?.querySelectorAll("input[type='hidden']")
           .map((element) => element.attributes);
 
   Future<Iterable<int>> getThingIds({
     required Future<Iterable<int>> Function() onMore,
-  }) async =>
-      <int>[
-        ...querySelectorAll('.athing').map((thing) => int.parse(thing.id)),
-        if (querySelector('.morelink') != null) ...await onMore(),
-      ];
+  }) async => <int>[
+    ...querySelectorAll('.athing').map((thing) => int.parse(thing.id)),
+    if (querySelector('.morelink') != null) ...await onMore(),
+  ];
 }
 
 extension on Iterable<Map<Object, String>> {
-  String? getAttributeValue(String name) => firstWhereOrNull(
-        (attributes) => attributes['name'] == name,
-      )?['value'];
+  String? getAttributeValue(String name) =>
+      firstWhereOrNull((attributes) => attributes['name'] == name)?['value'];
 }
