@@ -62,12 +62,15 @@ extension ItemExtension on Item {
         null => null,
       };
 
-  String? faviconUrl({required int size}) => url != null
-      ? Uri.https('icons.viter.nl', 'icon', <String, String>{
-          'url': url!.host,
-          'size': '0..$size..500',
-          'formats': 'gif,ico,jpg,png',
-        }).toString()
+  /// Favicon for this item's link, or null if it has no link.
+  ///
+  /// The previous source, icons.viter.nl, was the original maintainer's own
+  /// server and no longer resolves -- it answers every request with Cloudflare
+  /// error 1000 ("DNS points to prohibited IP"), so favicons had been broken
+  /// for everyone. DuckDuckGo's endpoint serves the same purpose and does not
+  /// take a size, so the icon is scaled on the device instead.
+  String? get faviconUrl => url != null
+      ? Uri.https('icons.duckduckgo.com', 'ip3/${url!.host}.ico').toString()
       : null;
 }
 

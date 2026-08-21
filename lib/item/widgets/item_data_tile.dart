@@ -491,7 +491,7 @@ class const _ItemFavicon(
   @override
   Widget build(BuildContext context) => Ink.image(
     image: ResizeImage(
-      NetworkImage(item.faviconUrl(size: _faviconRequestSize)!),
+      NetworkImage(item.faviconUrl!),
       width: _faviconSize,
       height: _faviconSize,
       policy: ResizeImagePolicy.fit,
