@@ -62,16 +62,26 @@ extension ItemExtension on Item {
         null => null,
       };
 
-  /// Favicon for this item's link, or null if it has no link.
+  /// Favicon candidates for this item's link, most specific first.
   ///
-  /// The previous source, icons.viter.nl, was the original maintainer's own
-  /// server and no longer resolves -- it answers every request with Cloudflare
-  /// error 1000 ("DNS points to prohibited IP"), so favicons had been broken
-  /// for everyone. DuckDuckGo's endpoint serves the same purpose and does not
-  /// take a size, so the icon is scaled on the device instead.
-  String? get faviconUrl => url != null
-      ? Uri.https('icons.duckduckgo.com', 'ip3/${url!.host}.ico').toString()
-      : null;
+  /// DuckDuckGo indexes by exact host, so a subdomain that publishes no icon
+  /// of its own 404s even when its parent domain has one --
+  /// api-docs.deepseek.com misses while deepseek.com hits. Trying the parent
+  /// next recovers those. The full host has to come first, because the
+  /// reverse also happens: www.winona.com hits while winona.com 404s.
+  List<String> get faviconUrls {
+    final String? host = url?.host;
+    if (host == null || host.isEmpty) return const [];
+
+    final List<String> labels = host.split('.');
+    return [
+      for (final candidate in [
+        host,
+        if (labels.length > 2) labels.sublist(1).join('.'),
+      ])
+        Uri.https('icons.duckduckgo.com', 'ip3/$candidate.ico').toString(),
+    ];
+  }
 }
 
 enum _UsernameTag() {
