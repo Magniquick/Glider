@@ -22,21 +22,39 @@ runs:
       # LicenceNotAcceptedException.
       #
       # Runs after the cache restore, not before: restoring unpacks over
-      # ANDROID_HOME and would undo anything installed first. Everything Gradle
-      # needs has to land here, because AGP's own auto-download resolves the
-      # compile target before the download finishes and fails the build with
-      # "Failed to find target with hash string 'android-37'". 36.0.0 is AGP's
-      # default build-tools version, which it fetches even though the build
-      # pins 36.1.0.
+      # ANDROID_HOME and would undo anything installed first.
+      #
+      # The platform is `android-37.0`, not `android-37`. Platforms carry a
+      # minor version now and there is no package under the bare name -- but
+      # sdkmanager exits 0 when asked for a package that does not exist, so
+      # naming it wrong installed nothing and said nothing. Gradle then
+      # auto-downloaded the platform mid-build and failed against it before the
+      # download finished. Hence the check below rather than trusting the exit
+      # code, and no redirect to /dev/null hiding what it says.
       run: |
+        set -euo pipefail
         yes | sdkmanager --licenses > /dev/null 2>&1 || true
         sdkmanager --install \
-          "platforms;android-37" \
+          "platforms;android-37.0" \
           "platforms;android-36" \
           "build-tools;36.1.0" \
           "build-tools;36.0.0" \
           "platform-tools" \
-          "ndk;28.2.13676358" > /dev/null
+          "ndk;28.2.13676358"
+        missing=0
+        for path in \
+          "platforms/android-37.0" \
+          "platforms/android-36" \
+          "build-tools/36.1.0" \
+          "build-tools/36.0.0" \
+          "ndk/28.2.13676358"
+        do
+          if [ ! -d "$ANDROID_HOME/$path" ]; then
+            echo "::error::Android SDK component missing after install: $path"
+            missing=1
+          fi
+        done
+        exit "$missing"
     - name: Cache pub
       uses: actions/cache@v4
       with:
