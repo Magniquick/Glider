@@ -55,6 +55,24 @@ jobs:
         uses: ./.github/actions/bootstrap
         with:
           android: 'false'
+      # TEMPORARY, remove once the resulting patch is committed. `pod` and
+      # xcodebuild exist only on this runner, so the deintegration Flutter has
+      # been recommending on every build is performed here and exported through
+      # the same drift patch below. If the build that follows fails, the change
+      # is simply not committed and nothing is lost.
+      - name: Deintegrate CocoaPods
+        run: |
+          set -euo pipefail
+          cd ios
+          pod deintegrate
+          rm -f Podfile Podfile.lock
+          cd ..
+          # These are `#include?`, optional, which is why the build tolerates a
+          # missing Pods directory today. They still have to go.
+          sed -i '' '/Pods-Runner\..*\.xcconfig/d' ios/Flutter/Debug.xcconfig
+          sed -i '' '/Pods-Runner\..*\.xcconfig/d' ios/Flutter/Release.xcconfig
+          echo '--- Debug.xcconfig'; cat ios/Flutter/Debug.xcconfig
+          echo '--- Release.xcconfig'; cat ios/Flutter/Release.xcconfig
       - name: Build iOS
         run: flutter build ios --no-codesign
       # Every build rewrites parts of ios/ on the runner and then discards them:
