@@ -57,18 +57,28 @@ jobs:
           android: 'false'
       - name: Build iOS
         run: flutter build ios --no-codesign
-      # `pod install` rewrites the lock on the runner and the job then throws it
-      # away, so the committed copy can drift indefinitely without anything
-      # noticing. It named flutter_inappwebview_ios, dropped in cbd7c65, and
-      # flutter_secure_storage 6.0.0, replaced by flutter_secure_storage_darwin.
-      # Uploading it makes the regenerated file recoverable from a Linux
-      # machine, which is the only way to commit an honest one without a Mac.
-      - name: Upload the regenerated Podfile.lock
+      # Every build rewrites parts of ios/ on the runner and then discards them:
+      # `pod install` regenerates the lock, and flutter itself runs migrations
+      # (UIScene lifecycle, @UIApplicationMain to @main, Swift Package Manager
+      # integration, the xcscheme). The work is redone from scratch on each run
+      # and the repository never learns. Exporting the diff is the only way to
+      # apply it from a Linux machine, where none of these tools can run.
+      #
+      # When this artifact stops appearing, the project has caught up and this
+      # step can go.
+      - name: Export what the build changed under ios/
+        if: always()
+        run: |
+          git diff --stat -- ios/ || true
+          git diff -- ios/ > /tmp/ios-migration.patch || true
+          test -s /tmp/ios-migration.patch && echo '::warning::flutter migrated ios/ during the build; the committed project is behind' || echo 'ios/ unchanged by the build'
+      - name: Upload the ios/ migration patch
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Podfile.lock
-          path: ios/Podfile.lock
+          name: ios-migration-patch
+          path: /tmp/ios-migration.patch
+          if-no-files-found: ignore
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
