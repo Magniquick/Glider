@@ -66,19 +66,27 @@ jobs:
       #
       # When this artifact stops appearing, the project has caught up and this
       # step can go.
-      - name: Export what the build changed under ios/
+      - name: Check whether the build changed anything under ios/
+        id: drift
         if: always()
         run: |
-          git diff --stat -- ios/ || true
           git diff -- ios/ > /tmp/ios-migration.patch || true
-          test -s /tmp/ios-migration.patch && echo '::warning::flutter migrated ios/ during the build; the committed project is behind' || echo 'ios/ unchanged by the build'
+          if [ -s /tmp/ios-migration.patch ]; then
+            git diff --stat -- ios/
+            echo 'drifted=true' >> "$GITHUB_OUTPUT"
+            echo '::warning::flutter migrated ios/ during the build, so the committed project is behind. Download the ios-migration-patch artifact and `git apply` it.'
+          else
+            echo 'drifted=false' >> "$GITHUB_OUTPUT"
+            echo 'ios/ unchanged by the build'
+          fi
+      # Only uploaded when there is drift, so the artifact appearing at all is
+      # the signal. Silence is the healthy state.
       - name: Upload the ios/ migration patch
-        if: always()
+        if: always() && steps.drift.outputs.drifted == 'true'
         uses: actions/upload-artifact@v7
         with:
           name: ios-migration-patch
           path: /tmp/ios-migration.patch
-          if-no-files-found: ignore
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
