@@ -5,11 +5,11 @@ runs:
   steps:
     - name: Set up toolchain (Flutter, Java, Android SDK)
       # Versions come from mise.toml, so CI and local development stay in sync.
-      uses: jdx/mise-action@v2
+      uses: jdx/mise-action@v4
       with:
         cache: true
     - name: Cache Android SDK
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.local/share/mise/installs/android-sdk
         key: ${{ runner.os }}-android-sdk-${{ hashFiles('mise.toml', '.github/actions/bootstrap/action.yml') }}
@@ -56,13 +56,13 @@ runs:
         done
         exit "$missing"
     - name: Cache pub
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: .pub-cache
         key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
         restore-keys: ${{ runner.os }}-pub-
     - name: Cache Gradle
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: |
           ~/.gradle/caches

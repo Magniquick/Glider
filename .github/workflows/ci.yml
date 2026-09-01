@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Bootstrap workspace
@@ -24,7 +24,7 @@ jobs:
       - name: Build Android APK (profile)
         run: flutter build apk --profile
       - name: Upload APK (profile) artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-profile.apk
           path: build/app/outputs/apk/profile/app-profile.apk
