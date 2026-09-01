@@ -1,5 +1,12 @@
 name: Bootstrap
 description: Bootstrap workspace
+inputs:
+  android:
+    description: >
+      Install the Android SDK components and restore the Gradle cache. Set to
+      false for jobs that only run Dart, which saves about 50s of SDK install
+      and cache restore they would never use.
+    default: 'true'
 runs:
   using: composite
   steps:
@@ -8,49 +15,46 @@ runs:
       uses: jdx/mise-action@v4
       with:
         cache: true
-    - name: Cache Android SDK
-      uses: actions/cache@v6
-      with:
-        path: ~/.local/share/mise/installs/android-sdk
-        key: ${{ runner.os }}-android-sdk-${{ hashFiles('mise.toml', '.github/actions/bootstrap/action.yml') }}
-        restore-keys: ${{ runner.os }}-android-sdk-
+    # There is deliberately no cache for the SDK components below. Measured on
+    # 2026-09-01: restoring the 1.07 GiB cache took 30.1s while installing them
+    # from scratch took 25.5s, so the cache was a net loss that also ate a
+    # quarter of the repository's cache budget and evicted entries that do pay
+    # for themselves. Re-measure before adding one back.
     - name: Install Android SDK components and accept licences
+      if: inputs.android == 'true'
       shell: bash
       # mise's android-sdk provides cmdline-tools only, and it exports
       # ANDROID_HOME at its own install, which shadows the runner's preinstalled
       # SDK and its accepted licences. Without this the Gradle build fails with
       # LicenceNotAcceptedException.
       #
-      # Runs after the cache restore, not before: restoring unpacks over
-      # ANDROID_HOME and would undo anything installed first.
-      #
       # The platform is `android-37.0`, not `android-37`. Platforms carry a
-      # minor version now and there is no package under the bare name -- but
+      # minor version now and there is no package under the bare name, but
       # sdkmanager exits 0 when asked for a package that does not exist, so
       # naming it wrong installed nothing and said nothing. Gradle then
       # auto-downloaded the platform mid-build and failed against it before the
       # download finished. Hence the check below rather than trusting the exit
       # code, and no redirect to /dev/null hiding what it says.
+      #
+      # The NDK is not optional: cronet_http pulls in package:jni, whose
+      # android/build.gradle runs an externalNativeBuild against
+      # `flutter.ndkVersion`.
       run: |
         set -euo pipefail
-        yes | sdkmanager --licenses > /dev/null 2>&1 || true
-        sdkmanager --install \
-          "platforms;android-37.0" \
-          "platforms;android-36" \
-          "build-tools;36.1.0" \
-          "build-tools;36.0.0" \
-          "platform-tools" \
+        packages=(
+          "platforms;android-37.0"
+          "platforms;android-36"
+          "build-tools;36.1.0"
+          "build-tools;36.0.0"
+          "platform-tools"
           "ndk;28.2.13676358"
+        )
+        yes | sdkmanager --licenses > /dev/null 2>&1 || true
+        sdkmanager --install "${packages[@]}"
         missing=0
-        for path in \
-          "platforms/android-37.0" \
-          "platforms/android-36" \
-          "build-tools/36.1.0" \
-          "build-tools/36.0.0" \
-          "ndk/28.2.13676358"
-        do
-          if [ ! -d "$ANDROID_HOME/$path" ]; then
-            echo "::error::Android SDK component missing after install: $path"
+        for package in "${packages[@]}"; do
+          if [ ! -d "$ANDROID_HOME/${package//;//}" ]; then
+            echo "::error::Android SDK component missing after install: $package"
             missing=1
           fi
         done
@@ -62,13 +66,20 @@ runs:
         key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
         restore-keys: ${{ runner.os }}-pub-
     - name: Cache Gradle
+      if: inputs.android == 'true'
       uses: actions/cache@v6
       with:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
-        restore-keys: ${{ runner.os }}-gradle-
+        # The run number rotates the key so every build writes back a fresh
+        # entry. Without it the key only changes when a Gradle file does, the
+        # first run wins, and the build cache underneath `caches/build-cache-1`
+        # is frozen at whatever that run happened to produce.
+        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-
+          ${{ runner.os }}-gradle-
     - name: Bootstrap workspace
       shell: bash
       # melos is a dev_dependency, so its version is pinned by pubspec.lock

@@ -6,9 +6,17 @@ on:
     tags-ignore:
       - 'v*'
   pull_request:
+# A second push to the same branch makes the first one's result irrelevant, and
+# three runs raced over the same cache keys on 2026-09-01. Keep the newest.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 jobs:
-  build:
-    name: Build
+  # Split from the Android build so the two run in parallel rather than adding
+  # up. This one needs no Android SDK, which keeps ~50s of SDK install and
+  # Gradle cache restore out of its critical path.
+  analyze:
+    name: Analyze and test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -17,11 +25,52 @@ jobs:
           fetch-depth: 0
       - name: Bootstrap workspace
         uses: ./.github/actions/bootstrap
+        with:
+          android: 'false'
       - name: Run static analysis checks
         run: dart run melos run lint
       - name: Run tests
         run: dart run melos run test
+  build:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      # Looked up before bootstrapping, because a hit also makes the Android SDK
+      # and the Gradle cache dead weight for this job.
+      #
+      # The key has to name everything the APK is built from, or a green check
+      # stops meaning anything. Sources, the Android project, bundled assets,
+      # the resolved dependency set, the toolchain versions, and the SDK
+      # component list in the bootstrap action. A hit says these exact inputs
+      # produced an APK on some earlier run, which is the same claim a fresh
+      # build would make. Anything that can change the output and is NOT listed
+      # here is a hole; add to the key rather than trusting the build to notice.
+      - name: Restore a previously built APK
+        id: apk
+        uses: actions/cache@v6
+        with:
+          path: build/app/outputs/apk/profile/app-profile.apk
+          key: >-
+            ${{ runner.os }}-apk-profile-${{ hashFiles(
+              'lib/**',
+              'packages/**',
+              'android/**',
+              'assets/**',
+              'pubspec.yaml',
+              'pubspec.lock',
+              'mise.toml',
+              '.github/actions/bootstrap/action.yml'
+            ) }}
+      - name: Bootstrap workspace
+        uses: ./.github/actions/bootstrap
+        with:
+          android: ${{ steps.apk.outputs.cache-hit != 'true' }}
       - name: Build Android APK (profile)
+        if: steps.apk.outputs.cache-hit != 'true'
         run: flutter build apk --profile
       - name: Upload APK (profile) artifact
         uses: actions/upload-artifact@v7
