@@ -38,6 +38,14 @@ jobs:
   ios:
     name: Build iOS
     runs-on: macos-latest
+    # mise.toml is shared with the Android side, so without this the mac runner
+    # installs an Android SDK and a JDK that an iOS build never touches. Job
+    # level so the composite action inherits it. Safe to scope here and not on
+    # the ubuntu jobs: mise-action keys its cache by runner OS but not by tool
+    # set, so disabling tools on the ubuntu analyze job would hand the Android
+    # build job a cache with no SDK in it.
+    env:
+      MISE_DISABLE_TOOLS: android-sdk,java
     steps:
       - name: Checkout
         uses: actions/checkout@v7
