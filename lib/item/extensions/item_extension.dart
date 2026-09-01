@@ -32,23 +32,15 @@ extension ItemExtension on Item {
       .replaceAll(_originalDateRegExp, '')
       .replaceAll(_ycBatchRegExp, '');
 
-  bool get hasPrefix => title != null && _prefixRegExp.hasMatch(title!);
-
-  String? get prefix => _prefixRegExp.firstMatch(title!)?.group(1);
-
-  bool get hasSuffix => title != null && _suffixRegExp.hasMatch(title!);
+  String? get prefix => _prefixRegExp.firstMatch(title ?? '')?.group(1);
 
   String? get suffix =>
-      _suffixRegExp.firstMatch(title!)?.group(1)?.toLowerCase();
+      _suffixRegExp.firstMatch(title ?? '')?.group(1)?.toLowerCase();
 
-  bool get hasOriginalDate =>
-      title != null && _originalDateRegExp.hasMatch(title!);
+  String? get originalDate =>
+      _originalDateRegExp.firstMatch(title ?? '')?.group(1);
 
-  String? get originalDate => _originalDateRegExp.firstMatch(title!)?.group(1);
-
-  bool get hasYcBatch => title != null && _ycBatchRegExp.hasMatch(title!);
-
-  String? get ycBatch => _ycBatchRegExp.firstMatch(title!)?.group(1);
+  String? get ycBatch => _ycBatchRegExp.firstMatch(title ?? '')?.group(1);
 
   bool get hasUsernameTag => _usernameTags.containsKey(username);
 

@@ -415,54 +415,22 @@ class const _ItemTitle(
           ? Theme.of(context).textTheme.titleMedium
           : Theme.of(context).textTheme.titleSmall,
       children: [
-        if (item.hasPrefix) ...[
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: Badge(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              textColor: Theme.of(context).colorScheme.onSecondaryContainer,
-              label: Text(item.prefix!),
-            ),
-          ),
+        if (item.prefix case final prefix?) ...[
+          _tagSpan(context, prefix, _TagColor.secondary),
           const TextSpan(text: ' '),
         ],
         TextSpan(text: item.filteredTitle),
-        if (item.hasSuffix) ...[
+        if (item.suffix case final suffix?) ...[
           const TextSpan(text: ' '),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: Badge(
-              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-              textColor: Theme.of(context).colorScheme.onPrimaryContainer,
-              label: Text(item.suffix!),
-            ),
-          ),
+          _tagSpan(context, suffix, _TagColor.primary),
         ],
-        if (item.hasOriginalDate) ...[
+        if (item.originalDate case final originalDate?) ...[
           const TextSpan(text: ' '),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: Badge(
-              backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-              textColor: Theme.of(context).colorScheme.onSecondaryContainer,
-              label: Text(item.originalDate!),
-            ),
-          ),
+          _tagSpan(context, originalDate, _TagColor.secondary),
         ],
-        if (item.hasYcBatch) ...[
+        if (item.ycBatch case final ycBatch?) ...[
           const TextSpan(text: ' '),
-          WidgetSpan(
-            alignment: PlaceholderAlignment.baseline,
-            baseline: TextBaseline.alphabetic,
-            child: Badge(
-              backgroundColor: Theme.of(context).colorScheme.tertiaryContainer,
-              textColor: Theme.of(context).colorScheme.onTertiaryContainer,
-              label: Text(item.ycBatch!),
-            ),
-          ),
+          _tagSpan(context, ycBatch, _TagColor.tertiary),
         ],
         if (style.showUrlHost && useLargeStoryStyle)
           if (item.url case final url?) ...[
@@ -484,6 +452,58 @@ class const _ItemTitle(
     ),
     maxLines: maxLines,
     overflow: TextOverflow.ellipsis,
+  );
+}
+
+enum _TagColor() {
+  primary,
+  secondary,
+  tertiary
+}
+
+/// A pill for one of the tags Hacker News encodes in a title -- `Show HN:`,
+/// `[video]`, `(2019)`, `(YC W20)`.
+///
+/// Deliberately not a [Badge]. Badge sizes its label with an intrinsic-width
+/// stadium and then clips it to a fixed 16dp line, so a label whose measured
+/// width lands a hair over what its own intrinsic pass reported wraps and
+/// loses every line but the first -- which is how `Show HN` rendered as
+/// `Show` in a pill still wide enough for both words.
+InlineSpan _tagSpan(BuildContext context, String label, _TagColor color) {
+  final ColorScheme colorScheme = Theme.of(context).colorScheme;
+  final (Color background, Color foreground) = switch (color) {
+    _TagColor.primary => (
+      colorScheme.primaryContainer,
+      colorScheme.onPrimaryContainer,
+    ),
+    _TagColor.secondary => (
+      colorScheme.secondaryContainer,
+      colorScheme.onSecondaryContainer,
+    ),
+    _TagColor.tertiary => (
+      colorScheme.tertiaryContainer,
+      colorScheme.onTertiaryContainer,
+    ),
+  };
+
+  return WidgetSpan(
+    alignment: PlaceholderAlignment.baseline,
+    baseline: TextBaseline.alphabetic,
+    child: DecoratedBox(
+      decoration: ShapeDecoration(
+        color: background,
+        shape: const StadiumBorder(),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.s),
+        child: Text(
+          label,
+          softWrap: false,
+          style: Theme.of(context).textTheme.labelSmall
+              ?.copyWith(color: foreground),
+        ),
+      ),
+    ),
   );
 }
 
