@@ -65,21 +65,37 @@ runs:
         path: .pub-cache
         key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.lock') }}
         restore-keys: ${{ runner.os }}-pub-
-    - name: Cache Gradle
+    # Two entries, because the Gradle home holds two kinds of thing and they
+    # want opposite keys. Measured 2026-09-02: modules-2 and the per-version
+    # internals are 3.3 GiB, build-cache-1 is 48 MiB.
+    #
+    # Dependencies and Gradle's own internals are fully determined by the
+    # dependency set and the wrapper version, so a content key is exactly right
+    # and the entry should be written once and then hit forever.
+    - name: Cache Gradle dependencies
       if: inputs.android == 'true'
       uses: actions/cache@v6
       with:
         path: |
           ~/.gradle/caches
+          !~/.gradle/caches/build-cache-1
           ~/.gradle/wrapper
-        # The run number rotates the key so every build writes back a fresh
-        # entry. Without it the key only changes when a Gradle file does, the
-        # first run wins, and the build cache underneath `caches/build-cache-1`
-        # is frozen at whatever that run happened to produce.
-        key: ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-${{ github.run_id }}
+        key: ${{ runner.os }}-gradle-deps-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}
+        restore-keys: ${{ runner.os }}-gradle-deps-
+    # The task output cache is the opposite: its value grows with every build,
+    # so it has to be rewritten each time. `actions/cache` saves only when the
+    # primary key missed, and entries are immutable, so the run id forces that
+    # miss while restore-keys do the actual restoring by prefix. Keeping this
+    # separate is what makes the rewrite ~50 MiB instead of ~1.45 GiB.
+    - name: Cache Gradle build outputs
+      if: inputs.android == 'true'
+      uses: actions/cache@v6
+      with:
+        path: ~/.gradle/caches/build-cache-1
+        key: ${{ runner.os }}-gradle-build-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-${{ github.run_id }}
         restore-keys: |
-          ${{ runner.os }}-gradle-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-
-          ${{ runner.os }}-gradle-
+          ${{ runner.os }}-gradle-build-${{ hashFiles('android/**/*.gradle*', 'android/gradle/wrapper/gradle-wrapper.properties') }}-
+          ${{ runner.os }}-gradle-build-
     - name: Bootstrap workspace
       shell: bash
       # melos is a dev_dependency, so its version is pinned by pubspec.lock
