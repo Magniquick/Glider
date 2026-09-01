@@ -57,6 +57,18 @@ jobs:
           android: 'false'
       - name: Build iOS
         run: flutter build ios --no-codesign
+      # `pod install` rewrites the lock on the runner and the job then throws it
+      # away, so the committed copy can drift indefinitely without anything
+      # noticing. It named flutter_inappwebview_ios, dropped in cbd7c65, and
+      # flutter_secure_storage 6.0.0, replaced by flutter_secure_storage_darwin.
+      # Uploading it makes the regenerated file recoverable from a Linux
+      # machine, which is the only way to commit an honest one without a Mac.
+      - name: Upload the regenerated Podfile.lock
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: Podfile.lock
+          path: ios/Podfile.lock
   build:
     name: Build Android APK
     runs-on: ubuntu-latest
