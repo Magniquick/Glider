@@ -66,6 +66,30 @@ extension ItemTreeStateExtension on ItemTreeState {
       ?.where((e) => e.ancestorIds.contains(descendant.id))
       .toList(growable: false);
 
+  /// Where a jump to the next or previous root comment should search from.
+  ///
+  /// Two things go wrong if this is read off the unobstructed visible range,
+  /// and both skip or stall on childless root comments, where the next root is
+  /// the very next row and nothing sits between them to absorb an error.
+  ///
+  /// The app bar covers the topmost row, so that row is missing from the
+  /// unobstructed range and the search starts past it. [visibleRange] still
+  /// counts it, and is the honest answer to which comment the reader is on.
+  ///
+  /// A landing that stops a row short then leaves the previous comment topmost,
+  /// so the search re-finds the comment just jumped to and the button animates
+  /// to where the reader already is. Hence [lastTarget]: prefer where the last
+  /// jump aimed for as long as it is on screen, whatever the pixels did.
+  static int resolveJumpOrigin({
+    required (int, int) visibleRange,
+    required int? lastTarget,
+  }) =>
+      lastTarget != null &&
+          lastTarget >= visibleRange.$1 &&
+          lastTarget <= visibleRange.$2
+      ? lastTarget
+      : visibleRange.$1;
+
   int? getPreviousRootChildIndex({required int index}) => viewableData?.indexed
       .take(index)
       .lastWhereOrNull((indexed) => indexed.$2.depth == 1)

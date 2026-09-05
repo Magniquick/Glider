@@ -58,6 +58,10 @@ class _ItemPageState() extends State<ItemPage> {
   late final StorySimilarCubit _storySimilarCubit;
   late final StoryItemSearchBloc _storyItemSearchBloc;
   late final ScrollController _scrollController;
+
+  /// Index the last jump aimed at, so the next one starts from there rather
+  /// than from wherever the viewport happens to begin.
+  int? _lastJumpTarget;
   late final ListController _listController;
   final GlobalKey _bodyKey = GlobalKey();
 
@@ -178,8 +182,12 @@ class _ItemPageState() extends State<ItemPage> {
       );
 
   Future<void> _onPreviousPressed() async {
-    if (_listController.unobstructedVisibleRange case final visibleRange?) {
-      if (_itemTreeCubit.state.getPreviousRootChildIndex(index: visibleRange.$1)
+    if (_listController.visibleRange case final visibleRange?) {
+      final int origin = ItemTreeStateExtension.resolveJumpOrigin(
+        visibleRange: visibleRange,
+        lastTarget: _lastJumpTarget,
+      );
+      if (_itemTreeCubit.state.getPreviousRootChildIndex(index: origin)
           case final index?) {
         await _animateTo(index: index);
       }
@@ -187,22 +195,28 @@ class _ItemPageState() extends State<ItemPage> {
   }
 
   Future<void> _onNextPressed() async {
-    if (_listController.unobstructedVisibleRange case final visibleRange?) {
-      if (_itemTreeCubit.state.getNextRootChildIndex(index: visibleRange.$1)
+    if (_listController.visibleRange case final visibleRange?) {
+      final int origin = ItemTreeStateExtension.resolveJumpOrigin(
+        visibleRange: visibleRange,
+        lastTarget: _lastJumpTarget,
+      );
+      if (_itemTreeCubit.state.getNextRootChildIndex(index: origin)
           case final index?) {
         await _animateTo(index: index);
       }
     }
   }
 
-  Future<void> _animateTo({required int index}) async =>
-      _listController.animateToItem(
-        index: index,
-        scrollController: _scrollController,
-        duration: (estimatedDistance) => AppAnimation.emphasized.duration,
-        curve: (estimatedDistance) => AppAnimation.emphasized.easing,
-        alignment: 0,
-      );
+  Future<void> _animateTo({required int index}) async {
+    _lastJumpTarget = index;
+    _listController.animateToItem(
+      index: index,
+      scrollController: _scrollController,
+      duration: (estimatedDistance) => AppAnimation.emphasized.duration,
+      curve: (estimatedDistance) => AppAnimation.emphasized.easing,
+      alignment: 0,
+    );
+  }
 }
 
 class const _SliverItemAppBar(
