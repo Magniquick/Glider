@@ -19,6 +19,7 @@ import 'package:glider/item/extensions/item_extension.dart';
 import 'package:glider/item/models/item_style.dart';
 import 'package:glider/item/models/vote_type.dart';
 import 'package:glider/item/typedefs/item_typedefs.dart';
+import 'package:glider/item/widgets/favicon_resolution.dart';
 import 'package:glider/item/widgets/username_widget.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
 import 'package:glider_domain/glider_domain.dart';
@@ -507,26 +508,12 @@ InlineSpan _tagSpan(BuildContext context, String label, _TagColor color) {
   );
 }
 
-/// Mean opaque luminance per favicon host, so an icon is analysed once for the
-/// whole feed rather than once per row.
-final _faviconLuminance = <String, double?>{};
-
-/// Which of a host's candidate URLs actually served an icon, or null once every
-/// candidate has failed. Cached per host so a miss is probed once per session
-/// rather than once per row, and so a row that will never get an icon can drop
-/// the slot entirely instead of reserving space for nothing.
-final _faviconResolution = <String, String?>{};
-
-/// Normalised bounds of each host icon's visible pixels, so a glyph padded out
-/// with transparency can be trimmed back to fill its tile.
-final _faviconBounds = <String, Rect?>{};
-
 /// Whether [item]'s host is already known to have no icon at all.
 bool _faviconKnownMissing(Item item) {
   final String? host = item.url?.host;
   return host != null &&
-      _faviconResolution.containsKey(host) &&
-      _faviconResolution[host] == null;
+      hasFaviconResolution(host) &&
+      faviconUrlFor(host) == null;
 }
 
 class _ItemFavicon extends StatefulWidget {
@@ -608,7 +595,7 @@ class _ItemFaviconState extends State<_ItemFavicon> {
       );
     }
 
-    if (_faviconResolution.containsKey(host)) return;
+    if (!claimFaviconLookup(host)) return;
     unawaited(
       ensurePublicSuffixListLoaded().then((_) {
         if (mounted) _tryCandidate(host, widget.item.faviconUrls, 0);
@@ -622,9 +609,7 @@ class _ItemFaviconState extends State<_ItemFavicon> {
 
   void _tryCandidate(String host, List<String> candidates, int index) {
     if (index >= candidates.length) {
-      _faviconResolution[host] = null;
-      _faviconLuminance[host] = null;
-      _faviconBounds[host] = null;
+      recordFaviconResolution(host, url: null, luminance: null);
       if (mounted) setState(() {});
       return;
     }
@@ -633,9 +618,12 @@ class _ItemFaviconState extends State<_ItemFavicon> {
       (info, _) async {
         final analysis = await analyseFavicon(info.image);
         info.image.dispose();
-        _faviconResolution[host] = candidates[index];
-        _faviconLuminance[host] = analysis.luminance;
-        _faviconBounds[host] = analysis.opaqueBounds;
+        recordFaviconResolution(
+          host,
+          url: candidates[index],
+          luminance: analysis.luminance,
+          bounds: analysis.opaqueBounds,
+        );
         if (mounted) setState(() {});
       },
       onError: (_, __) {
@@ -660,7 +648,8 @@ class _ItemFaviconState extends State<_ItemFavicon> {
   /// that would be rewriting someone else's brand mark.
   Color _plate(ColorScheme colorScheme) {
     final tile = colorScheme.surfaceContainerHighest;
-    final luminance = _host != null ? _faviconLuminance[_host] : null;
+    final String? host = _host;
+    final luminance = host != null ? faviconLuminanceFor(host) : null;
     if (luminance == null) return tile;
 
     final tileLuminance = relativeLuminance(
@@ -678,7 +667,7 @@ class _ItemFaviconState extends State<_ItemFavicon> {
   /// Only worth doing when the padding is wide enough to see: trimming a
   /// hairline would just resample the icon for nothing.
   Rect? _trim(String? host) {
-    final bounds = host != null ? _faviconBounds[host] : null;
+    final bounds = host != null ? faviconBoundsFor(host) : null;
     if (bounds == null) return null;
     return max(bounds.width, bounds.height) <= _maximumUntrimmedExtent
         ? bounds
@@ -712,14 +701,14 @@ class _ItemFaviconState extends State<_ItemFavicon> {
       );
     }
 
-    final String? resolved = host != null ? _faviconResolution[host] : null;
+    final String? resolved = host != null ? faviconUrlFor(host) : null;
 
     // No icon anywhere for this host: take up no room at all, so the title
     // gets the width back. A zero-size image inside the plate would leave the
     // inset padding behind as a stray dot.
     if (resolved == null) {
       return SizedBox.square(
-        dimension: host != null && _faviconResolution.containsKey(host)
+        dimension: host != null && hasFaviconResolution(host)
             ? 0
             : _faviconSize.toDouble(),
       );
