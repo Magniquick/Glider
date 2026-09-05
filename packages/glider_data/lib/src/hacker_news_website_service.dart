@@ -15,13 +15,10 @@ import 'package:http/http.dart' as http;
 /// In practice this means the stored session cookie is no longer valid: a
 /// logged-out item page carries no `auth` parameter, and `/submit` renders
 /// "You have to be logged in to submit." with no hidden `fnid`.
-class const HackerNewsAuthException(this.action) implements Exception {
-  /// Creates an exception for the named [action].
-  this;
-
+class const HackerNewsAuthException(
   /// The action that could not be authorised, e.g. `vote`.
-  final String action;
-
+  final String action,
+) implements Exception {
   @override
   String toString() =>
       'Hacker News did not authorise the $action request. '
@@ -29,17 +26,13 @@ class const HackerNewsAuthException(this.action) implements Exception {
 }
 
 /// Thrown when Hacker News answers a request with a non-success status.
-class const HackerNewsRequestException(this.statusCode, this.uri)
-    implements Exception {
-  /// Creates an exception for [statusCode] returned by [uri].
-  this;
-
+class const HackerNewsRequestException(
   /// The HTTP status Hacker News returned.
-  final int statusCode;
+  final int statusCode,
 
   /// The request that failed.
-  final Uri uri;
-
+  final Uri uri,
+) implements Exception {
   @override
   String toString() => 'Hacker News returned HTTP $statusCode for $uri.';
 }
@@ -63,13 +56,10 @@ class const HackerNewsRequestException(this.statusCode, this.uri)
 /// does get through writes `lastview` forward, so a client that keeps sending
 /// the cookie spends the reading budget the setting exists to protect. Once
 /// this is seen, prefer anonymous fetches for the rest of the session.
-class const HackerNewsProcrastinationException(this.uri) implements Exception {
-  /// Creates an exception for the page at [uri].
-  this;
-
+class const HackerNewsProcrastinationException(
   /// The page that was withheld.
-  final Uri uri;
-
+  final Uri uri,
+) implements Exception {
   @override
   String toString() =>
       "Hacker News withheld $uri under the account's noprocrast setting.";
@@ -77,18 +67,30 @@ class const HackerNewsProcrastinationException(this.uri) implements Exception {
 
 /// Thrown when an item page came back but did not look like one.
 ///
-/// In practice this means the markup this parser depends on has changed.
-/// Callers are expected to fall back to the Firebase API rather than surface
-/// this.
-class const HackerNewsParseException(this.uri) implements Exception {
-  /// Creates an exception for the page at [uri].
-  this;
-
+/// In practice this means the markup this parser depends on has changed, so
+/// it is a defect here rather than anything the reader did. Distinct from
+/// [HackerNewsItemNotFoundException], which is the ordinary outcome of asking
+/// for an item that is not there.
+class const HackerNewsParseException(
   /// The page that could not be parsed.
-  final Uri uri;
-
+  final Uri uri,
+) implements Exception {
   @override
   String toString() => 'Hacker News served no parseable item page at $uri.';
+}
+
+/// Thrown when Hacker News has no item to show at the requested id.
+///
+/// Covers both an id that was never used, answered with a bare
+/// `No such item.`, and one that has been killed, which anonymously gets the
+/// whole page wrapped around an empty `table.fatitem`. `cansee` fails in
+/// news.arc, so the frame renders with nothing inside it.
+class const HackerNewsItemNotFoundException(
+  /// The item that could not be shown.
+  final Uri uri,
+) implements Exception {
+  @override
+  String toString() => 'Hacker News has no item to show at $uri.';
 }
 
 /// Outcome of a [HackerNewsWebsiteService.logIn] attempt.
@@ -199,7 +201,7 @@ class const HackerNewsWebsiteService(
       throw HackerNewsProcrastinationException(endpoint);
     }
     final ItemPageDto? parsed = await compute(_parseItemPage, response.body);
-    return parsed ?? (throw HackerNewsParseException(endpoint));
+    return parsed ?? (throw _pageException(response.body, endpoint));
   }
 
   /// Parses an item page while it is still arriving.
@@ -282,7 +284,20 @@ class const HackerNewsWebsiteService(
       }
     }
 
-    if (!storyEmitted) throw _pageException(pending, endpoint);
+    // A page can legitimately hold no comment rows at all: a job post, a story
+    // nobody has replied to yet, a comment permalink with no replies. Nothing
+    // ever marks the header complete on those, so the item is only parseable
+    // once the body has ended.
+    if (!storyEmitted) {
+      final ItemPageDto? whole = await compute(_parseItemPage, pending);
+      if (whole == null) throw _pageException(pending, endpoint);
+      yield ItemPageChunk(
+        story: whole.story,
+        rows: whole.rows,
+        hasMore: whole.hasMore,
+      );
+      return;
+    }
 
     // Whatever is left is the final row plus the page footer.
     if (pending.isNotEmpty) batch.add(pending);
@@ -292,14 +307,31 @@ class const HackerNewsWebsiteService(
     );
   }
 
-  /// Tells a reading limit apart from markup that no longer parses.
+  /// Tells the three ways an item page can yield nothing apart.
   ///
-  /// They need different handling: the first is fixed by dropping the cookie,
-  /// the second by falling back to the API.
+  /// A reading limit is fixed by dropping the cookie and a withheld item is
+  /// not a fault at all, so neither should be reported as the markup having
+  /// moved out from under this parser.
   static Exception _pageException(String body, Uri endpoint) =>
       body.contains('class="noprocrast"')
       ? HackerNewsProcrastinationException(endpoint)
+      : _isMissingItem(body)
+      ? HackerNewsItemNotFoundException(endpoint)
       : HackerNewsParseException(endpoint);
+
+  /// Whether Hacker News answered, but with no item in the page.
+  ///
+  /// An unused id gets a bare `No such item.`; a killed one gets the full page
+  /// around an empty `table.fatitem`.
+  ///
+  /// The username is checked as well as the row, so that a page which merely
+  /// renamed `athing` is still reported as a markup change rather than as an
+  /// item that is not there.
+  static bool _isMissingItem(String body) =>
+      body.contains('No such item.') ||
+      body.contains('class="fatitem"') &&
+          !body.contains('class="athing') &&
+          !body.contains('class="hnuser"');
 
   /// Fetches one page of a story list, e.g. `news`, `newest`, `best`.
   ///
@@ -686,20 +718,29 @@ ItemPageDto? _parseItemPage(String body) {
   final html_dom.Element? submission = document.querySelector(
     'tr.athing.submission',
   );
-  if (submission == null) return null;
+  // A comment's own page has no submission row: the fatitem holds a bare
+  // `tr.athing` for the comment itself, with its replies below as usual.
+  final html_dom.Element? subject =
+      submission ?? document.querySelector('table.fatitem tr.athing');
+  if (subject == null) return null;
 
   final rows = <ItemPageRowDto>[
     // Poll options are bare `tr.athing` rows inside the fatitem, neither a
-    // submission nor a comment, holding their text in `td.comment`.
-    for (final element in document.querySelectorAll('table.fatitem tr.athing'))
-      if (!element.classes.contains('submission') &&
-          !element.classes.contains('comtr'))
-        if (int.tryParse(element.id) case final int id)
-          ItemPageRowDto(
-            id: id,
-            textHtml: element.querySelector('td.comment')?.innerHtml,
-            isPart: true,
-          ),
+    // submission nor a comment, holding their text in `td.comment`. Only a
+    // story can have them, so on a comment page this loop must not run: the
+    // subject comment is itself a bare `tr.athing`.
+    if (submission != null)
+      for (final element in document.querySelectorAll(
+        'table.fatitem tr.athing',
+      ))
+        if (!element.classes.contains('submission') &&
+            !element.classes.contains('comtr'))
+          if (int.tryParse(element.id) case final int id)
+            ItemPageRowDto(
+              id: id,
+              textHtml: element.querySelector('td.comment')?.innerHtml,
+              isPart: true,
+            ),
     // Comment rows carry `comtr` plus, when a subtree is collapsed, `noshow`
     // or `coll`. Those variants still hold every field, so match on the one
     // class they share rather than on the exact attribute.
@@ -708,7 +749,9 @@ ItemPageDto? _parseItemPage(String body) {
   ];
 
   return ItemPageDto(
-    story: _parseStory(document, submission),
+    story: submission != null
+        ? _parseStory(document, submission)
+        : _parseSubjectComment(document, subject),
     rows: rows,
     hasMore: document.querySelector('a.morelink') != null,
   );
@@ -732,13 +775,17 @@ ItemDto _storyDto(
   // A text submission links its own title back at itself; that is not a URL
   // the app should render as an outbound link.
   final bool isSelfLink = href == null || href.startsWith('item?id=');
+  // Every submission carries a `div.toptext`, empty when there is no text.
+  // Firebase omits the field instead, and the tile lays out a text section for
+  // anything non-null, so an empty one has to read as absent.
+  final String? text = toptext?.innerHtml;
 
   return ItemDto(
     id: int.tryParse(submission.id) ?? 0,
     type: type,
     by: subtext?.querySelector('a.hnuser')?.text,
     time: subtext?.querySelector('span.age')?.epochSeconds,
-    text: toptext?.innerHtml,
+    text: text != null && text.isNotEmpty ? text : null,
     url: isSelfLink ? null : href,
     score: subtext?.querySelector('span.score')?.leadingInt,
     title: titleAnchor?.text,
@@ -746,9 +793,19 @@ ItemDto _storyDto(
   );
 }
 
+/// Whether a submission's subtext belongs to a job post.
+///
+/// Job posts carry neither a score nor an author, which is the only thing that
+/// distinguishes them from a story. Worth getting right on both the lists and
+/// the item page: the app hides voting, replying, favouriting and flagging for
+/// a job, all of which Hacker News rejects anyway.
+bool _isJob(html_dom.Element? subtext) =>
+    subtext != null && subtext.querySelector('span.score') == null;
+
 /// Builds the submission's own DTO from the fatitem table.
 ItemDto _parseStory(html_dom.Document document, html_dom.Element submission) {
   final html_dom.Element? fatitem = document.querySelector('table.fatitem');
+  final html_dom.Element? subtext = fatitem?.querySelector('td.subtext');
   final bool isPoll = document
       .querySelectorAll('table.fatitem tr.athing')
       .any(
@@ -758,9 +815,43 @@ ItemDto _parseStory(html_dom.Document document, html_dom.Element submission) {
 
   return _storyDto(
     submission,
-    subtext: fatitem?.querySelector('td.subtext'),
+    subtext: subtext,
     toptext: fatitem?.querySelector('div.toptext'),
-    type: isPoll ? 'poll' : 'story',
+    type: isPoll
+        ? 'poll'
+        : _isJob(subtext)
+        ? 'job'
+        : 'story',
+  );
+}
+
+/// Builds the DTO for a comment viewed on its own page.
+///
+/// The fatitem carries the comment rather than a submission, so there is no
+/// title, score or URL to read; the author, timestamp and body sit in the same
+/// places a comment row keeps them.
+ItemDto _parseSubjectComment(
+  html_dom.Document document,
+  html_dom.Element subject,
+) {
+  final html_dom.Element? fatitem = document.querySelector('table.fatitem');
+  return ItemDto(
+    id: int.tryParse(subject.id) ?? 0,
+    deleted: subject.isDeletedMarked,
+    type: 'comment',
+    dead: subject.isDeadMarked,
+    by: fatitem?.querySelector('a.hnuser')?.text,
+    time: fatitem?.querySelector('span.age')?.epochSeconds,
+    text: fatitem?.querySelector('div.commtext')?.innerHtml,
+    parent: int.tryParse(
+      fatitem
+              ?.querySelectorAll('span.navs a')
+              .firstWhereOrNull((anchor) => anchor.text == 'parent')
+              ?.attributes['href']
+              ?.split('=')
+              .last ??
+          '',
+    ),
   );
 }
 
@@ -779,9 +870,7 @@ StoryListDto _parseStoryList(String body) {
         _storyDto(
           submission,
           subtext: subtext,
-          // Job posts carry neither a score nor an author, which is the only
-          // thing that distinguishes them here.
-          type: subtext.querySelector('span.score') == null ? 'job' : 'story',
+          type: _isJob(subtext) ? 'job' : 'story',
         ),
   ];
 
@@ -792,14 +881,30 @@ StoryListDto _parseStoryList(String body) {
 }
 
 extension on html_dom.Element {
-  /// Reads this row's fields, given the [id] already parsed from it.
-  ItemPageRowDto toRowDto(int id) {
-    // Logged in, the marker is a bare text node in the header, e.g. `<span
-    // id="unv_49562690"></span> [dead] <span class="navs">`. Anonymously the
-    // header stays clean and the body is replaced wholesale instead, as
-    // `<div class="comment noshow">[flagged]`, with no commtext at all.
+  /// Whether Hacker News marked this comment dead or flagged.
+  ///
+  /// Logged in, the marker is a bare text node in the header:
+  /// `<span id="unv_49562690"></span> [dead] <span class="navs">`.
+  /// Anonymously the header stays clean and the body is replaced wholesale
+  /// instead, as `<div class="comment noshow">[flagged]`, with no commtext at
+  /// all. A dead comment's own page is served that way to anyone, unlike its
+  /// row in a thread, which only a profile with `showdead` sees at all.
+  bool get isDeadMarked {
     final String head = querySelector('span.comhead')?.text ?? '';
     final String comment = querySelector('div.comment')?.text ?? '';
+    return head.contains('[dead]') ||
+        head.contains('[flagged]') ||
+        comment.startsWith('[dead]') ||
+        comment.startsWith('[flagged]');
+  }
+
+  /// Whether the author deleted this comment, leaving the marker `[deleted]`
+  /// as the whole body and no username behind it.
+  bool get isDeletedMarked =>
+      querySelector('div.comment')?.text.startsWith('[deleted]') ?? false;
+
+  /// Reads this row's fields, given the [id] already parsed from it.
+  ItemPageRowDto toRowDto(int id) {
     final String? voteHref = querySelectorAll('a')
         .firstWhereOrNull((e) => e.id.startsWith('up_'))
         ?.attributes['href'];
@@ -816,10 +921,7 @@ extension on html_dom.Element {
       subtreeCount: int.tryParse(
         querySelector('a.togg')?.attributes['n'] ?? '',
       ),
-      isDead:
-          head.contains('[dead]') ||
-          head.contains('[flagged]') ||
-          comment.startsWith('[flagged]'),
+      isDead: isDeadMarked,
       voteAuth: voteHref != null
           ? Uri.tryParse(voteHref)?.queryParameters['auth']
           : null,
