@@ -5,6 +5,13 @@ class StoriesState({
   @override final List<int>? data,
   @override final int page = 1,
   final StoryType storyType = StoryType.topStories,
+
+  /// Whether Hacker News offered a `More` link on the last page loaded.
+  ///
+  /// The id-list endpoints used to bound this: a fixed 500 ids meant more
+  /// pages existed while fewer than that had been shown. The stories now come
+  /// from the pages themselves, which only know about themselves.
+  final bool hasMore = false,
   @override final Object? exception,
 }) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
   factory fromMap(Map<String, dynamic> json) => StoriesState(
@@ -13,12 +20,14 @@ class StoriesState({
         ?.map((e) => e as int)
         .toList(growable: false),
     storyType: StoryType.values.byName(json['storyType'] as String),
+    hasMore: json['hasMore'] as bool? ?? false,
   );
 
   Map<String, dynamic> toMap() => <String, dynamic>{
     'status': status.name,
     'data': data,
     'storyType': storyType.name,
+    'hasMore': hasMore,
   };
 
   @override
@@ -34,17 +43,26 @@ class StoriesState({
     List<int>? Function()? data,
     int Function()? page,
     StoryType Function()? storyType,
+    bool Function()? hasMore,
     Object? Function()? exception,
   }) => StoriesState(
     status: status != null ? status() : this.status,
     data: data != null ? data() : this.data,
     page: page != null ? page() : this.page,
     storyType: storyType != null ? storyType() : this.storyType,
+    hasMore: hasMore != null ? hasMore() : this.hasMore,
     exception: exception != null ? exception() : this.exception,
   );
 
   // loadedData and currentPageData are memoised derivations of data and page,
   // which are already compared below.
   @override
-  List<Object?> get props => [status, data, page, storyType, exception];
+  List<Object?> get props => [
+    status,
+    data,
+    page,
+    storyType,
+    hasMore,
+    exception,
+  ];
 }

@@ -94,6 +94,8 @@ class const AppContainer(
     final itemRepository = ItemRepository(
       algoliaApiService,
       hackerNewsApiService,
+      hackerNewsWebsiteService,
+      secureStorageService,
     );
     final itemInteractionRepository = ItemInteractionRepository(
       hackerNewsWebsiteService,

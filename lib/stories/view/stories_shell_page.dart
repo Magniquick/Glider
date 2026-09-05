@@ -245,7 +245,7 @@ class const _SliverStoriesBody(
               );
             },
           ),
-          if (state.loadedData!.length < state.data!.length)
+          if (state.hasMore)
             SliverPadding(
               padding: AppSpacing.defaultTilePadding,
               sliver: SliverToBoxAdapter(

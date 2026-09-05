@@ -18,6 +18,16 @@ enum StoryType() {
     StoryType.jobStories => context.l10n.storyTypeJob,
   };
 
+  /// The Hacker News path that renders this section.
+  String get path => switch (this) {
+    StoryType.topStories => 'news',
+    StoryType.newStories => 'newest',
+    StoryType.bestStories => 'best',
+    StoryType.askStories => 'ask',
+    StoryType.showStories => 'show',
+    StoryType.jobStories => 'jobs',
+  };
+
   IconData get icon => switch (this) {
     StoryType.topStories => Icons.whatshot_outlined,
     StoryType.newStories => Icons.new_releases_outlined,

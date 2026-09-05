@@ -53,6 +53,39 @@ class Item({
     descendantCount: dto.numComments,
   );
 
+  /// Builds an item from one row parsed off a Hacker News item page.
+  ///
+  /// [childIds] cannot come from the row itself. The page expresses the tree
+  /// through indentation, so a row's children are the rows that follow it one
+  /// level deeper, which only the caller walking the whole list can know.
+  /// `ItemAction.delete` gates on this being non-null and empty, so leaving it
+  /// out would silently remove the delete action.
+  ///
+  /// `descendantCount` is deliberately not set from the row's subtree size,
+  /// even though the page carries one. Firebase only reports it for stories,
+  /// so populating it here would put a reply-count badge on every comment,
+  /// which is a change to how the list looks rather than to how fast it loads.
+  factory fromItemPageRowDto(
+    ItemPageRowDto dto, {
+    required List<int> childIds,
+  }) => Item(
+    id: dto.id,
+    type: dto.isPart ? ItemType.pollopt : ItemType.comment,
+    username: dto.by,
+    // `fromDto` builds a local DateTime out of the Firebase epoch, and `isUtc`
+    // counts towards DateTime equality, so the page's trailing `Z` has to be
+    // converted rather than carried through as UTC.
+    dateTime: switch (dto.timeIso) {
+      final String iso => DateTime.tryParse(iso)?.toLocal(),
+      _ => null,
+    },
+    text: dto.textHtml?.convertHtmlToHackerNews(),
+    isDead: dto.isDead,
+    parentId: dto.parentId,
+    childIds: childIds,
+    partIds: const [],
+  );
+
   factory fromMap(Map<String, dynamic> json) => Item(
     id: json['id'] as int,
     isDeleted: json['isDeleted'] as bool? ?? false,

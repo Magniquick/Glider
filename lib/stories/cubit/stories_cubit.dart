@@ -28,17 +28,14 @@ class StoriesCubit(final ItemRepository _itemRepository)
     );
 
     try {
-      final List<int> itemIds = await switch (state.storyType) {
-        StoryType.topStories => _itemRepository.getTopStoryIds,
-        StoryType.newStories => _itemRepository.getNewStoryIds,
-        StoryType.bestStories => _itemRepository.getBestStoryIds,
-        StoryType.askStories => _itemRepository.getAskStoryIds,
-        StoryType.showStories => _itemRepository.getShowStoryIds,
-        StoryType.jobStories => _itemRepository.getJobStoryIds,
-      }();
-      safeEmit(state.copyWith(data: () => itemIds));
-      await _loadCurrentPage();
-      safeEmit(state.copyWith(status: () => Status.success));
+      final page = await _itemRepository.getStories(state.storyType.path);
+      safeEmit(
+        state.copyWith(
+          status: () => Status.success,
+          data: () => [for (final item in page.items) item.id],
+          hasMore: () => page.hasMore,
+        ),
+      );
     } on Object catch (exception) {
       safeEmit(
         state.copyWith(
@@ -50,17 +47,30 @@ class StoriesCubit(final ItemRepository _itemRepository)
   }
 
   Future<void> showMore() async {
+    final int nextPage = state.page + 1;
     safeEmit(
-      state.copyWith(
-        status: () => Status.loading,
-        page: () => state.page + 1,
-        exception: () => null,
-      ),
+      state.copyWith(status: () => Status.loading, exception: () => null),
     );
 
     try {
-      await _loadCurrentPage();
-      safeEmit(state.copyWith(status: () => Status.success));
+      final page = await _itemRepository.getStories(
+        state.storyType.path,
+        page: nextPage,
+      );
+      safeEmit(
+        state.copyWith(
+          status: () => Status.success,
+          // Hacker News reranks between requests, so a story can appear on two
+          // consecutive pages. A set keeps insertion order while dropping the
+          // repeat, which would otherwise render twice.
+          data: () => <int>{
+            ...?state.data,
+            for (final item in page.items) item.id,
+          }.toList(growable: false),
+          page: () => nextPage,
+          hasMore: () => page.hasMore,
+        ),
+      );
     } on Object catch (exception) {
       safeEmit(
         state.copyWith(
@@ -70,11 +80,6 @@ class StoriesCubit(final ItemRepository _itemRepository)
       );
     }
   }
-
-  Future<List<Item>> _loadCurrentPage() => Future.wait<Item>([
-    if (state.currentPageData case final ids?)
-      for (final id in ids) _itemRepository.getItem(id),
-  ]);
 
   Future<void> setStoryType(StoryType storyType) async {
     id = storyType.name;
