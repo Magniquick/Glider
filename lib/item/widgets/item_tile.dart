@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bloc_presentation/bloc_presentation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -97,21 +99,17 @@ class ItemTile extends StatefulWidget {
   }
 }
 
-class _ItemTileState()
-    extends State<ItemTile>
-    with AutomaticKeepAliveClientMixin {
+class _ItemTileState() extends State<ItemTile> {
   late final ItemCubit _itemCubit;
 
   @override
   void initState() {
-    // Define before `super.initState()` for safe access in `wantKeepAlive`.
     _itemCubit = widget._itemCubit ?? widget._itemCubitFactory!(widget.id);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    super.build(context);
     return BlocPresentationListener<ItemCubit, ItemPresentationEvent>(
       bloc: _itemCubit,
       listener: (context, event) => switch (event) {
@@ -270,9 +268,16 @@ class _ItemTileState()
     );
   }
 
+  // This used to keep every row that had ever loaded alive. The sliver then
+  // held an element for all of them and rebuilt all of them whenever the tree
+  // emitted, so collapsing one comment on a thread the reader had scrolled
+  // through cost a single 946 ms frame. Rows rebuild from the repository's
+  // in-memory item, so none are kept.
   @override
-  bool get wantKeepAlive => switch (_itemCubit.state.status) {
-    Status.loading || Status.success => true,
-    _ => false,
-  };
+  void dispose() {
+    // Only the cubit this tile made itself; the other constructor is handed
+    // one that its page owns and closes.
+    if (widget._itemCubit == null) unawaited(_itemCubit.close());
+    super.dispose();
+  }
 }
