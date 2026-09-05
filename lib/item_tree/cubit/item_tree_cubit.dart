@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart';
 import 'package:equatable/equatable.dart';
+import 'package:glider/app/bootstrap/dev_controls.dart';
 import 'package:glider/common/extensions/bloc_base_extension.dart';
 import 'package:glider/common/mixins/data_mixin.dart';
 import 'package:glider/common/models/status.dart';
@@ -10,7 +11,9 @@ part 'item_tree_state.dart';
 
 class ItemTreeCubit(final ItemRepository _itemRepository, {required int id})
     extends HydratedCubit<ItemTreeState> {
-  this : super(ItemTreeState());
+  this : super(ItemTreeState()) {
+    registerItemTree(this);
+  }
 
   final int itemId = id;
 
@@ -59,6 +62,12 @@ class ItemTreeCubit(final ItemRepository _itemRepository, {required int id})
         );
       }
     }
+  }
+
+  @override
+  Future<void> close() {
+    unregisterItemTree(this);
+    return super.close();
   }
 
   void toggleCollapsed(int id) {

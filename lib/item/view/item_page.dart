@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:glider/app/bootstrap/dev_controls.dart';
 import 'package:glider/app/container/app_container.dart';
 import 'package:glider/app/models/app_route.dart';
 import 'package:glider/auth/cubit/auth_cubit.dart';
@@ -76,6 +77,15 @@ class _ItemPageState() extends State<ItemPage> {
     _storyItemSearchBloc = widget._storyItemSearchBlocFactory(widget.id);
     _scrollController = ScrollController();
     _listController = ListController();
+    registerItemTreeScroller(widget.id, (index, {required jump}) {
+      if (!jump) return _animateTo(index: index);
+      _listController.jumpToItem(
+        index: index,
+        scrollController: _scrollController,
+        alignment: 0,
+      );
+      return Future<void>.value();
+    });
   }
 
   @override

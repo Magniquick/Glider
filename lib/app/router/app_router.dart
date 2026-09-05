@@ -30,7 +30,15 @@ class AppRouter._(final RouterConfig<Object> config) {
   factory create(AppContainer appContainer) => AppRouter._(
     GoRouter(
       navigatorKey: rootNavigatorKey,
-      initialLocation: AppRoute.stories.location(),
+      // Profiling affordance: `--dart-define=initialLocation=/item?id=N`
+      // opens straight onto a screen. Both operands are compile-time
+      // constants and `kReleaseMode` is const, so a store build folds this
+      // back to the story list whatever is defined.
+      initialLocation:
+          kReleaseMode ||
+              const String.fromEnvironment('initialLocation').isEmpty
+          ? AppRoute.stories.location()
+          : const String.fromEnvironment('initialLocation'),
       debugLogDiagnostics: kDebugMode,
       routes: [
         StatefulShellRoute.indexedStack(

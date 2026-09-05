@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:glider/app/bootstrap/app_bloc_observer.dart';
+import 'package:glider/app/bootstrap/dev_controls.dart';
 import 'package:glider/app/container/app_container.dart';
 import 'package:glider/app/router/app_router.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
@@ -37,6 +38,7 @@ Future<void> bootstrap(
     });
 
     Bloc.observer = const AppBlocObserver();
+    registerDevControls();
     HydratedBloc.storage = await HydratedStorage.build(
       storageDirectory: kIsWeb
           ? HydratedStorageDirectory.web
