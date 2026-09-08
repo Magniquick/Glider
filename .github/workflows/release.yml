@@ -73,6 +73,84 @@ jobs:
         with:
           name: app-release.aab
           path: build/app/outputs/bundle/release/app-release.aab
+  # Deliberately outside the `guard` gate. That gate exists because Android
+  # cannot be released without the upstream maintainer's keystore, but an
+  # unsigned IPA needs no secret at all, so this fork can ship an iOS build
+  # even though it cannot ship a signed Android one.
+  #
+  # Nobody can install this artifact by tapping it. It is re-signed on the way
+  # in by Sideloadly, AltStore or TrollStore against whatever Apple ID the
+  # installer holds, and a free Apple ID gives it a seven-day life. That works
+  # only because the app declares no entitlements: no push, no app groups, no
+  # keychain sharing, no associated domains. A free account can grant none of
+  # those, so adding one later breaks sideloading for everybody without a paid
+  # developer account, and it breaks it here rather than at build time.
+  build-ios:
+    name: Build unsigned iOS IPA
+    runs-on: macos-latest
+    permissions:
+      contents: write
+    # Same reason as the CI iOS job: mise.toml is shared with the Android side,
+    # and an iOS build touches neither the Android SDK nor a JDK.
+    env:
+      MISE_DISABLE_TOOLS: android-sdk,java
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: Bootstrap workspace
+        uses: ./.github/actions/bootstrap
+        with:
+          android: 'false'
+      # `flutter build ipa` is the wrong command here. Without a signing
+      # identity it stops after writing the .xcarchive and never runs the
+      # export step, so it produces no IPA and does not fail either. `build
+      # ios` leaves an unsigned Runner.app behind instead, and an IPA is only
+      # ever a zip holding that bundle under Payload/.
+      - name: Build unsigned Runner.app
+        run: flutter build ios --release --no-codesign
+      - name: Package it as an IPA
+        id: package
+        run: |
+          set -euo pipefail
+          if [ "$GITHUB_REF_TYPE" = tag ]; then
+            version="${GITHUB_REF_NAME#v}"
+          else
+            version="$(sed -n 's/^version: *\([^+]*\).*/\1/p' pubspec.yaml)"
+          fi
+          name="Glider-$version-unsigned.ipa"
+          mkdir -p build/ios/Payload
+          cp -R build/ios/iphoneos/Runner.app build/ios/Payload/
+          # -y stores symlinks instead of following them, which keeps any
+          # embedded framework a bundle rather than several copies of itself.
+          (cd build/ios && zip -qry "$name" Payload)
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "path=build/ios/$name" >> "$GITHUB_OUTPUT"
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v7
+        with:
+          name: ${{ steps.package.outputs.name }}
+          path: ${{ steps.package.outputs.path }}
+      # Releases in this fork are cut by hand after the tag is pushed, so when
+      # this runs on the tag there is usually no release to attach to yet.
+      # Attaching is therefore best effort, and the artifact above is the thing
+      # that always exists. Creating the release here instead would race the
+      # manual one and publish it with no notes and without --prerelease.
+      - name: Attach to the release, if one exists yet
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+          IPA: ${{ steps.package.outputs.path }}
+        run: |
+          set -euo pipefail
+          if gh release view "$TAG" > /dev/null 2>&1; then
+            gh release upload "$TAG" "$IPA" --clobber
+          else
+            echo "::notice::No release exists for $TAG yet, so the IPA is only a workflow artifact. Attach it with: gh release upload $TAG $(basename "$IPA")"
+          fi
+
   release-github:
     name: Release to GitHub
     runs-on: ubuntu-latest

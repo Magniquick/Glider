@@ -36,9 +36,12 @@ runs:
       # download finished. Hence the check below rather than trusting the exit
       # code, and no redirect to /dev/null hiding what it says.
       #
-      # The NDK is not optional: cronet_http pulls in package:jni, whose
-      # android/build.gradle runs an externalNativeBuild against
-      # `flutter.ndkVersion`.
+      # The NDK is not optional: package:jni's android/build.gradle runs an
+      # externalNativeBuild against `flutter.ndkVersion`. cronet_http used to
+      # be what pulled jni in and is long gone, so this looks removable and is
+      # not. path_provider is a direct dependency, path_provider_android
+      # depends on jni and jni_flutter, and dropping the NDK fails the APK
+      # build in Gradle rather than anywhere that names a Dart package.
       run: |
         set -euo pipefail
         packages=(
