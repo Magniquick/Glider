@@ -28,6 +28,10 @@ class const ItemState({
   Map<String, dynamic> toMap() => <String, dynamic>{
     'status': status.name,
     'data': data?.toMap(),
+    // `fromMap` has always read this back; without it written here a restored
+    // state came back unvisited until `visitedStream` caught up, flashing the
+    // unvisited styling on a row that had been read.
+    'visited': visited,
     'voted': vote?.name,
     'favorited': favorited,
     'flagged': flagged,
