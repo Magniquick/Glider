@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -5,8 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/semantics.dart';
+import 'package:glider/app/router/app_router.dart';
 import 'package:glider/item_tree/cubit/item_tree_cubit.dart';
 import 'package:glider_domain/glider_domain.dart';
+import 'package:go_router/go_router.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 /// Comment trees currently on screen, so profiling can drive them.
@@ -176,6 +179,26 @@ void registerDevControls() {
     // different amount of accumulated state than landing there directly.
     await scroller(index, jump: parameters['jump'] == 'true');
     return _ok({'index': index});
+  });
+
+  // Opening a thread the way a reader does, so a script can drive many
+  // threads in one run. `initialLocation` cannot: it is a compile-time
+  // constant, and a deep link leaves nothing on the stack to go back to.
+  registerExtension('ext.glider.push', (method, parameters) async {
+    final location = parameters['loc'];
+    if (location == null) return _error('push needs loc');
+    final context = rootNavigatorKey.currentContext;
+    if (context == null) return _error('no navigator context');
+    unawaited(context.push(location));
+    return _ok({'pushed': location});
+  });
+
+  registerExtension('ext.glider.pop', (method, parameters) async {
+    final context = rootNavigatorKey.currentContext;
+    if (context == null) return _error('no navigator context');
+    if (!context.canPop()) return _error('nothing to pop');
+    context.pop();
+    return _ok({'popped': true});
   });
 
   registerExtension('ext.glider.collapse', (method, parameters) async {
