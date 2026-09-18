@@ -19,7 +19,15 @@ class Item({
   final List<int>? partIds,
   final int? descendantCount,
 }) with EquatableMixin {
-  factory fromDto(ItemDto dto) => Item(
+  /// Builds an item from [dto].
+  ///
+  /// Pass [reportsChildren] false for a source that never lists children at
+  /// all. The Firebase API omits `kids` exactly when an item has none, so an
+  /// absent list there means childless and `[]` is the honest reading. A
+  /// scraped story list omits it because it does not carry that information,
+  /// and reading `[]` off it claimed every story on the front page had no
+  /// comments, which is what `childCount` and the delete action both consult.
+  factory fromDto(ItemDto dto, {bool reportsChildren = true}) => Item(
     id: dto.id,
     isDeleted: dto.deleted ?? false,
     type: dto.type != null ? ItemType.tryParse(dto.type!) : null,
@@ -31,11 +39,11 @@ class Item({
     isDead: dto.dead ?? false,
     parentId: dto.parent,
     pollId: dto.poll,
-    childIds: dto.kids ?? const [],
+    childIds: reportsChildren ? dto.kids ?? const [] : null,
     url: dto.url != null && dto.url!.isNotEmpty ? Uri.tryParse(dto.url!) : null,
     score: dto.score,
     title: dto.title,
-    partIds: dto.parts ?? const [],
+    partIds: reportsChildren ? dto.parts ?? const [] : null,
     descendantCount: dto.descendants,
   );
 
@@ -70,6 +78,7 @@ class Item({
     required List<int> childIds,
   }) => Item(
     id: dto.id,
+    isDeleted: dto.isDeleted,
     type: dto.isPart ? ItemType.pollopt : ItemType.comment,
     username: dto.by,
     // `fromDto` builds a local DateTime out of the Firebase epoch, and `isUtc`
@@ -142,11 +151,11 @@ class Item({
     bool Function()? isDead,
     int? Function()? parentId,
     int? Function()? pollId,
-    List<int> Function()? childIds,
+    List<int>? Function()? childIds,
     Uri? Function()? url,
     int? Function()? score,
     String? Function()? title,
-    List<int> Function()? partIds,
+    List<int>? Function()? partIds,
     int? Function()? descendantCount,
   }) => Item(
     id: id != null ? id() : this.id,
@@ -168,6 +177,46 @@ class Item({
         : this.descendantCount,
   );
 
+  /// This item laid over [previous], keeping what [source] cannot report.
+  ///
+  /// Every item lives in one subject keyed by its id, written by sources that
+  /// describe an item to different depths, so a plain replace lets whichever
+  /// wrote last decide what the app knows. A field a source never carries is
+  /// absent, not cleared, and only the source itself can tell those apart:
+  /// a permalink reporting no text means the comment was deleted, while a
+  /// search hit reporting none means the index does not carry bodies.
+  Item mergedOnto(Item previous, ItemSource source) => switch (source) {
+    // Reports every field, so nothing is worth keeping.
+    ItemSource.api => this,
+    // Reads a story's title and score off the list markup, which carries no
+    // children at all.
+    ItemSource.storyList => copyWith(
+      childIds: () => childIds ?? previous.childIds,
+      partIds: () => partIds ?? previous.partIds,
+    ),
+    // Hacker News' own pages carry a story's link, points and comment count;
+    // a comment row is not rendered with any of them.
+    ItemSource.pageRow => copyWith(
+      pollId: () => pollId ?? previous.pollId,
+      url: () => url ?? previous.url,
+      score: () => score ?? previous.score,
+      title: () => title ?? previous.title,
+      descendantCount: () => descendantCount ?? previous.descendantCount,
+    ),
+    // A hit carries an author and a body whenever the index holds the item at
+    // all, so a null in either is a real absence and is left alone. Deleted
+    // and dead comments are simply not indexed, which is why their flags have
+    // to be kept rather than taken as false.
+    ItemSource.search => copyWith(
+      type: () => type ?? previous.type,
+      isDeleted: () => previous.isDeleted,
+      isDead: () => previous.isDead,
+      pollId: () => pollId ?? previous.pollId,
+      childIds: () => childIds ?? previous.childIds,
+      partIds: () => partIds ?? previous.partIds,
+    ),
+  };
+
   @override
   List<Object?> get props => [
     id,
@@ -186,6 +235,26 @@ class Item({
     partIds,
     descendantCount,
   ];
+}
+
+/// Where an [Item] was read from, and so which of its fields are meaningful.
+///
+/// Used by [Item.mergedOnto] to tell a field a source cleared from one it
+/// never reports.
+enum ItemSource() {
+  /// The Firebase API, or the header of a scraped item page. Reports
+  /// everything, children included: `kids` is omitted exactly when an item
+  /// has none.
+  api,
+
+  /// A row of a scraped story list, which carries no children.
+  storyList,
+
+  /// One comment or poll-option row of a scraped item page.
+  pageRow,
+
+  /// An Algolia search hit.
+  search
 }
 
 enum ItemType() {

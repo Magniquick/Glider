@@ -922,6 +922,10 @@ extension on html_dom.Element {
         querySelector('a.togg')?.attributes['n'] ?? '',
       ),
       isDead: isDeadMarked,
+      // The fatitem parse has always read this; a row never did, so a deleted
+      // comment inside a thread rendered without its marker and with the
+      // actions that are meant to be gated on it.
+      isDeleted: isDeletedMarked,
       voteAuth: voteHref != null
           ? Uri.tryParse(voteHref)?.queryParameters['auth']
           : null,

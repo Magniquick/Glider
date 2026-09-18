@@ -33,6 +33,12 @@ class const ItemPageRowDto({
   /// these rows entirely.
   final bool isDead = false,
 
+  /// Whether the author deleted the comment, leaving `[deleted]` as the body.
+  ///
+  /// A deleted row keeps its place in the tree, so the page still renders it,
+  /// with no username and the marker in place of the text.
+  final bool isDeleted = false,
+
   /// Whether this is a poll option rather than a comment.
   final bool isPart = false,
 

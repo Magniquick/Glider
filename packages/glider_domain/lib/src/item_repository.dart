@@ -17,6 +17,13 @@ class ItemRepository(
 
   final Map<int, BehaviorSubject<Item>> _itemStreamControllers;
 
+  /// Every comment id of the last tree read for a story, in page order.
+  ///
+  /// The tree is built here anyway, and the items themselves are already in
+  /// [_itemStreamControllers], so searching a thread needs no request: this is
+  /// the missing piece that says which of those items belong to which story.
+  final Map<int, List<int>> _threadItemIds = {};
+
   /// Set once Hacker News answers with its `noprocrast` interstitial.
   ///
   /// Every authenticated page view that does get through writes the account's
@@ -43,12 +50,17 @@ class ItemRepository(
       page: page,
     );
     final items = await compute(
-      (stories) => stories.map(Item.fromDto).toList(growable: false),
+      // The list markup carries no children, so it must not claim there
+      // are none: these same stories are read again from their own pages.
+      (stories) => [
+        for (final story in stories)
+          Item.fromDto(story, reportsChildren: false),
+      ],
       dto.stories,
     );
 
     for (final item in items) {
-      _itemStreamControllers.getOrAdd(item.id).add(item);
+      _seed(item, ItemSource.storyList);
     }
 
     return (items: items, hasMore: dto.hasMore);
@@ -70,25 +82,40 @@ class ItemRepository(
     );
 
     for (final item in items) {
-      _itemStreamControllers.getOrAdd(item.id).add(item);
+      _seed(item, ItemSource.search);
     }
 
     return items;
   }
 
+  /// Searches the thread already on screen, without asking anyone.
+  ///
+  /// The comments are in memory the moment the tree is read, so a request here
+  /// only bought worse answers. Algolia's index lags the page that was just
+  /// parsed, so it both misses comments the reader is looking at and returns
+  /// ones this thread does not have; and seeding its hits back over the page's
+  /// own items dropped the fields an Algolia hit does not carry, `childIds`
+  /// among them, which is what the collapsed-reply count and the delete action
+  /// read.
+  ///
+  /// Only page one of a thread is ever fetched, so this searches everything
+  /// the reader could scroll to and nothing they could not.
   Future<List<Item>> searchStoryItems(int id, {String? text}) async {
-    final dto = await _algoliaApiService.searchStoryItems(id, query: text);
-    final items = await compute(
-      (hits) => hits.map(Item.fromAlgoliaSearchHitDto).toList(growable: false),
-      dto.hits,
-    );
-
-    for (final item in items) {
-      _itemStreamControllers.getOrAdd(item.id).add(item);
-    }
-
-    return items;
+    final String query = text?.trim().toLowerCase() ?? '';
+    return [
+      for (final itemId in _threadItemIds[id] ?? const <int>[])
+        if (_itemStreamControllers[itemId]?.valueOrNull case final item?)
+          if (query.isEmpty || _matchesQuery(item, query)) item,
+    ];
   }
+
+  /// Whether [item] matches [query], which is already lower case and trimmed.
+  ///
+  /// Body and author only. A comment carries no title, and matching on the id
+  /// or the timestamp would surprise more than it helps.
+  static bool _matchesQuery(Item item, String query) =>
+      (item.text?.toLowerCase().contains(query) ?? false) ||
+      (item.username?.toLowerCase().contains(query) ?? false);
 
   Future<List<Item>> getSimilarStories(int id, {required String url}) async {
     final dto = await _algoliaApiService.getSimilarStories(id, url: url);
@@ -98,7 +125,7 @@ class ItemRepository(
     );
 
     for (final item in items) {
-      _itemStreamControllers.getOrAdd(item.id).add(item);
+      _seed(item, ItemSource.search);
     }
 
     return items;
@@ -112,7 +139,7 @@ class ItemRepository(
     );
 
     for (final item in items) {
-      _itemStreamControllers.getOrAdd(item.id).add(item);
+      _seed(item, ItemSource.search);
     }
 
     return items;
@@ -132,13 +159,28 @@ class ItemRepository(
       );
 
       for (final item in items) {
-        _itemStreamControllers.getOrAdd(item.id).add(item);
+        _seed(item, ItemSource.search);
       }
 
       return items;
     } else {
       return [];
     }
+  }
+
+  /// Publishes [item], keeping what [source] does not report.
+  ///
+  /// Every seed goes through here. The map is read and written with nothing
+  /// awaited in between, so a fetch landing concurrently cannot be lost, and
+  /// an unchanged item is not republished: `ItemCubit` parses a comment's
+  /// text on every emit, so a no-op emit is a wasted parse per row.
+  void _seed(Item item, ItemSource source) {
+    final subject = _itemStreamControllers.getOrAdd(item.id);
+    final Item? previous = subject.valueOrNull;
+    final Item merged = previous == null
+        ? item
+        : item.mergedOnto(previous, source);
+    if (merged != previous) subject.add(merged);
   }
 
   Stream<Item> getItemStream(int id) =>
@@ -148,7 +190,7 @@ class ItemRepository(
     try {
       final dto = await _hackerNewsApiService.getItem(id);
       final item = Item.fromDto(dto);
-      _itemStreamControllers.getOrAdd(id).add(item);
+      _seed(item, ItemSource.api);
       return item;
     } on Object catch (e, st) {
       _itemStreamControllers.getOrAdd(id).addError(e, st);
@@ -267,20 +309,24 @@ class ItemRepository(
           if (rows[rowId] case final row?) (row, childIds[rowId] ?? const []),
       ]);
       for (final item in items) {
-        _itemStreamControllers.getOrAdd(item.id).add(item);
+        _seed(item, ItemSource.pageRow);
       }
 
       if (chunk.story case final story?) {
-        _itemStreamControllers
-            .getOrAdd(id)
-            .add(Item.fromDto(story).copyWith(childIds: () => childIds[id]!));
+        // The page header describes the subject as fully as the API does, and
+        // the tree it came wrapped in is the authority on its children.
+        _seed(
+          Item.fromDto(story).copyWith(childIds: () => childIds[id]!),
+          ItemSource.api,
+        );
       } else if (stale.contains(id)) {
         // The story gained top-level comments, so its child list moved on.
         final Item? previous = _itemStreamControllers[id]?.valueOrNull;
         if (previous != null) {
-          _itemStreamControllers
-              .getOrAdd(id)
-              .add(previous.copyWith(childIds: () => childIds[id]!));
+          _seed(
+            previous.copyWith(childIds: () => childIds[id]!),
+            ItemSource.api,
+          );
         }
       }
 
@@ -289,12 +335,18 @@ class ItemRepository(
       // state for the third of a second before the first rows land.
       if (descendants.isEmpty) continue;
       emitted = true;
+      _threadItemIds[id] = [
+        for (final descendant in descendants) descendant.id,
+      ];
       yield [...descendants];
     }
 
     // A thread genuinely can have no comments, and that has to resolve to the
     // empty state rather than sit on the skeletons forever.
-    if (!emitted) yield const [];
+    if (!emitted) {
+      _threadItemIds[id] = const [];
+      yield const [];
+    }
   }
 }
 
