@@ -7,7 +7,7 @@ class const EditState({
   final bool isValid = false,
   final bool preview = true,
   final bool success = false,
-}) with EquatableMixin {
+}) with Equatable {
   factory fromMap(Map<String, dynamic> json) => EditState(
     item: json['item'] != null
         ? Item.fromMap(json['item'] as Map<String, dynamic>)

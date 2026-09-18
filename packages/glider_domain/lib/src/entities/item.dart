@@ -18,7 +18,7 @@ class Item({
   final String? title,
   final List<int>? partIds,
   final int? descendantCount,
-}) with EquatableMixin {
+}) with Equatable {
   /// Builds an item from [dto].
   ///
   /// Pass [reportsChildren] false for a source that never lists children at

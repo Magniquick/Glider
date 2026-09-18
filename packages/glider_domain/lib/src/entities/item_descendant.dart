@@ -4,7 +4,7 @@ class ItemDescendant({
   required final int id,
   final List<int> ancestorIds = const [],
   final bool isPart = false,
-}) with EquatableMixin {
+}) with Equatable {
   factory fromMap(Map<String, dynamic> json) => ItemDescendant(
     id: json['id'] as int,
     ancestorIds:

@@ -1,6 +1,6 @@
 part of 'user_item_search_bloc.dart';
 
-sealed class const UserItemSearchEvent() with EquatableMixin;
+sealed class const UserItemSearchEvent() with Equatable;
 
 final class const LoadUserItemSearchEvent() extends UserItemSearchEvent {
   @override

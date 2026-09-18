@@ -13,7 +13,7 @@ class StoriesState({
   /// from the pages themselves, which only know about themselves.
   final bool hasMore = false,
   @override final Object? exception,
-}) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
+}) with DataMixin<List<int>>, PaginatedListMixin, Equatable {
   factory fromMap(Map<String, dynamic> json) => StoriesState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)

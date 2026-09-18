@@ -4,7 +4,7 @@ class const FavoritesState({
   @override final Status status = Status.initial,
   @override final List<int>? data,
   @override final Object? exception,
-}) with DataMixin<List<int>>, EquatableMixin {
+}) with DataMixin<List<int>>, Equatable {
   factory fromMap(Map<String, dynamic> json) => FavoritesState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)

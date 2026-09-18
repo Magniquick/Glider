@@ -8,7 +8,7 @@ class const User({
   required final int karma,
   final String? about,
   final List<int>? submittedIds,
-}) with EquatableMixin {
+}) with Equatable {
   factory fromDto(UserDto dto) => User(
     username: dto.id,
     createdDateTime: DateTime.fromMillisecondsSinceEpoch(dto.created * 1000),

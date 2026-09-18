@@ -7,7 +7,7 @@ class const UserState({
   final bool blocked = false,
   final bool synchronizing = false,
   @override final Object? exception,
-}) with DataMixin<User>, EquatableMixin {
+}) with DataMixin<User>, Equatable {
   factory fromMap(Map<String, dynamic> json) => UserState(
     status: Status.values.byName(json['status'] as String),
     data: User.fromMap(json['data'] as Map<String, dynamic>),

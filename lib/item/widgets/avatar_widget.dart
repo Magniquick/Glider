@@ -31,7 +31,7 @@ class const _AvatarPainter({
   required final String username,
   required final double pixelSize,
   required final Offset offset,
-}) extends CustomPainter with EquatableMixin {
+}) extends CustomPainter with Equatable {
   @override
   void paint(Canvas canvas, Size size) {
     const seedSteps = 28;

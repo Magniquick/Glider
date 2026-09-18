@@ -5,7 +5,7 @@ class const StorySimilarState({
   final Item? item,
   @override final List<int>? data,
   @override final Object? exception,
-}) with DataMixin<List<int>>, EquatableMixin {
+}) with DataMixin<List<int>>, Equatable {
   factory fromMap(Map<String, dynamic> json) => StorySimilarState(
     status: Status.values.byName(json['status'] as String),
     item: json['item'] != null

@@ -6,7 +6,7 @@ class const ReplyState({
   final bool isValid = false,
   final bool preview = true,
   final bool success = false,
-}) with EquatableMixin {
+}) with Equatable {
   factory fromMap(Map<String, dynamic> json) => ReplyState(
     parentItem: json['parentItem'] != null
         ? Item.fromMap(json['parentItem'] as Map<String, dynamic>)

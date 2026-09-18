@@ -14,7 +14,7 @@ class const AuthState({
   final bool isLoggedIn = false,
   final String? username,
   final AuthStatus status = AuthStatus.initial,
-}) with EquatableMixin {
+}) with Equatable {
   AuthState copyWith({
     bool Function()? isLoggedIn,
     String? Function()? username,

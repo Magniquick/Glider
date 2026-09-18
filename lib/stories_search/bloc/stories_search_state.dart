@@ -8,7 +8,7 @@ class StoriesSearchState({
   final SearchRange? searchRange,
   final DateTimeRange? dateRange,
   @override final Object? exception,
-}) with DataMixin<List<int>>, PaginatedListMixin, EquatableMixin {
+}) with DataMixin<List<int>>, PaginatedListMixin, Equatable {
   factory fromMap(Map<String, dynamic> json) => StoriesSearchState(
     searchRange: json['searchRange'] != null
         ? SearchRange.values.byName(json['searchRange'] as String)

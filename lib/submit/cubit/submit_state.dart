@@ -7,7 +7,7 @@ class const SubmitState({
   final bool isValid = false,
   final bool preview = true,
   final bool success = false,
-}) with EquatableMixin {
+}) with Equatable {
   factory fromMap(Map<String, dynamic> json) => SubmitState(
     title: TitleInput.pure(json['title'] as String? ?? ''),
     url: UrlInput.pure(

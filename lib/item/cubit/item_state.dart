@@ -10,7 +10,7 @@ class const ItemState({
   final bool flagged = false,
   final bool blocked = false,
   @override final Object? exception,
-}) with DataMixin<Item>, EquatableMixin {
+}) with DataMixin<Item>, Equatable {
   factory fromMap(Map<String, dynamic> json) => ItemState(
     status: Status.values.byName(json['status'] as String),
     data: json['data'] != null

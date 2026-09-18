@@ -22,7 +22,7 @@ class const SettingsState({
   final Set<String> wordFilters = const {},
   final Set<String> domainFilters = const {},
   final Version? appVersion,
-}) with EquatableMixin {
+}) with Equatable {
   SettingsState copyWith({
     ThemeMode Function()? themeMode,
     bool Function()? useDynamicTheme,

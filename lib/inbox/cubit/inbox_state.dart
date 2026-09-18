@@ -6,7 +6,7 @@ class const InboxState({
   @override final Status status = Status.initial,
   @override final List<IdWithParent>? data,
   @override final Object? exception,
-}) with DataMixin<List<IdWithParent>>, EquatableMixin {
+}) with DataMixin<List<IdWithParent>>, Equatable {
   factory fromMap(Map<String, dynamic> json) => InboxState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)

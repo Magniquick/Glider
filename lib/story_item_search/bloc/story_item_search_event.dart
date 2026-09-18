@@ -1,6 +1,6 @@
 part of 'story_item_search_bloc.dart';
 
-sealed class const StoryItemSearchEvent() with EquatableMixin;
+sealed class const StoryItemSearchEvent() with Equatable;
 
 final class const LoadStoryItemSearchEvent() extends StoryItemSearchEvent {
   @override

@@ -5,7 +5,7 @@ class const StoryItemSearchState({
   @override final List<int>? data,
   final String? searchText,
   @override final Object? exception,
-}) with DataMixin<List<int>>, EquatableMixin {
+}) with DataMixin<List<int>>, Equatable {
   StoryItemSearchState copyWith({
     Status Function()? status,
     List<int>? Function()? data,

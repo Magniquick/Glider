@@ -6,7 +6,7 @@ class ItemTreeState({
   final List<ItemDescendant>? previousData,
   final Set<int> collapsedIds = const {},
   @override final Object? exception,
-}) with DataMixin<List<ItemDescendant>>, EquatableMixin {
+}) with DataMixin<List<ItemDescendant>>, Equatable {
   factory fromMap(Map<String, dynamic> json) => ItemTreeState(
     status: Status.values.byName(json['status'] as String),
     data: (json['data'] as List<dynamic>?)
