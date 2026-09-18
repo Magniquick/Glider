@@ -35,7 +35,12 @@ class _AuthPageState() extends State<AuthPage> {
 
   @override
   Widget build(BuildContext context) => BlocConsumer<AuthCubit, AuthState>(
-    listenWhen: (previous, current) => current.isLoggedIn,
+    // Only on the edge into being logged in. A successful log in emits twice,
+    // once when `_updateLoggedIn` picks up the session and again when the
+    // status becomes success, and both satisfy `current.isLoggedIn`, so gating
+    // on the value pushed the synchronise dialog twice.
+    listenWhen: (previous, current) =>
+        !previous.isLoggedIn && current.isLoggedIn,
     listener: (context, state) async {
       final bool? confirm = await context.push<bool>(
         AppRoute.confirmDialog.location(),
