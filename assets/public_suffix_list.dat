@@ -368,6 +368,7 @@ deporte.bo
 ecologia.bo
 economia.bo
 empresa.bo
+ia.bo
 indigena.bo
 industria.bo
 info.bo
@@ -4871,9 +4872,11 @@ net.pn
 org.pn
 post
 pr
+ac.pr
 biz.pr
 com.pr
 edu.pr
+est.pr
 gov.pr
 info.pr
 isla.pr
@@ -4881,8 +4884,6 @@ name.pr
 net.pr
 org.pr
 pro.pr
-ac.pr
-est.pr
 prof.pr
 pro
 aaa.pro
@@ -8719,6 +8720,7 @@ figma.site
 figma-gov.site
 preview.site
 filegear.me
+hosted-by-files.com
 firebaseapp.com
 fldrv.com
 on-fleek.app
@@ -8925,6 +8927,8 @@ cloud.goog
 translate.goog
 *.usercontent.goog
 cloudfunctions.net
+cloud.run
+ai.studio
 goupile.fr
 pymnt.uk
 gov.nl
@@ -8956,6 +8960,7 @@ hercules-app.com
 hercules-dev.com
 here.now
 herokuapp.com
+*.compute.herokuapp.com
 heyflow.page
 heyflow.site
 ravendb.cloud
@@ -9742,8 +9747,6 @@ qa2.com
 qcx.io
 *.sys.qcx.io
 myqnapcloud.cn
-alpha-myqnapcloud.com
-dev-myqnapcloud.com
 mycloudnas.com
 mynascloud.com
 myqnapcloud.com
@@ -10103,6 +10106,7 @@ realtime.supabase.co
 storage.supabase.co
 supabase.in
 supabase.net
+surge.sh
 syncloud.it
 dscloud.biz
 direct.quickconnect.cn
