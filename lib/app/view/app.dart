@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:glider/app/extensions/theme_mode_extension.dart';
@@ -8,11 +11,12 @@ import 'package:glider/app/extensions/variant_extension.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/l10n/app_localizations.dart';
 import 'package:glider/settings/cubit/settings_cubit.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class const App(
   final SettingsCubit _settingsCubit,
-  final RouterConfig<Object> _routerConfig,
+  final GoRouter _router,
   final BaseDeviceInfo _deviceInfo, {
   super.key,
 }) extends StatelessWidget {
@@ -29,7 +33,8 @@ class const App(
               previous.usePureBackground != current.usePureBackground ||
               previous.font != current.font,
           builder: (context, state) => MaterialApp.router(
-            routerConfig: _routerConfig,
+            routerConfig: _router,
+            onNavigationNotification: _onNavigationNotification,
             theme: _buildTheme(context, state, lightDynamic, Brightness.light),
             darkTheme: _buildTheme(
               context,
@@ -50,6 +55,28 @@ class const App(
           ),
         ),
   );
+
+  /// Tells Android whether a back press is the app's to handle.
+  ///
+  /// Each navigator reports only its own history, and the last report wins.
+  /// Popping a thread off the root navigator reported nothing left to pop
+  /// while a search was still open in a tab's own navigator, so Android took
+  /// the next back press itself and closed the app instead of the search.
+  /// go_router's `canPop` looks into the current tab as well.
+  bool _onNavigationNotification(NavigationNotification notification) {
+    switch (WidgetsBinding.instance.lifecycleState) {
+      case null || AppLifecycleState.detached:
+        // As the default handler: the engine is not ready to be told.
+        return true;
+      case _:
+        unawaited(
+          SystemNavigator.setFrameworkHandlesBack(
+            notification.canHandlePop || _router.canPop(),
+          ),
+        );
+        return true;
+    }
+  }
 
   ThemeData _buildTheme(
     BuildContext context,
