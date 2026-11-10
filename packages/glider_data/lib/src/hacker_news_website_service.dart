@@ -324,14 +324,17 @@ class const HackerNewsWebsiteService(
   /// An unused id gets a bare `No such item.`; a killed one gets the full page
   /// around an empty `table.fatitem`.
   ///
-  /// The username is checked as well as the row, so that a page which merely
-  /// renamed `athing` is still reported as a markup change rather than as an
-  /// item that is not there.
+  /// The byline containers are checked as well as the row, so that a page
+  /// which merely renamed `athing` is still reported as a markup change rather
+  /// than as an item that is not there. A comment's sits in `comhead` and a
+  /// story's or job's in `subtext`. The author link itself would not do: the
+  /// header carries one for the signed-in account on every page.
   static bool _isMissingItem(String body) =>
       body.contains('No such item.') ||
       body.contains('class="fatitem"') &&
           !body.contains('class="athing') &&
-          !body.contains('class="hnuser"');
+          !body.contains('class="comhead"') &&
+          !body.contains('class="subtext"');
 
   /// Fetches one page of a story list, e.g. `news`, `newest`, `best`.
   ///
@@ -694,6 +697,18 @@ class const HackerNewsWebsiteService(
 /// short of the closing quote.
 const _rowMarker = '<tr class="athing comtr';
 
+/// A trailing UTC designator or numeric offset on an ISO 8601 timestamp.
+final _zoneSuffix = RegExp(r'(Z|[+-]\d\d(:?\d\d)?)$');
+
+/// The author's link, wherever a byline sits: a story's subtext, a comment
+/// row's header, or a fatitem.
+///
+/// Hacker News once marked it `a.hnuser` and no longer does, so the link is
+/// found by its target, which both markups share. The page header links the
+/// signed-in account the same way, so this is only ever queried inside an
+/// element that excludes the header.
+const _authorSelector = 'a[href^="user?id="]';
+
 /// Parses a batch of raw comment rows, each one a slice of the page.
 ///
 /// A bare `<tr>` would be discarded by the HTML5 tree builder, which only
@@ -783,7 +798,7 @@ ItemDto _storyDto(
   return ItemDto(
     id: int.tryParse(submission.id) ?? 0,
     type: type,
-    by: subtext?.querySelector('a.hnuser')?.text,
+    by: subtext?.querySelector(_authorSelector)?.text,
     time: subtext?.querySelector('span.age')?.epochSeconds,
     text: text != null && text.isNotEmpty ? text : null,
     url: isSelfLink ? null : href,
@@ -840,7 +855,7 @@ ItemDto _parseSubjectComment(
     deleted: subject.isDeletedMarked,
     type: 'comment',
     dead: subject.isDeadMarked,
-    by: fatitem?.querySelector('a.hnuser')?.text,
+    by: fatitem?.querySelector(_authorSelector)?.text,
     time: fatitem?.querySelector('span.age')?.epochSeconds,
     text: fatitem?.querySelector('div.commtext')?.innerHtml,
     parent: int.tryParse(
@@ -915,7 +930,7 @@ extension on html_dom.Element {
       indent:
           int.tryParse(querySelector('td.ind')?.attributes['indent'] ?? '') ??
           0,
-      by: querySelector('a.hnuser')?.text,
+      by: querySelector(_authorSelector)?.text,
       timeIso: querySelector('span.age')?.isoTimestamp,
       textHtml: querySelector('div.commtext')?.innerHtml,
       subtreeCount: int.tryParse(
@@ -944,12 +959,20 @@ extension on html_dom.Element {
         '',
   );
 
-  /// The exact timestamp from an `span.age` title, e.g.
-  /// `2026-09-04T11:01:58.000000Z`.
+  /// The exact timestamp from an `span.age` title, always marked as UTC.
   ///
   /// Preferred over the anchor's "22 hours ago" text, which is both imprecise
   /// and localised. Some pages append an epoch after a space.
-  String? get isoTimestamp => attributes['title']?.split(' ').first;
+  ///
+  /// Hacker News once wrote `2026-09-04T11:01:58.000000Z` and now writes
+  /// `2026-11-09T19:42:14`, still UTC but no longer saying so. Dart reads a
+  /// timestamp without a zone as local time, which put every scraped item off
+  /// by the reader's UTC offset, so the zone is added back when it is missing.
+  String? get isoTimestamp => switch (attributes['title']?.split(' ').first) {
+    final String iso when iso.isEmpty || _zoneSuffix.hasMatch(iso) => iso,
+    final String iso => '${iso}Z',
+    null => null,
+  };
 
   /// [isoTimestamp] as whole seconds since the epoch, as Firebase reports it.
   int? get epochSeconds => switch (isoTimestamp) {
