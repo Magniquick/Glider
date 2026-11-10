@@ -26,6 +26,7 @@ class ItemTreeCubit(final ItemRepository _itemRepository, {required int id})
         .getItemDescendantsStream(itemId);
 
     if (state.data == null || state.data!.isEmpty) {
+      var failed = false;
       descendantsStream.listen(
         (descendants) => safeEmit(
           state.copyWith(
@@ -34,13 +35,21 @@ class ItemTreeCubit(final ItemRepository _itemRepository, {required int id})
             exception: () => null,
           ),
         ),
-        onError: (Object exception) => safeEmit(
-          state.copyWith(
-            status: () => Status.failure,
-            exception: () => exception,
-          ),
-        ),
-        onDone: () => safeEmit(state.copyWith(status: () => Status.success)),
+        onError: (Object exception) {
+          failed = true;
+          safeEmit(
+            state.copyWith(
+              status: () => Status.failure,
+              exception: () => exception,
+            ),
+          );
+        },
+        // A stream closes after its error too, and reporting success then
+        // turned every failed thread into "no comments": the list renders a
+        // success with no data as the empty state.
+        onDone: () {
+          if (!failed) safeEmit(state.copyWith(status: () => Status.success));
+        },
       );
     } else {
       try {

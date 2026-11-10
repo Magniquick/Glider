@@ -11,8 +11,21 @@ class ItemRepository(
   final AlgoliaApiService _algoliaApiService,
   final HackerNewsApiService _hackerNewsApiService,
   final HackerNewsWebsiteService _hackerNewsWebsiteService,
-  final SecureStorageService _secureStorageService,
-) {
+  final SecureStorageService _secureStorageService, {
+
+  /// How long to wait before each retry of a thread that failed to load.
+  ///
+  /// Five retries inside about five seconds. A dropped socket or a moment of
+  /// rate limiting clears well within that, and a reader staring at skeletons
+  /// will not wait much longer before deciding the app is stuck.
+  final List<Duration> threadRetryDelays = const [
+    Duration(milliseconds: 250),
+    Duration(milliseconds: 500),
+    Duration(seconds: 1),
+    Duration(milliseconds: 1500),
+    Duration(seconds: 2),
+  ],
+}) {
   this : _itemStreamControllers = {};
 
   final Map<int, BehaviorSubject<Item>> _itemStreamControllers;
@@ -211,8 +224,29 @@ class ItemRepository(
   /// takes seconds to arrive and buffering it means staring at placeholders
   /// for all of them. Measured on that thread: the header lands at 0.86 s and
   /// the first comments at 1.19 s, against 5.1 s for everything at once.
-  Stream<List<ItemDescendant>> getItemDescendantsStream(int id) =>
-      _getPageDescendantsStream(id, _getItemPageStream(id));
+  Stream<List<ItemDescendant>> getItemDescendantsStream(int id) async* {
+    for (var attempt = 0; ; attempt++) {
+      try {
+        // `await for` rather than `yield*`, so that a failure lands in this
+        // `try` instead of going straight to the listener.
+        await for (final descendants in _getPageDescendantsStream(
+          id,
+          _getItemPageStream(id),
+        )) {
+          yield descendants;
+        }
+        return;
+      } on HackerNewsItemNotFoundException {
+        // Asking again will not make the item exist.
+        rethrow;
+      } on Object {
+        if (attempt >= threadRetryDelays.length) rethrow;
+      }
+      // Every yield is the whole tree so far, so a retry that fails partway
+      // through a page and starts over simply supersedes what was shown.
+      await Future<void>.delayed(threadRetryDelays[attempt]);
+    }
+  }
 
   /// Fetches the item page, logged in when that is possible and sensible.
   ///
@@ -268,8 +302,12 @@ class ItemRepository(
     final ancestors = <int>[id];
     final rows = <int, ItemPageRowDto>{};
     var emitted = false;
+    // Read before this page seeds over it, for the empty-page check below.
+    final Item? known = _itemStreamControllers[id]?.valueOrNull;
+    ItemDto? header;
 
     await for (final chunk in chunks) {
+      header ??= chunk.story;
       // A row seen in an earlier chunk can still gain children in this one, and
       // `ItemAction.delete` is gated on a comment having no children, so those
       // rows have to be seeded again rather than left stale.
@@ -342,12 +380,53 @@ class ItemRepository(
     }
 
     // A thread genuinely can have no comments, and that has to resolve to the
-    // empty state rather than sit on the skeletons forever.
+    // empty state rather than sit on the skeletons forever. A page that parsed
+    // without a single row for a story listed with comments is not that,
+    // though, and showing "no comments" for it hides the failure.
     if (!emitted) {
+      final int expected = _expectedCommentCount(header, known);
+      if (expected > 0) {
+        // The header was seeded over the story as this page arrived. Left
+        // there, it would wipe the count the next attempt checks against, and
+        // claim the story has no children.
+        if (known != null) _seed(known, ItemSource.api);
+        throw MissingCommentsException(id, expected);
+      }
       _threadItemIds[id] = const [];
       yield const [];
     }
   }
+}
+
+/// How many comments a thread is known to have, from what is to hand.
+///
+/// A story's page states its count in the header, which is the freshest
+/// figure there is. Failing that, the count the story list showed. A comment's
+/// own page carries no count at all, so for one that is the replies already
+/// read off its story's page.
+int _expectedCommentCount(ItemDto? header, Item? known) => switch (header) {
+  ItemDto(:final String type) when type != 'comment' =>
+    header.descendants ?? known?.descendantCount ?? 0,
+  _ => known?.childIds?.length ?? known?.descendantCount ?? 0,
+};
+
+/// Thrown when a thread came back with no comments it is known to have.
+///
+/// Hacker News occasionally answers with the page frame and nothing in it.
+/// Reported as a failure rather than shown as an empty thread, which would
+/// tell the reader there was nothing to read.
+class const MissingCommentsException(
+  /// The thread that came back empty.
+  final int id,
+
+  /// How many comments it was listed with.
+  final int expected,
+) implements Exception {
+  @override
+  String toString() =>
+      'Hacker News lists $expected '
+      '${expected == 1 ? 'comment' : 'comments'} '
+      'here, but the page it served had none.';
 }
 
 /// Converts parsed rows into items, off the UI thread.

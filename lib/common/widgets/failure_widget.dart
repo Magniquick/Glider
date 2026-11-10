@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:glider/common/constants/app_spacing.dart';
 import 'package:glider/l10n/extensions/app_localizations_extension.dart';
+import 'package:http/http.dart' as http;
 
 class const FailureWidget({
   super.key,
@@ -16,9 +20,14 @@ class const FailureWidget({
       children: [
         ListTile(
           title: Text(title ?? context.l10n.failure),
-          subtitle: exception != null
-              ? Text(exception.runtimeType.toString())
-              : null,
+          subtitle: switch (exception) {
+            final Object exception => Text(
+              _describe(context, exception),
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+            ),
+            null => null,
+          },
           trailing: compact && onRetry != null
               ? IconButton.outlined(
                   onPressed: onRetry,
@@ -48,4 +57,21 @@ class const FailureWidget({
       ],
     ),
   );
+
+  /// What went wrong, in words a reader can act on.
+  ///
+  /// A connection failure says to check the connection rather than naming a
+  /// socket class. The app's own exceptions already describe themselves, and
+  /// only something that does not falls back to its type.
+  String _describe(BuildContext context, Object exception) =>
+      switch (exception) {
+        SocketException() ||
+        HttpException() ||
+        TlsException() ||
+        TimeoutException() ||
+        http.ClientException() => context.l10n.failureNetwork,
+        _ when exception.toString().startsWith("Instance of '") =>
+          exception.runtimeType.toString(),
+        _ => exception.toString(),
+      };
 }

@@ -2,6 +2,7 @@
   "@@locale": "nl",
   "appName": "Glider",
   "search": "Zoeken",
+  "failureNetwork": "Kan Hacker News niet bereiken. Controleer je verbinding en probeer het opnieuw.",
   "settings": "Instellingen",
   "themeMode": "Themamodus",
   "appearance": "Uiterlijk",

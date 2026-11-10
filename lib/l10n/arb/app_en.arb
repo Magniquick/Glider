@@ -3,6 +3,7 @@
   "appName": "Glider",
   "empty": "\"It's quiet... too quiet\"",
   "failure": "Something went wrong",
+  "failureNetwork": "Couldn't reach Hacker News. Check your connection and try again.",
   "confirm": "Are you sure?",
   "retry": "Retry",
   "search": "Search",
