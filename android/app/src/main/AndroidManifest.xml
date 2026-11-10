@@ -49,27 +49,27 @@
                 <data
                     android:scheme="http"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/submit" />
+                    android:path="/submit" />
                 <data
                     android:scheme="https"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/submit" />
+                    android:path="/submit" />
                 <data
                     android:scheme="http"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/item" />
+                    android:path="/item" />
                 <data
                     android:scheme="https"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/item" />
+                    android:path="/item" />
                 <data
                     android:scheme="http"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/user" />
+                    android:path="/user" />
                 <data
                     android:scheme="https"
                     android:host="news.ycombinator.com"
-                    android:pathPrefix="/user" />
+                    android:path="/user" />
             </intent-filter>
         </activity>
         <!-- Don't delete the meta-data below.

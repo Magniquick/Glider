@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:glider/app/container/app_container.dart';
@@ -26,10 +28,14 @@ import 'package:go_router/go_router.dart';
 
 final rootNavigatorKey = GlobalKey<NavigatorState>();
 
-class AppRouter._(final RouterConfig<Object> config) {
-  factory create(AppContainer appContainer) => AppRouter._(
-    GoRouter(
+class AppRouter._(final GoRouter config) {
+  factory create(AppContainer appContainer) {
+    final router = GoRouter(
       navigatorKey: rootNavigatorKey,
+      // go_router would otherwise start on a link the app was opened with,
+      // alone on the stack, so back from it left the app. The link is pushed
+      // over the story list below instead.
+      overridePlatformDefaultLocation: true,
       // Profiling affordance: `--dart-define=initialLocation=/item?id=N`
       // opens straight onto a screen. Both operands are compile-time
       // constants and `kReleaseMode` is const, so a store build folds this
@@ -274,8 +280,35 @@ class AppRouter._(final RouterConfig<Object> config) {
           parentNavigatorKey: rootNavigatorKey,
         ),
       ],
-    ),
-  );
+    );
+
+    // Registered before `runApp` builds the router, so this observer is asked
+    // about a link before go_router's own provider, which would `go` to it.
+    WidgetsBinding.instance.addObserver(_LinkObserver(router));
+    final String launchLink =
+        WidgetsBinding.instance.platformDispatcher.defaultRouteName;
+    if (launchLink != '/') {
+      WidgetsBinding.instance.addPostFrameCallback(
+        (_) => unawaited(router.push(Uri.parse(launchLink).routeLocation)),
+      );
+    }
+
+    return AppRouter._(router);
+  }
+}
+
+/// Opens a link handed over by the platform on top of whatever is showing.
+///
+/// go_router treats such a link as `go`, which replaces the whole stack, so a
+/// thread opened from a browser had nothing under it. Back then left the app,
+/// and Android relaunches a task from recents with the intent that started it,
+/// so the same lone thread came back every time until the task was cleared.
+class _LinkObserver(final GoRouter _router) with WidgetsBindingObserver {
+  @override
+  Future<bool> didPushRouteInformation(RouteInformation routeInformation) {
+    unawaited(_router.push(routeInformation.uri.routeLocation));
+    return SynchronousFuture(true);
+  }
 }
 
 /// Hacker News deep links reach the app from any other app or web page, and the
@@ -288,6 +321,14 @@ extension on Uri {
   /// a missing `id` must not be asserted either. An empty username simply
   /// fails to load and shows the page's normal error state.
   String get username => queryParameters['id'] ?? '';
+
+  /// This link as a router location, without the scheme and host the platform
+  /// may include for an app link.
+  String get routeLocation => Uri(
+    path: path.isEmpty ? '/' : path,
+    query: hasQuery ? query : null,
+    fragment: hasFragment ? fragment : null,
+  ).toString();
 }
 
 /// Sentinel for a deep link whose `id` was absent or unparseable. No Hacker
